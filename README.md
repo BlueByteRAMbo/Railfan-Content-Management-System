@@ -29,6 +29,12 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 - 📅 **Temporal Workflows**: Dedicated Upload Planner, Pending Queues, and Interactive Calendars to track exactly when and what you recorded/uploaded.
 - 🚨 **Duplicate Resolution**: Automated backend daemon that flags and alerts you of potential duplicate recordings (e.g., same train on the same day).
 
+### 🎨 Design & UX
+- **"Signal & Steel" Identity**: A bespoke, railway-inspired UI utilizing a deep Charcoal/Graphite base with vibrant Signal Amber accents, ditching generic stock themes.
+- **Fluid Animations**: Built with **Framer Motion** for staggered page loads, dynamic layout transitions, and interactive stat counters.
+- **Glassmorphism**: Sophisticated backdrop-blur card layouts and glowing hover states over a dynamic radial mesh background.
+- **Mobile-First Responsiveness**: Features a native off-canvas drawer sidebar, bottom navigation for quick mobile access, and intelligent data tables that gracefully downgrade into touch-friendly stacked cards on small screens.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -43,6 +49,7 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 ### **Frontend (TypeScript)**
 - **Framework**: React 18 + Vite
 - **Styling**: Tailwind CSS + Shadcn UI
+- **Animations**: Framer Motion
 - **State/Fetching**: Zustand + TanStack Query (React Query)
 - **Charts/UI**: Recharts, React-Calendar, Lucide Icons
 
