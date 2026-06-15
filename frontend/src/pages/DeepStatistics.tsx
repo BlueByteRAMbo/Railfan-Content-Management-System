@@ -50,8 +50,8 @@ export default function DeepStatistics() {
               <BarChart data={trains} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradTrains" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#60a5fa" stopOpacity={1}/>
+                    <stop offset="0%" stopColor="#c27303" stopOpacity={0.6}/>
+                    <stop offset="100%" stopColor="#d98e04" stopOpacity={1}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
@@ -75,8 +75,8 @@ export default function DeepStatistics() {
               <BarChart data={locos} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradLocos" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#fbbf24" stopOpacity={1}/>
+                    <stop offset="0%" stopColor="#8A7E72" stopOpacity={0.6}/>
+                    <stop offset="100%" stopColor="#C98A2C" stopOpacity={1}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
@@ -92,7 +92,7 @@ export default function DeepStatistics() {
         {/* Sheds */}
         <motion.div variants={fadeUp} className="glass-card p-6">
           <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
-            <Building size={18} className="text-emerald-400" />
+            <Building size={18} className="text-[#3E7C8C]" />
             Top 5 Most Recorded Sheds
           </h2>
           <div className="h-64">
@@ -100,8 +100,8 @@ export default function DeepStatistics() {
               <BarChart data={sheds} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradSheds" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#34d399" stopOpacity={1}/>
+                    <stop offset="0%" stopColor="#2c5f6e" stopOpacity={0.6}/>
+                    <stop offset="100%" stopColor="#3E7C8C" stopOpacity={1}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
@@ -117,7 +117,7 @@ export default function DeepStatistics() {
         {/* Stations */}
         <motion.div variants={fadeUp} className="glass-card p-6">
           <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
-            <MapPin size={18} className="text-purple-400" />
+            <MapPin size={18} className="text-[#5C8A4A]" />
             Top 5 Most Recorded Stations
           </h2>
           <div className="h-64">
@@ -125,8 +125,8 @@ export default function DeepStatistics() {
               <BarChart data={stations} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradStations" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#a855f7" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#c084fc" stopOpacity={1}/>
+                    <stop offset="0%" stopColor="#476e38" stopOpacity={0.6}/>
+                    <stop offset="100%" stopColor="#5C8A4A" stopOpacity={1}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />

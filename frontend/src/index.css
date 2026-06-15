@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Archivo:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,19 +11,19 @@
   --header-height: 64px;
   
   /* Background System */
-  --bg-base: #0a0a14; /* Deep navy/slate base */
+  --bg-base: #16161a; /* Warm dark charcoal/graphite */
   --bg-elevated: rgba(255, 255, 255, 0.03);
   --bg-glass: rgba(255, 255, 255, 0.05);
 
   /* Brand */
-  --color-brand-primary: #4e55e5;
-  --color-brand-dark: #3539a3;
+  --color-brand-primary: #d98e04;
+  --color-brand-dark: #a15606;
   
   /* Status */
-  --color-pending:   #f59e0b;
-  --color-scheduled: #3b82f6;
-  --color-uploaded:  #10b981;
-  --color-archived:  #6b7280;
+  --color-pending:   #C98A2C;
+  --color-scheduled: #3E7C8C;
+  --color-uploaded:  #5C8A4A;
+  --color-archived:  #8A7E72;
 }
 
 /* ── Base Styles ────────────────────────────────────────────── */
@@ -45,14 +45,14 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Archivo', system-ui, sans-serif;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #1a1a2e; }
-::-webkit-scrollbar-thumb { background: #3539a3; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #4e55e5; }
+::-webkit-scrollbar-track { background: #1a1a20; }
+::-webkit-scrollbar-thumb { background: #3c1d05; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #81430d; }
 
 /* ── Glassmorphism Utility ──────────────────────────────────── */
 .glass {
@@ -74,7 +74,7 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(78, 85, 229, 0.4); /* shadow-glow */
+  box-shadow: 0 0 20px rgba(217, 142, 4, 0.35); /* shadow-glow */
 }
 
 /* ── Status Badge Utilities ─────────────────────────────────── */
@@ -90,14 +90,14 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
 }
 
-.status-pending   { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
-.status-scheduled { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
-.status-uploaded  { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
-.status-archived  { background: rgba(107,114,128,0.15); color: #9ca3af; border: 1px solid rgba(107,114,128,0.3); }
+.status-pending   { background: rgba(201,138,44,0.15); color: #C98A2C; border: 1px solid rgba(201,138,44,0.3); }
+.status-scheduled { background: rgba(62,124,140,0.15); color: #3E7C8C; border: 1px solid rgba(62,124,140,0.3); }
+.status-uploaded  { background: rgba(92,138,74,0.15);  color: #5C8A4A; border: 1px solid rgba(92,138,74,0.3);  }
+.status-archived  { background: rgba(138,126,114,0.15); color: #8A7E72; border: 1px solid rgba(138,126,114,0.3); }
 
 /* ── Gradient Text ──────────────────────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #6272f1 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, #e29737 0%, #c27303 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -110,7 +110,7 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   left: 0;
   top: 0;
-  background: linear-gradient(180deg, #0d0d1f 0%, #131326 100%);
+  background: linear-gradient(180deg, #16161a 0%, #1a1a20 100%);
   border-right: 1px solid rgba(255,255,255,0.06);
   overflow-y: auto;
   z-index: 50;
@@ -130,21 +130,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .sidebar-link:hover {
-  background: rgba(78, 85, 229, 0.1);
+  background: rgba(217, 142, 4, 0.1);
   color: #e2e8f0;
 }
 
 .sidebar-link.active {
-  background: rgba(78, 85, 229, 0.2);
-  color: #818cf8;
-  border: 1px solid rgba(78, 85, 229, 0.3);
+  background: rgba(217, 142, 4, 0.15);
+  color: #eab86a;
+  border: 1px solid rgba(217, 142, 4, 0.2);
 }
 
 /* ── Main Content ───────────────────────────────────────────── */
 .main-content {
   margin-left: var(--sidebar-width);
   min-height: 100vh;
-  background: #0f0f1a;
+  background: transparent;
 }
 
 /* ── Stat Cards ─────────────────────────────────────────────── */

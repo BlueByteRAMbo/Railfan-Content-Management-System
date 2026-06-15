@@ -46,7 +46,17 @@ const navSections = [
   },
 ]
 
-export default function Sidebar({ isCollapsed, toggleCollapse }: { isCollapsed: boolean, toggleCollapse: () => void }) {
+export default function Sidebar({ 
+  isCollapsed, 
+  toggleCollapse, 
+  isMobileOpen, 
+  closeMobile 
+}: { 
+  isCollapsed: boolean; 
+  toggleCollapse: () => void;
+  isMobileOpen: boolean;
+  closeMobile: () => void;
+}) {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
@@ -58,7 +68,9 @@ export default function Sidebar({ isCollapsed, toggleCollapse }: { isCollapsed: 
 
   return (
     <aside 
-      className="sidebar flex flex-col transition-all duration-300"
+      className={`sidebar flex flex-col transition-all duration-300 z-50 fixed top-0 bottom-0 left-0 ${
+        isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}
       style={{ width: isCollapsed ? '80px' : 'var(--sidebar-width)' }}
     >
       {/* Logo & Toggle */}
@@ -106,6 +118,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse }: { isCollapsed: 
                   <NavLink
                     key={to}
                     to={to}
+                    onClick={closeMobile}
                     className={`sidebar-link relative overflow-hidden group ${isActive ? 'text-brand-300' : ''}`}
                   >
                     {isActive && (

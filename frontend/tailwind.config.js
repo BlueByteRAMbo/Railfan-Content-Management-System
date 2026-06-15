@@ -8,19 +8,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Railfan brand palette — deep railway blues + amber accents
+        // Railfan brand palette — Signal & Steel (Amber/Ochre)
         brand: {
-          50:  '#f0f4ff',
-          100: '#e0e9ff',
-          200: '#c7d7fe',
-          300: '#a4bcfd',
-          400: '#8198f8',
-          500: '#6272f1',
-          600: '#4e55e5',
-          700: '#3f43ca',
-          800: '#3539a3',
-          900: '#303581',
-          950: '#1e1f4d',
+          50:  '#fdf8ee',
+          100: '#f9edd3',
+          200: '#f2d6a3',
+          300: '#eab86a',
+          400: '#e29737',
+          500: '#d98e04', // Primary accent
+          600: '#c27303',
+          700: '#a15606',
+          800: '#81430d',
+          900: '#68370f',
+          950: '#3c1d05',
         },
         amber: {
           400: '#fbbf24',
@@ -29,25 +29,24 @@ export default {
         },
         // Status colors
         status: {
-          pending:   '#f59e0b',
-          scheduled: '#3b82f6',
-          uploaded:  '#10b981',
-          archived:  '#6b7280',
+          pending:   '#C98A2C', // Muted amber
+          scheduled: '#3E7C8C', // Slate teal
+          uploaded:  '#5C8A4A', // Moss green
+          archived:  '#8A7E72', // Warm grey-brown
         }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        display: ['Archivo', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'hero-pattern': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234e55e5' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
       },
       boxShadow: {
         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.25)',
         'elevated': '0 10px 30px -5px rgba(0, 0, 0, 0.3)',
-        'glow': '0 0 20px rgba(78, 85, 229, 0.4)',
+        'glow': '0 0 20px rgba(217, 142, 4, 0.35)',
         'card': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
         'card-hover': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
       },

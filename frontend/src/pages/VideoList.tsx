@@ -119,9 +119,10 @@ export default function VideoList() {
         </button>
       </div>
 
-      {/* Table */}
+      {/* Table & Cards */}
       <div className="glass-card overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="data-table">
             <thead>
               <tr>
@@ -197,6 +198,67 @@ export default function VideoList() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card List */}
+        <div className="md:hidden flex flex-col divide-y divide-white/5">
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="p-4 flex gap-4">
+                <div className="w-20 h-14 bg-white/5 rounded animate-pulse" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-white/5 rounded w-3/4 animate-pulse" />
+                  <div className="h-3 bg-white/5 rounded w-1/2 animate-pulse" />
+                </div>
+              </div>
+            ))
+          ) : page?.content.length === 0 ? (
+            <div className="text-center py-12 text-slate-500 text-sm">
+              No videos found. Add your first video to get started!
+            </div>
+          ) : page?.content.map((v) => (
+            <div 
+              key={v.id} 
+              className={`p-4 flex items-start gap-4 transition-colors ${selectedIds.includes(v.id) ? 'bg-brand-500/10' : ''}`}
+              onClick={() => navigate(`/videos/${v.id}`)}
+            >
+              <div onClick={(e) => e.stopPropagation()} className="pt-1">
+                <input 
+                  type="checkbox" 
+                  className="form-checkbox" 
+                  checked={selectedIds.includes(v.id)} 
+                  onChange={() => toggleSelect(v.id)} 
+                />
+              </div>
+              {v.thumbnail ? (
+                <img
+                  src={v.thumbnail.startsWith('http') ? v.thumbnail : `data:image/jpeg;base64,${v.thumbnail}`}
+                  alt={v.title}
+                  className="w-20 h-14 rounded object-cover bg-slate-800 flex-shrink-0"
+                />
+              ) : (
+                <div className="w-20 h-14 rounded bg-slate-800 flex-shrink-0" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-white truncate text-sm mb-1">{v.title}</p>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-2">
+                  <span>{v.recordingDate}</span>
+                  <span>•</span>
+                  <span>{formatDuration(v.durationSeconds)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`status-badge text-[10px] px-2 py-0.5 ${STATUS_CLASSES[v.uploadStatus]}`}>
+                    {STATUS_LABELS[v.uploadStatus]}
+                  </span>
+                  {(v.trainNumber || v.locoNumber) && (
+                    <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-slate-300">
+                      {v.trainNumber || v.locoNumber}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Bulk Actions Floating Bar */}

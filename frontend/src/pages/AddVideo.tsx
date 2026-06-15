@@ -14,9 +14,9 @@ export default function AddVideo() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-8 animate-fade-in">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-4 mb-6 md:mb-8">
         <button
           onClick={() => navigate(-1)}
           className="btn-secondary p-2"
@@ -36,7 +36,7 @@ export default function AddVideo() {
         </div>
       )}
 
-      <div className="glass-card p-8">
+      <div className="glass-card p-5 md:p-8">
         <VideoForm
           onSubmit={handleSubmit}
           isSubmitting={createMutation.isPending}

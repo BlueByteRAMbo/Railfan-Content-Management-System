@@ -25,7 +25,7 @@ function formatDuration(s: number): string {
   return h > 0 ? `${h}h ${m}m` : `${m}m`
 }
 
-const CHART_COLORS = ['#6272f1','#a78bfa','#34d399','#fbbf24','#f87171','#60a5fa','#e879f9','#2dd4bf']
+const CHART_COLORS = ['#d98e04', '#c27303', '#3E7C8C', '#5C8A4A', '#8A7E72', '#a15606', '#81430d']
 const STATUS_CONFIG: Record<UploadStatus, { label:string; className:string }> = {
   PENDING_UPLOAD:   { label:'Pending',   className:'status-pending'   },
   SCHEDULED_UPLOAD: { label:'Scheduled', className:'status-scheduled' },
@@ -50,17 +50,17 @@ function StatCard({
   label, value, sub, icon: Icon, accent
 }: { label:string; value:string|number; sub?:string; icon:React.ElementType; accent:string }) {
   return (
-    <motion.div variants={fadeUp} whileHover={{ y: -4 }} className="glass-card group relative overflow-hidden p-6">
+    <motion.div variants={fadeUp} whileHover={{ y: -4 }} className="glass-card group relative overflow-hidden p-4 sm:p-6">
       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${accent}/5 to-transparent`} />
       <div className="relative">
-        <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${accent}/20 mb-4`}>
-          <Icon size={20} className={`text-${accent.split('-')[0]}-400`} />
+        <div className={`inline-flex p-2 rounded-xl bg-gradient-to-br ${accent}/20 mb-3 sm:mb-4`}>
+          <Icon size={18} className={`text-${accent.split('-')[0]}-400 sm:w-5 sm:h-5`} />
         </div>
-        <p className="text-3xl font-bold text-white tracking-tight mb-0.5">
+        <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-0.5">
           {typeof value === 'number' ? <AnimatedCounter value={value} /> : value}
         </p>
-        <p className="text-sm text-slate-400">{label}</p>
-        {sub && <p className="text-xs text-slate-600 mt-1">{sub}</p>}
+        <p className="text-xs sm:text-sm text-slate-400">{label}</p>
+        {sub && <p className="text-[10px] sm:text-xs text-slate-600 mt-1">{sub}</p>}
       </div>
     </motion.div>
   )
@@ -91,9 +91,9 @@ export default function Dashboard() {
   const { data: recent = []                       } = useRecentVideos()
 
   return (
-    <div className="p-8 animate-fade-in">
+    <div className="p-4 md:p-8 animate-fade-in">
       {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
           <p className="text-slate-500 text-sm mt-1">Your railfanning archive at a glance</p>
@@ -108,7 +108,7 @@ export default function Dashboard() {
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4 mb-6"
       >
         {statsLoading ? Array.from({length:5}).map((_,i)=><StatSkeleton key={i}/>) : (
           <>
@@ -126,7 +126,7 @@ export default function Dashboard() {
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8"
       >
         {statsLoading ? Array.from({length:4}).map((_,i)=><StatSkeleton key={i}/>) : (
           <>
@@ -161,15 +161,15 @@ export default function Dashboard() {
               <AreaChart data={charts?.recordingsPerMonth ?? []}>
                 <defs>
                   <linearGradient id="recGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#6272f1" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#6272f1" stopOpacity={0}/>
+                    <stop offset="5%"  stopColor="#d98e04" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#d98e04" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                 <XAxis dataKey="label" tick={{ fill:'#64748b', fontSize:11 }} />
                 <YAxis tick={{ fill:'#64748b', fontSize:11 }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="count" name="Recordings" stroke="#6272f1" fill="url(#recGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="count" name="Recordings" stroke="#d98e04" fill="url(#recGrad)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -185,15 +185,15 @@ export default function Dashboard() {
               <AreaChart data={charts?.uploadsPerMonth ?? []}>
                 <defs>
                   <linearGradient id="uplGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#34d399" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#34d399" stopOpacity={0}/>
+                    <stop offset="5%"  stopColor="#3E7C8C" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#3E7C8C" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                 <XAxis dataKey="label" tick={{ fill:'#64748b', fontSize:11 }} />
                 <YAxis tick={{ fill:'#64748b', fontSize:11 }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="count" name="Uploads" stroke="#34d399" fill="url(#uplGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="count" name="Uploads" stroke="#3E7C8C" fill="url(#uplGrad)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           )}
@@ -244,8 +244,8 @@ export default function Dashboard() {
               <BarChart data={charts?.trainCategoryDistribution ?? []}>
                 <defs>
                   <linearGradient id="gradCat" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#a78bfa" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.6}/>
+                    <stop offset="0%" stopColor="#e29737" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#a15606" stopOpacity={0.6}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
