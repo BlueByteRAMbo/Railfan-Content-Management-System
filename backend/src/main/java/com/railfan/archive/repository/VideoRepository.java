@@ -123,25 +123,23 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
     );
 
     // ── Chart data ────────────────────────────────────────────
-    @Query("""
-        SELECT YEAR(v.recordingDate), MONTH(v.recordingDate), COUNT(v)
-        FROM Video v
-        WHERE v.isDeleted = false
-        AND v.recordingDate >= :fromDate
-        GROUP BY YEAR(v.recordingDate), MONTH(v.recordingDate)
-        ORDER BY YEAR(v.recordingDate), MONTH(v.recordingDate)
-        """)
-    List<Object[]> countRecordingsByMonth(@Param("fromDate") LocalDate fromDate);
+    @Query("SELECT YEAR(v.recordingDate), MONTH(v.recordingDate), COUNT(v) FROM Video v WHERE v.isDeleted = false GROUP BY YEAR(v.recordingDate), MONTH(v.recordingDate) ORDER BY YEAR(v.recordingDate), MONTH(v.recordingDate)")
+    List<Object[]> countRecordingsByMonthAllTime();
 
-    @Query("""
-        SELECT YEAR(v.uploadDate), MONTH(v.uploadDate), COUNT(v)
-        FROM Video v
-        WHERE v.isDeleted = false AND v.uploadStatus = 'UPLOADED'
-        AND v.uploadDate >= :fromDate
-        GROUP BY YEAR(v.uploadDate), MONTH(v.uploadDate)
-        ORDER BY YEAR(v.uploadDate), MONTH(v.uploadDate)
-        """)
-    List<Object[]> countUploadsByMonth(@Param("fromDate") LocalDate fromDate);
+    @Query("SELECT YEAR(v.recordingDate), MONTH(v.recordingDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND YEAR(v.recordingDate) = :year GROUP BY YEAR(v.recordingDate), MONTH(v.recordingDate) ORDER BY MONTH(v.recordingDate)")
+    List<Object[]> countRecordingsByMonth(@Param("year") Integer year);
+
+    @Query("SELECT YEAR(v.recordingDate), DAY(v.recordingDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND YEAR(v.recordingDate) = :year AND MONTH(v.recordingDate) = :month GROUP BY YEAR(v.recordingDate), DAY(v.recordingDate) ORDER BY DAY(v.recordingDate)")
+    List<Object[]> countRecordingsByDay(@Param("year") Integer year, @Param("month") Integer month);
+
+    @Query("SELECT YEAR(v.uploadDate), MONTH(v.uploadDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.uploadStatus = 'UPLOADED' GROUP BY YEAR(v.uploadDate), MONTH(v.uploadDate) ORDER BY YEAR(v.uploadDate), MONTH(v.uploadDate)")
+    List<Object[]> countUploadsByMonthAllTime();
+
+    @Query("SELECT YEAR(v.uploadDate), MONTH(v.uploadDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.uploadStatus = 'UPLOADED' AND YEAR(v.uploadDate) = :year GROUP BY YEAR(v.uploadDate), MONTH(v.uploadDate) ORDER BY MONTH(v.uploadDate)")
+    List<Object[]> countUploadsByMonth(@Param("year") Integer year);
+
+    @Query("SELECT YEAR(v.uploadDate), DAY(v.uploadDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.uploadStatus = 'UPLOADED' AND YEAR(v.uploadDate) = :year AND MONTH(v.uploadDate) = :month GROUP BY YEAR(v.uploadDate), DAY(v.uploadDate) ORDER BY DAY(v.uploadDate)")
+    List<Object[]> countUploadsByDay(@Param("year") Integer year, @Param("month") Integer month);
 
     // ── Statistics ────────────────────────────────────────────
     @Query("""

@@ -21,13 +21,13 @@ public class DuplicateController {
 
     @GetMapping
     public ResponseEntity<List<DuplicateAlert>> getUnresolved() {
-        return ResponseEntity.ok(duplicateAlertRepository.findByIsResolvedFalseOrderByCreatedAtDesc());
+        return ResponseEntity.ok(duplicateAlertRepository.findByResolvedFalseOrderByCreatedAtDesc());
     }
 
     @PatchMapping("/{id}/resolve")
     public ResponseEntity<Map<String, String>> resolve(@PathVariable Long id) {
         return duplicateAlertRepository.findById(id).map(alert -> {
-            alert.setIsResolved(true);
+            alert.setResolved(true);
             duplicateAlertRepository.save(alert);
             return ResponseEntity.ok(Map.of("message", "Alert resolved"));
         }).orElse(ResponseEntity.notFound().build());

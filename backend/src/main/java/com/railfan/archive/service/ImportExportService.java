@@ -223,7 +223,7 @@ public class ImportExportService {
                 if (row == null || row.getCell(0) == null) continue;
 
                 String title = row.getCell(0).getStringCellValue();
-                Cell dateCell = row.getCell(1);
+                org.apache.poi.ss.usermodel.Cell dateCell = row.getCell(1);
                 LocalDate date = null;
                 if (dateCell != null) {
                     if (dateCell.getCellType() == CellType.STRING) {
@@ -239,18 +239,18 @@ public class ImportExportService {
                 req.setTitle(title);
                 req.setRecordingDate(date);
                 
-                Cell statusCell = row.getCell(2);
+                org.apache.poi.ss.usermodel.Cell statusCell = row.getCell(2);
                 req.setUploadStatus(statusCell != null && statusCell.getCellType() == CellType.STRING 
                     ? UploadStatus.valueOf(statusCell.getStringCellValue()) 
                     : UploadStatus.PENDING_UPLOAD);
 
-                Cell tnCell = row.getCell(3);
+                org.apache.poi.ss.usermodel.Cell tnCell = row.getCell(3);
                 if (tnCell != null && tnCell.getCellType() == CellType.STRING) req.setTrainNumber(tnCell.getStringCellValue());
 
-                Cell tnmCell = row.getCell(4);
+                org.apache.poi.ss.usermodel.Cell tnmCell = row.getCell(4);
                 if (tnmCell != null && tnmCell.getCellType() == CellType.STRING) req.setTrainName(tnmCell.getStringCellValue());
 
-                Cell lnCell = row.getCell(5);
+                org.apache.poi.ss.usermodel.Cell lnCell = row.getCell(5);
                 if (lnCell != null && lnCell.getCellType() == CellType.STRING) req.setLocoNumber(lnCell.getStringCellValue());
 
                 req.setPriority(Priority.MEDIUM);
