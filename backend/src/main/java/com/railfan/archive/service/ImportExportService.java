@@ -202,12 +202,19 @@ public class ImportExportService {
                 if (row.length <= Math.max(titleIdx, dateIdx)) continue;
                 
                 String title = row[titleIdx];
-                String dateStr = row[dateIdx];
-                if (title == null || title.isBlank() || dateStr == null || dateStr.isBlank()) continue;
+                String rawDateStr = row[dateIdx];
+                if (title == null || title.isBlank() || rawDateStr == null || rawDateStr.isBlank()) continue;
+
+                String dateStr = rawDateStr;
+                String timeStr = "12:00:00"; // Default time if missing
 
                 // Handle Google Takeout ISO Timestamp "2024-10-12T11:40:00..."
-                if (isGoogleTakeout && dateStr.contains("T")) {
-                    dateStr = dateStr.substring(0, dateStr.indexOf("T"));
+                if (isGoogleTakeout && rawDateStr.contains("T")) {
+                    dateStr = rawDateStr.substring(0, rawDateStr.indexOf("T"));
+                    String afterT = rawDateStr.substring(rawDateStr.indexOf("T") + 1);
+                    if (afterT.length() >= 8) {
+                        timeStr = afterT.substring(0, 8); // Extract HH:mm:ss
+                    }
                 }
 
                 VideoCreateRequest req = new VideoCreateRequest();
@@ -216,6 +223,8 @@ public class ImportExportService {
                 
                 if (isGoogleTakeout) {
                     req.setUploadStatus(UploadStatus.UPLOADED);
+                    req.setUploadDate(LocalDate.parse(dateStr));
+                    req.setUploadTime(LocalTime.parse(timeStr));
                     req.setYoutubeVideoId(row[0]); // Save original Video ID
                 } else {
                     req.setUploadStatus(statusIdx >= 0 && row.length > statusIdx && !row[statusIdx].isBlank() 
