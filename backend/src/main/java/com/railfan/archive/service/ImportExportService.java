@@ -187,20 +187,44 @@ public class ImportExportService {
             List<String[]> lines = csvReader.readAll();
             if (lines.isEmpty()) return 0;
 
-            String[] header = lines.get(0); // Optional: parse headers for mapping, but we assume a fixed format for now:
-            // Title(0), RecordingDate(1), Status(2), TrainNo(3), TrainName(4), LocoNo(5)
+            String[] header = lines.get(0);
+            boolean isGoogleTakeout = header.length > 9 && header[0].trim().equalsIgnoreCase("Video ID");
+
+            int titleIdx = isGoogleTakeout ? 5 : 0;
+            int dateIdx = isGoogleTakeout ? 9 : 1;
+            int statusIdx = isGoogleTakeout ? -1 : 2;
+            int trainNoIdx = isGoogleTakeout ? -1 : 3;
+            int trainNameIdx = isGoogleTakeout ? -1 : 4;
+            int locoNoIdx = isGoogleTakeout ? -1 : 5;
 
             for (int i = 1; i < lines.size(); i++) {
                 String[] row = lines.get(i);
-                if (row.length < 2) continue; // Minimum Title and Date
+                if (row.length <= Math.max(titleIdx, dateIdx)) continue;
                 
+                String title = row[titleIdx];
+                String dateStr = row[dateIdx];
+                if (title == null || title.isBlank() || dateStr == null || dateStr.isBlank()) continue;
+
+                // Handle Google Takeout ISO Timestamp "2024-10-12T11:40:00..."
+                if (isGoogleTakeout && dateStr.contains("T")) {
+                    dateStr = dateStr.substring(0, dateStr.indexOf("T"));
+                }
+
                 VideoCreateRequest req = new VideoCreateRequest();
-                req.setTitle(row[0]);
-                req.setRecordingDate(LocalDate.parse(row[1]));
-                req.setUploadStatus(row.length > 2 && !row[2].isBlank() ? UploadStatus.valueOf(row[2]) : UploadStatus.PENDING_UPLOAD);
-                if (row.length > 3) req.setTrainNumber(row[3]);
-                if (row.length > 4) req.setTrainName(row[4]);
-                if (row.length > 5) req.setLocoNumber(row[5]);
+                req.setTitle(title);
+                req.setRecordingDate(LocalDate.parse(dateStr));
+                
+                if (isGoogleTakeout) {
+                    req.setUploadStatus(UploadStatus.UPLOADED);
+                    req.setYoutubeVideoId(row[0]); // Save original Video ID
+                } else {
+                    req.setUploadStatus(statusIdx >= 0 && row.length > statusIdx && !row[statusIdx].isBlank() 
+                        ? UploadStatus.valueOf(row[statusIdx]) 
+                        : UploadStatus.PENDING_UPLOAD);
+                    if (trainNoIdx >= 0 && row.length > trainNoIdx) req.setTrainNumber(row[trainNoIdx]);
+                    if (trainNameIdx >= 0 && row.length > trainNameIdx) req.setTrainName(row[trainNameIdx]);
+                    if (locoNoIdx >= 0 && row.length > locoNoIdx) req.setLocoNumber(row[locoNoIdx]);
+                }
                 
                 req.setPriority(Priority.MEDIUM);
                 videoService.create(req);

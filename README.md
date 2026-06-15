@@ -20,11 +20,13 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 
 ### ✨ Key Features
 
-- 📹 **YouTube Metadata Sync**: Paste a YouTube Video ID to automatically extract Title, Description, Duration, and high-quality Thumbnail art.
+- 🆓 **API-Free YouTube Metadata Scraping**: Paste a YouTube Video ID to automatically extract Title, Description, Duration, and high-quality Thumbnail art. This bypasses the paid Google Cloud API entirely using intelligent HTML scraping!
+- 📤 **Google Takeout Auto-Importer**: Drop your raw `videos.csv` from Google Takeout directly into the dashboard. The backend automatically detects the format, strips out timezones, and builds your database instantly.
 - 🚀 **Quick Add Mode**: Lightning-fast, sequential data entry forms designed for logging massive backlogs without touching your mouse.
-- 📊 **Deep Analytics**: View your top recorded trains, locomotives, sheds, and stations via interactive Recharts visualizations.
+- 🗃️ **Mass Import & Export**: Import legacy Excel or standard CSV files. Export your entire video archive into beautifully formatted PDF reports, Excel spreadsheets, or CSV backups.
+- 📦 **Bulk Action Engine**: Multi-select hundreds of videos at once using checkboxes to perform bulk Archiving or Deletion with a dynamic floating action bar.
+- 📊 **Deep Analytics Dashboard**: View your top recorded trains, locomotives, sheds, and stations via interactive Recharts visualizations. Compare upload velocity vs. recording frequency.
 - 📅 **Temporal Workflows**: Dedicated Upload Planner, Pending Queues, and Interactive Calendars to track exactly when and what you recorded/uploaded.
-- 📥 **Mass Import & Export**: Drag-and-drop legacy Excel/CSV files to populate the database, or export your entire archive to a formatted PDF.
 - 🚨 **Duplicate Resolution**: Automated backend daemon that flags and alerts you of potential duplicate recordings (e.g., same train on the same day).
 
 ---
@@ -36,7 +38,7 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 - **Security**: Spring Security + JWT Authentication
 - **Database**: PostgreSQL (via Spring Data JPA / Hibernate)
 - **Migrations**: Flyway
-- **Integrations**: Google YouTube Data API v3, Apache POI, OpenCSV, iText PDF
+- **Integrations**: Apache POI, OpenCSV, iText PDF, Custom HTML Scraper
 
 ### **Frontend (TypeScript)**
 - **Framework**: React 18 + Vite
@@ -64,7 +66,7 @@ docker-compose up db -d
 ```
 
 ### 2. Backend Setup
-1. Duplicate `.env.example` to `.env` in the root folder and add your credentials (including your `YOUTUBE_API_KEY`).
+1. Duplicate `.env.example` to `.env` in the root folder and configure your DB details.
 2. Navigate to the backend folder and run it:
 ```bash
 cd backend
