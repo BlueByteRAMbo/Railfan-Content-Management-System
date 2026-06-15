@@ -11,7 +11,7 @@ const navSections = [
   {
     label: 'Overview',
     items: [
-      { to: '/',           icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
       { to: '/videos',     icon: Video,           label: 'All Videos' },
     ]
   },

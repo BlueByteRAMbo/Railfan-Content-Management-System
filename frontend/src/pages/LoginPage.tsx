@@ -53,9 +53,9 @@ const RealisticBackground = () => (
 )
 
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required'),
-  email: z.string().email('Invalid email address').optional(),
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: z.string().email('Invalid email address').optional().or(z.literal('')),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
@@ -79,7 +79,7 @@ export default function LoginPage() {
     },
     onSuccess: (data) => {
       setAuth(data)
-      navigate('/')
+      navigate('/dashboard')
     },
   })
 
@@ -105,7 +105,8 @@ export default function LoginPage() {
             <div className="mb-6 flex items-center gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400">
               <AlertCircle size={18} className="flex-shrink-0" />
               <p className="text-sm">
-                {isRegistering ? 'Registration failed. Username or email might be taken.' : 'Invalid username or password. Please try again.'}
+                {(authMutation.error as any).response?.data?.message || 
+                 (isRegistering ? 'Registration failed. Username or email might be taken.' : 'Invalid username or password. Please try again.')}
               </p>
             </div>
           )}

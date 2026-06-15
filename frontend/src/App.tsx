@@ -5,6 +5,7 @@ import Layout from './components/layout/Layout'
 import AppBackground from './components/layout/AppBackground'
 import PageTransition from './components/layout/PageTransition'
 import LoginPage   from './pages/LoginPage'
+import LandingPage from './pages/LandingPage'
 import Dashboard   from './pages/Dashboard'
 import VideoList   from './pages/VideoList'
 import AddVideo    from './pages/AddVideo'
@@ -36,9 +37,10 @@ export default function App() {
       <AppBackground />
       <Routes>
         {/* Public */}
+      <Route path="/" element={<LandingPage />} />
       <Route
         path="/login"
-        element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />}
       />
 
       {/* Protected — all inside sidebar Layout */}
@@ -50,7 +52,7 @@ export default function App() {
               <AnimatePresence mode="wait">
                 <Routes location={location} key={location.pathname}>
                   {/* ── Phase 2 (complete) ── */}
-                  <Route path="/"              element={<PageTransition><Dashboard /></PageTransition>} />
+                  <Route path="/dashboard"     element={<PageTransition><Dashboard /></PageTransition>} />
                   <Route path="/videos"        element={<PageTransition><VideoList /></PageTransition>} />
                   <Route path="/videos/add"    element={<PageTransition><AddVideo /></PageTransition>} />
                   <Route path="/videos/:id"    element={<PageTransition><VideoDetail /></PageTransition>} />

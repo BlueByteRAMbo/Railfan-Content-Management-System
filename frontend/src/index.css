@@ -105,15 +105,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Sidebar ────────────────────────────────────────────────── */
 .sidebar {
-  width: var(--sidebar-width);
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
   background: linear-gradient(180deg, #16161a 0%, #1a1a20 100%);
   border-right: 1px solid rgba(255,255,255,0.06);
   overflow-y: auto;
-  z-index: 50;
 }
 
 .sidebar-link {
@@ -140,12 +134,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(217, 142, 4, 0.2);
 }
 
-/* ── Main Content ───────────────────────────────────────────── */
-.main-content {
-  margin-left: var(--sidebar-width);
-  min-height: 100vh;
-  background: transparent;
-}
+
 
 /* ── Stat Cards ─────────────────────────────────────────────── */
 .stat-card {

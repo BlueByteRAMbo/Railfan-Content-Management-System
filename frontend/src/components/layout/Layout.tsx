@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Menu, Plus } from 'lucide-react'
 import Sidebar from './Sidebar'
 import BottomNav from './BottomNav'
+import Footer from '../ui/Footer'
 
 interface LayoutProps {
   children: ReactNode
@@ -54,9 +55,12 @@ export default function Layout({ children }: LayoutProps) {
 
       {/* Main Content Area */}
       <main 
-        className={`main-content flex-1 overflow-auto transition-all duration-300 pt-14 lg:pt-0 pb-16 md:pb-0 ${isCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[var(--sidebar-width)]'} ml-0`}
+        className={`flex-1 flex flex-col overflow-auto transition-all duration-300 pt-14 lg:pt-0 pb-16 md:pb-0 ${isCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[var(--sidebar-width)]'} ml-0`}
       >
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        <Footer />
       </main>
 
       <BottomNav />

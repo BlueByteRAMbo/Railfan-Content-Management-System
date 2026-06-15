@@ -3,6 +3,7 @@ import { duplicatesApi } from '../api/services'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { AlertTriangle, Check, ExternalLink } from 'lucide-react'
+import SignalLoader from '../components/ui/SignalLoader'
 
 export default function DuplicateResolver() {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ export default function DuplicateResolver() {
     }
   })
 
-  if (isLoading) return <div className="p-8 text-slate-500 animate-pulse">Loading duplicate alerts...</div>
+  if (isLoading) return <SignalLoader message="CHECKING DUPLICATES..." />
 
   return (
     <div className="max-w-4xl mx-auto p-8 animate-fade-in">
