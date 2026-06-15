@@ -11,6 +11,7 @@ import { Train, Eye, EyeOff, AlertCircle } from 'lucide-react'
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
+  email: z.string().email('Invalid email address').optional(),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
@@ -19,13 +20,19 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
   const [showPassword, setShowPassword] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(false)
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   })
 
-  const loginMutation = useMutation({
-    mutationFn: (data: LoginForm) => authApi.login(data).then(r => r.data),
+  const authMutation = useMutation({
+    mutationFn: (data: LoginForm) => {
+      if (isRegistering) {
+        return authApi.register({ username: data.username, password: data.password, email: data.email! }).then(r => r.data)
+      }
+      return authApi.login({ username: data.username, password: data.password }).then(r => r.data)
+    },
     onSuccess: (data) => {
       setAuth(data)
       navigate('/')
@@ -47,19 +54,23 @@ export default function LoginPage() {
             <Train size={28} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Railfan Archive</h1>
-          <p className="text-slate-400 text-sm mt-1">Sign in to manage your train videos</p>
+          <p className="text-slate-400 text-sm mt-1">
+            {isRegistering ? 'Create a new admin account' : 'Sign in to manage your train videos'}
+          </p>
         </div>
 
         {/* Card */}
         <div className="glass-card p-8">
-          {loginMutation.isError && (
+          {authMutation.isError && (
             <div className="mb-6 flex items-center gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400">
               <AlertCircle size={18} className="flex-shrink-0" />
-              <p className="text-sm">Invalid username or password. Please try again.</p>
+              <p className="text-sm">
+                {isRegistering ? 'Registration failed. Username or email might be taken.' : 'Invalid username or password. Please try again.'}
+              </p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit((d) => loginMutation.mutate(d))} className="space-y-5">
+          <form onSubmit={handleSubmit((d) => authMutation.mutate(d))} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1.5">Username</label>
               <input
@@ -74,6 +85,23 @@ export default function LoginPage() {
               )}
             </div>
 
+            {isRegistering && (
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+                <input
+                  {...register('email')}
+                  type="email"
+                  className="form-input"
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                  required={isRegistering}
+                />
+                {errors.email && (
+                  <p className="mt-1.5 text-xs text-red-400">{errors.email.message}</p>
+                )}
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
               <div className="relative">
@@ -82,7 +110,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   className="form-input pr-10"
                   placeholder="••••••••"
-                  autoComplete="current-password"
+                  autoComplete={isRegistering ? "new-password" : "current-password"}
                 />
                 <button
                   type="button"
@@ -99,17 +127,30 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loginMutation.isPending}
+              disabled={authMutation.isPending}
               className="btn-primary w-full py-2.5 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loginMutation.isPending ? (
+              {authMutation.isPending ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Signing in...
+                  {isRegistering ? 'Creating Account...' : 'Signing in...'}
                 </>
-              ) : 'Sign In'}
+              ) : (isRegistering ? 'Create Account' : 'Sign In')}
             </button>
           </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setIsRegistering(!isRegistering)
+                reset()
+              }}
+              className="text-sm text-brand-400 hover:text-brand-300 transition-colors"
+            >
+              {isRegistering ? 'Already have an account? Sign in' : 'First time here? Create an account'}
+            </button>
+          </div>
         </div>
 
         <p className="text-center text-xs text-slate-600 mt-6">
