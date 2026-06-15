@@ -1,0 +1,82 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: railfan-archive-manager
+
+  # ── Database ──────────────────────────────────────────────
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/railfan_archive}
+    username: ${SPRING_DATASOURCE_USERNAME:railfan}
+    password: ${SPRING_DATASOURCE_PASSWORD:railfan123}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # ── JPA / Hibernate ───────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: validate       # Flyway manages schema; Hibernate only validates
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+
+  # ── Flyway DB Migrations ───────────────────────────────────
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  # ── JSON Serialization ─────────────────────────────────────
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+
+  # ── File Upload (thumbnail base64 payloads can be large) ───
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# ── Actuator (Render health checks) ──────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
+# ── Application-specific properties ──────────────────────────
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-this-must-be-at-least-256-bits-long-in-production!!}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}         # 24 hours
+    refresh-expiration-ms: ${JWT_REFRESH_MS:604800000}   # 7 days
+
+  youtube:
+    api-key: ${YOUTUBE_API_KEY:}
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}

@@ -1,0 +1,238 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { videosApi } from '../api/services'
+import type { VideoFilterParams, UploadStatus } from '../types'
+import { Plus, Search, Filter, Clock, HardDrive } from 'lucide-react'
+
+const STATUS_LABELS: Record<UploadStatus, string> = {
+  PENDING_UPLOAD:   'Pending',
+  SCHEDULED_UPLOAD: 'Scheduled',
+  UPLOADED:         'Uploaded',
+  ARCHIVED:         'Archived',
+}
+
+const STATUS_CLASSES: Record<UploadStatus, string> = {
+  PENDING_UPLOAD:   'status-pending',
+  SCHEDULED_UPLOAD: 'status-scheduled',
+  UPLOADED:         'status-uploaded',
+  ARCHIVED:         'status-archived',
+}
+
+function formatDuration(seconds?: number): string {
+  if (!seconds) return '—'
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+function formatBytes(bytes?: number): string {
+  if (!bytes) return '—'
+  const gb = bytes / (1024 ** 3)
+  if (gb >= 1) return `${gb.toFixed(1)} GB`
+  return `${(bytes / (1024 ** 2)).toFixed(0)} MB`
+}
+
+export default function VideoList() {
+  const navigate = useNavigate()
+  const qc = useQueryClient()
+  const [filters, setFilters] = useState<VideoFilterParams>({
+    page: 0, size: 20, sort: 'recordingDate', direction: 'DESC'
+  })
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
+
+  const { data: page, isLoading } = useQuery({
+    queryKey: ['videos', filters],
+    queryFn: () => videosApi.getAll(filters).then(r => r.data),
+  })
+
+  const bulkMutation = useMutation({
+    mutationFn: (data: any) => videosApi.bulkAction(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['videos'] })
+      setSelectedIds([])
+    }
+  })
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked && page) {
+      setSelectedIds(page.content.map(v => v.id))
+    } else {
+      setSelectedIds([])
+    }
+  }
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
+  }
+
+  const handleBulkAction = (action: string) => {
+    if (!selectedIds.length) return
+    bulkMutation.mutate({ videoIds: selectedIds, action })
+  }
+
+  return (
+    <div className="p-8 animate-fade-in">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-white">All Videos</h1>
+          <p className="text-slate-500 text-sm mt-1">
+            {page ? `${page.totalElements.toLocaleString()} total videos` : 'Loading…'}
+          </p>
+        </div>
+        <button onClick={() => navigate('/videos/add')} className="btn-primary flex items-center gap-2">
+          <Plus size={16} />
+          Add Video
+        </button>
+      </div>
+
+      {/* Search & Filter Bar */}
+      <div className="flex gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <input
+            type="text"
+            placeholder="Search by title, train, loco…"
+            className="form-input pl-9"
+            onChange={(e) => setFilters(f => ({ ...f, q: e.target.value, page: 0 }))}
+          />
+        </div>
+        <select
+          className="form-input w-44"
+          onChange={(e) => setFilters(f => ({
+            ...f,
+            uploadStatus: e.target.value as UploadStatus || undefined,
+            page: 0
+          }))}
+        >
+          <option value="">All Statuses</option>
+          <option value="PENDING_UPLOAD">Pending</option>
+          <option value="SCHEDULED_UPLOAD">Scheduled</option>
+          <option value="UPLOADED">Uploaded</option>
+          <option value="ARCHIVED">Archived</option>
+        </select>
+        <button className="btn-secondary flex items-center gap-2">
+          <Filter size={15} />
+          Filters
+        </button>
+      </div>
+
+      {/* Table */}
+      <div className="glass-card overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th className="w-10">
+                  <input type="checkbox" className="form-checkbox" 
+                         checked={page && page.content.length > 0 && selectedIds.length === page.content.length} 
+                         onChange={handleSelectAll} />
+                </th>
+                <th>Title</th>
+                <th>Recorded</th>
+                <th>Status</th>
+                <th>Train</th>
+                <th>Loco</th>
+                <th>Station</th>
+                <th><Clock size={13} /></th>
+                <th><HardDrive size={13} /></th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                Array.from({ length: 8 }).map((_, i) => (
+                  <tr key={i}>
+                    {Array.from({ length: 8 }).map((_, j) => (
+                      <td key={j}><div className="h-4 bg-white/5 rounded animate-pulse" /></td>
+                    ))}
+                  </tr>
+                ))
+              ) : page?.content.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="text-center py-16 text-slate-600">
+                    No videos found. Add your first video to get started!
+                  </td>
+                </tr>
+              ) : page?.content.map((v) => (
+                <tr
+                  key={v.id}
+                  className={`cursor-pointer ${selectedIds.includes(v.id) ? 'bg-brand-500/10' : ''}`}
+                >
+                  <td onClick={(e) => e.stopPropagation()}>
+                    <input type="checkbox" className="form-checkbox" 
+                           checked={selectedIds.includes(v.id)} 
+                           onChange={() => toggleSelect(v.id)} />
+                  </td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)}>
+                    <div className="flex items-center gap-3">
+                      {v.thumbnail ? (
+                        <img
+                          src={v.thumbnail.startsWith('http') ? v.thumbnail : `data:image/jpeg;base64,${v.thumbnail}`}
+                          alt={v.title}
+                          className="w-12 h-8 rounded object-cover bg-slate-800 flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-12 h-8 rounded bg-slate-800 flex-shrink-0" />
+                      )}
+                      <span className="font-medium text-white truncate max-w-xs">{v.title}</span>
+                    </div>
+                  </td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)} className="text-slate-400 text-sm whitespace-nowrap">{v.recordingDate}</td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)}>
+                    <span className={`status-badge ${STATUS_CLASSES[v.uploadStatus]}`}>
+                      {STATUS_LABELS[v.uploadStatus]}
+                    </span>
+                  </td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)} className="text-slate-400 text-sm">
+                    {v.trainNumber && <span className="font-mono text-xs bg-white/5 px-1.5 py-0.5 rounded mr-1">{v.trainNumber}</span>}
+                    {v.trainName}
+                  </td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)} className="font-mono text-xs text-slate-400">{v.locoNumber || '—'}</td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)} className="text-slate-400 text-sm">{v.stationName || '—'}</td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)} className="text-slate-500 text-sm font-mono">{formatDuration(v.durationSeconds)}</td>
+                  <td onClick={() => navigate(`/videos/${v.id}`)} className="text-slate-500 text-sm">{formatBytes(v.fileSizeBytes)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Bulk Actions Floating Bar */}
+        {selectedIds.length > 0 && (
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-700 shadow-2xl rounded-full px-6 py-3 flex items-center gap-4 animate-fade-up z-50">
+            <span className="text-sm font-bold text-white bg-slate-700 px-2 py-0.5 rounded">{selectedIds.length}</span>
+            <span className="text-sm text-slate-400 mr-2">selected</span>
+            <button onClick={() => handleBulkAction('ARCHIVE')} className="btn-secondary py-1.5 px-3 text-xs bg-slate-700 hover:bg-slate-600 border-none">Archive</button>
+            <button onClick={() => handleBulkAction('DELETE')} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/20 text-red-400 hover:bg-red-500/30 border-none">Delete</button>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {page && page.totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t border-white/5">
+            <p className="text-sm text-slate-500">
+              Page {(filters.page ?? 0) + 1} of {page.totalPages}
+            </p>
+            <div className="flex gap-2">
+              <button
+                className="btn-secondary py-1.5 px-3 text-xs"
+                disabled={filters.page === 0}
+                onClick={() => setFilters(f => ({ ...f, page: (f.page ?? 0) - 1 }))}
+              >
+                Previous
+              </button>
+              <button
+                className="btn-secondary py-1.5 px-3 text-xs"
+                disabled={page.last}
+                onClick={() => setFilters(f => ({ ...f, page: (f.page ?? 0) + 1 }))}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
