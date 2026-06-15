@@ -105,8 +105,17 @@ export default function LoginPage() {
             <div className="mb-6 flex items-center gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400">
               <AlertCircle size={18} className="flex-shrink-0" />
               <p className="text-sm">
-                {(authMutation.error as any).response?.data?.message || 
-                 (isRegistering ? 'Registration failed. Username or email might be taken.' : 'Invalid username or password. Please try again.')}
+                {(() => {
+                  const err = authMutation.error as any;
+                  if (err?.code === 'ECONNABORTED') {
+                    return 'Connection timed out. The server is taking too long to respond (it may be booting up from sleep). Please try again.';
+                  }
+                  if (!err?.response) {
+                    return 'Cannot connect to the server. It may be sleeping or starting up. Please try again in a few seconds.';
+                  }
+                  return err.response.data?.message || 
+                         (isRegistering ? 'Registration failed. Username or email might be taken.' : 'Invalid username or password. Please try again.');
+                })()}
               </p>
             </div>
           )}
