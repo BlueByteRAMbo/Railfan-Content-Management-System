@@ -6,10 +6,15 @@
 
 /* ── CSS Custom Properties ──────────────────────────────────── */
 :root {
-  --radius: 0.625rem;
+  --radius: 1rem; /* Updated to 2xl/xl for a softer look */
   --sidebar-width: 260px;
   --header-height: 64px;
   
+  /* Background System */
+  --bg-base: #0a0a14; /* Deep navy/slate base */
+  --bg-elevated: rgba(255, 255, 255, 0.03);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+
   /* Brand */
   --color-brand-primary: #4e55e5;
   --color-brand-dark: #3539a3;
@@ -33,10 +38,14 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #0f0f1a;
+  background-color: var(--bg-base);
   color: #e2e8f0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────── */
@@ -47,24 +56,25 @@ body {
 
 /* ── Glassmorphism Utility ──────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-elevated);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25); /* shadow-soft */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(78, 85, 229, 0.4);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px rgba(78, 85, 229, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(78, 85, 229, 0.4); /* shadow-glow */
 }
 
 /* ── Status Badge Utilities ─────────────────────────────────── */
@@ -169,15 +179,21 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.data-table td {
+.data-table-row {
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+}
+
+.data-table-row td {
   padding: 0.875rem 1rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   font-size: 0.875rem;
   color: #cbd5e1;
 }
 
-.data-table tr:hover td {
-  background: rgba(255,255,255,0.02);
+.data-table-row:hover {
+  background: rgba(255,255,255,0.03);
+  border-left-color: var(--color-brand-primary);
 }
 
 /* ── Form Inputs ────────────────────────────────────────────── */
@@ -249,4 +265,14 @@ body {
   border-top-color: #4e55e5;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+}
+
+/* ── Accessibility: Reduced Motion ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

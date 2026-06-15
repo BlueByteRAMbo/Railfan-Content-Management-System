@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { videosApi } from '../api/services'
 import type { VideoFilterParams, UploadStatus } from '../types'
 import { Plus, Search, Filter, Clock, HardDrive } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const STATUS_LABELS: Record<UploadStatus, string> = {
   PENDING_UPLOAD:   'Pending',
@@ -199,14 +200,24 @@ export default function VideoList() {
         </div>
 
         {/* Bulk Actions Floating Bar */}
-        {selectedIds.length > 0 && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-700 shadow-2xl rounded-full px-6 py-3 flex items-center gap-4 animate-fade-up z-50">
-            <span className="text-sm font-bold text-white bg-slate-700 px-2 py-0.5 rounded">{selectedIds.length}</span>
-            <span className="text-sm text-slate-400 mr-2">selected</span>
-            <button onClick={() => handleBulkAction('ARCHIVE')} className="btn-secondary py-1.5 px-3 text-xs bg-slate-700 hover:bg-slate-600 border-none">Archive</button>
-            <button onClick={() => handleBulkAction('DELETE')} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/20 text-red-400 hover:bg-red-500/30 border-none">Delete</button>
-          </div>
-        )}
+        <AnimatePresence>
+          {selectedIds.length > 0 && (
+            <motion.div 
+              initial={{ y: 100, opacity: 0, x: '-50%' }}
+              animate={{ y: 0, opacity: 1, x: '-50%' }}
+              exit={{ y: 100, opacity: 0, x: '-50%' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              className="fixed bottom-8 left-1/2 bg-white/5 backdrop-blur-xl border border-white/10 shadow-glow rounded-full px-6 py-3 flex items-center gap-4 z-50"
+            >
+              <span className="text-sm font-bold text-white bg-brand-500 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(78,85,229,0.5)]">
+                {selectedIds.length}
+              </span>
+              <span className="text-sm text-slate-300 mr-2 font-medium">selected</span>
+              <button onClick={() => handleBulkAction('ARCHIVE')} className="btn-secondary py-1.5 px-3 text-xs bg-white/5 hover:bg-white/10 border-white/10">Archive</button>
+              <button onClick={() => handleBulkAction('DELETE')} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border-red-500/20">Delete</button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Pagination */}
         {page && page.totalPages > 1 && (

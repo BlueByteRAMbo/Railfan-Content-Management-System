@@ -2,6 +2,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart
 } from 'recharts'
+import { motion, useSpring, useTransform } from 'framer-motion'
+import { useEffect } from 'react'
+import { staggerContainer, fadeUp } from '../lib/motion'
 import { useDashboardStats, useDashboardCharts, useRecentVideos } from '../hooks/useDashboard'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -30,22 +33,36 @@ const STATUS_CONFIG: Record<UploadStatus, { label:string; className:string }> = 
   ARCHIVED:         { label:'Archived',  className:'status-archived'  },
 }
 
+// ── Animated Counter ──────────────────────────────────────────
+function AnimatedCounter({ value }: { value: number }) {
+  const spring = useSpring(0, { bounce: 0, duration: 1500 });
+  const display = useTransform(spring, (current) => Math.floor(current));
+
+  useEffect(() => {
+    spring.set(value);
+  }, [spring, value]);
+
+  return <motion.span>{display}</motion.span>;
+}
+
 // ── Stat Card ─────────────────────────────────────────────────
 function StatCard({
   label, value, sub, icon: Icon, accent
 }: { label:string; value:string|number; sub?:string; icon:React.ElementType; accent:string }) {
   return (
-    <div className="stat-card group relative overflow-hidden">
+    <motion.div variants={fadeUp} whileHover={{ y: -4 }} className="glass-card group relative overflow-hidden p-6">
       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${accent}/5 to-transparent`} />
       <div className="relative">
         <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${accent}/20 mb-4`}>
           <Icon size={20} className={`text-${accent.split('-')[0]}-400`} />
         </div>
-        <p className="text-3xl font-bold text-white tracking-tight mb-0.5">{value}</p>
+        <p className="text-3xl font-bold text-white tracking-tight mb-0.5">
+          {typeof value === 'number' ? <AnimatedCounter value={value} /> : value}
+        </p>
         <p className="text-sm text-slate-400">{label}</p>
         {sub && <p className="text-xs text-slate-600 mt-1">{sub}</p>}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -87,7 +104,12 @@ export default function Dashboard() {
       </div>
 
       {/* ── Primary stat cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
+      <motion.div 
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6"
+      >
         {statsLoading ? Array.from({length:5}).map((_,i)=><StatSkeleton key={i}/>) : (
           <>
             <StatCard label="Total Videos"    value={stats?.totalVideos ?? 0}    icon={Video}        accent="from-brand-600" />
@@ -97,19 +119,24 @@ export default function Dashboard() {
             <StatCard label="Archived"        value={stats?.archivedVideos ?? 0}  icon={Archive}      accent="from-slate-500" />
           </>
         )}
-      </div>
+      </motion.div>
 
       {/* ── Secondary stat cards ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <motion.div 
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+      >
         {statsLoading ? Array.from({length:4}).map((_,i)=><StatSkeleton key={i}/>) : (
           <>
             <StatCard label="Total Storage"         value={formatBytes(stats?.totalStorageBytes ?? 0)}       icon={HardDrive}   accent="from-purple-500" />
             <StatCard label="Total Recorded"        value={formatDuration(stats?.totalDurationSeconds ?? 0)} icon={Clock}       accent="from-pink-500" />
             <StatCard label="Recorded This Month"   value={stats?.videosRecordedThisMonth ?? 0}              icon={TrendingUp}  accent="from-cyan-500" sub="new recordings" />
-            <StatCard label="Uploaded This Month"   value={stats?.videosUploadedThisMonth ?? 0}              icon={Timer}       accent="from-orange-500" sub="new uploads" />
+            <StatCard label="Pending Action"        value={(stats?.pendingVideos ?? 0) + (stats?.scheduledVideos ?? 0)} icon={Timer} accent="from-rose-500" sub="uploads left" />
           </>
         )}
-      </div>
+      </motion.div>
 
       {/* ── Alert banner ── */}
       {stats && stats.unresolvedDuplicates > 0 && (
@@ -215,11 +242,17 @@ export default function Dashboard() {
           ) : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={charts?.trainCategoryDistribution ?? []}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="name" tick={{ fill:'#64748b', fontSize:10 }} />
-                <YAxis tick={{ fill:'#64748b', fontSize:11 }} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" name="Videos" fill="#a78bfa" radius={[4,4,0,0]} />
+                <defs>
+                  <linearGradient id="gradCat" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#a78bfa" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.6}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fill:'#64748b', fontSize:10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill:'#64748b', fontSize:11 }} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                <Bar dataKey="count" name="Videos" fill="url(#gradCat)" radius={[4,4,0,0]} isAnimationActive={true} animationDuration={1000} />
               </BarChart>
             </ResponsiveContainer>
           )}

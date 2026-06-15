@@ -3,6 +3,8 @@ package com.railfan.archive.controller;
 import com.railfan.archive.entity.*;
 import com.railfan.archive.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,18 +33,21 @@ public class ReferenceDataController {
     private final StationRepository stationRepository;
 
     @GetMapping("/train-categories")
+    @Cacheable("referenceData_trainCategories")
     public ResponseEntity<List<TrainCategory>> getTrainCategories() {
         return ResponseEntity.ok(trainCategoryRepository.findAll(
             org.springframework.data.domain.Sort.by("name")));
     }
 
     @GetMapping("/loco-types")
+    @Cacheable("referenceData_locoTypes")
     public ResponseEntity<List<LocoType>> getLocoTypes() {
         return ResponseEntity.ok(locoTypeRepository.findAll(
             org.springframework.data.domain.Sort.by("name")));
     }
 
     @GetMapping("/loco-sheds")
+    @Cacheable(value = "referenceData_locoSheds", key = "#q")
     public ResponseEntity<List<LocoShed>> getLocoSheds(
         @RequestParam(required = false, defaultValue = "") String q
     ) {
@@ -56,6 +61,7 @@ public class ReferenceDataController {
     }
 
     @GetMapping("/stations")
+    @Cacheable(value = "referenceData_stations", key = "#q")
     public ResponseEntity<List<Station>> getStations(
         @RequestParam(required = false, defaultValue = "") String q
     ) {
@@ -69,6 +75,7 @@ public class ReferenceDataController {
     }
 
     @PostMapping("/loco-sheds")
+    @CacheEvict(value = "referenceData_locoSheds", allEntries = true)
     public ResponseEntity<LocoShed> createLocoShed(@RequestBody Map<String, String> body) {
         LocoShed shed = new LocoShed();
         shed.setName(body.get("name"));
@@ -78,6 +85,7 @@ public class ReferenceDataController {
     }
 
     @PostMapping("/stations")
+    @CacheEvict(value = "referenceData_stations", allEntries = true)
     public ResponseEntity<Station> createStation(@RequestBody Map<String, String> body) {
         Station station = new Station();
         station.setName(body.get("name"));

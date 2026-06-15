@@ -1,6 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import { useAuthStore } from './store/authStore'
 import Layout from './components/layout/Layout'
+import AppBackground from './components/layout/AppBackground'
+import PageTransition from './components/layout/PageTransition'
 import LoginPage   from './pages/LoginPage'
 import Dashboard   from './pages/Dashboard'
 import VideoList   from './pages/VideoList'
@@ -26,10 +29,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const { isAuthenticated } = useAuthStore()
+  const location = useLocation()
 
   return (
-    <Routes>
-      {/* Public */}
+    <>
+      <AppBackground />
+      <Routes>
+        {/* Public */}
       <Route
         path="/login"
         element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
@@ -41,30 +47,33 @@ export default function App() {
         element={
           <ProtectedRoute>
             <Layout>
-              <Routes>
-                {/* ── Phase 2 (complete) ── */}
-                <Route path="/"              element={<Dashboard />} />
-                <Route path="/videos"        element={<VideoList />} />
-                <Route path="/videos/add"    element={<AddVideo />} />
-                <Route path="/videos/:id"    element={<VideoDetail />} />
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  {/* ── Phase 2 (complete) ── */}
+                  <Route path="/"              element={<PageTransition><Dashboard /></PageTransition>} />
+                  <Route path="/videos"        element={<PageTransition><VideoList /></PageTransition>} />
+                  <Route path="/videos/add"    element={<PageTransition><AddVideo /></PageTransition>} />
+                  <Route path="/videos/:id"    element={<PageTransition><VideoDetail /></PageTransition>} />
 
-                {/* ── Phase 3 placeholders ── */}
-                <Route path="/queue"         element={<PendingQueue />} />
-                <Route path="/planner"       element={<UploadPlanner />} />
-                <Route path="/timeline"      element={<TimelineView />} />
-                <Route path="/calendar"      element={<CalendarView />} />
-                <Route path="/collections"   element={<CollectionsTagsManager />} />
-                <Route path="/statistics"    element={<DeepStatistics />} />
-                <Route path="/duplicates"    element={<DuplicateResolver />} />
-                <Route path="/quick-add"     element={<QuickAddView />} />
-                <Route path="/import-export" element={<ImportExportView />} />
+                  {/* ── Phase 3 placeholders ── */}
+                  <Route path="/queue"         element={<PageTransition><PendingQueue /></PageTransition>} />
+                  <Route path="/planner"       element={<PageTransition><UploadPlanner /></PageTransition>} />
+                  <Route path="/timeline"      element={<PageTransition><TimelineView /></PageTransition>} />
+                  <Route path="/calendar"      element={<PageTransition><CalendarView /></PageTransition>} />
+                  <Route path="/collections"   element={<PageTransition><CollectionsTagsManager /></PageTransition>} />
+                  <Route path="/statistics"    element={<PageTransition><DeepStatistics /></PageTransition>} />
+                  <Route path="/duplicates"    element={<PageTransition><DuplicateResolver /></PageTransition>} />
+                  <Route path="/quick-add"     element={<PageTransition><QuickAddView /></PageTransition>} />
+                  <Route path="/import-export" element={<PageTransition><ImportExportView /></PageTransition>} />
 
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </AnimatePresence>
             </Layout>
           </ProtectedRoute>
         }
       />
     </Routes>
+    </>
   )
 }

@@ -25,16 +25,18 @@
         <poi.version>5.2.5</poi.version>
         <opencsv.version>5.9</opencsv.version>
         <itext.version>8.0.3</itext.version>
-        <google.api.version>2.2.0</google.api.version>
-        <youtube.api.version>v3-rev20230816-2.0.0</youtube.api.version>
     </properties>
 
     <dependencies>
 
-        <!-- ===== WEB ===== -->
+        <!-- ===== WEB & CACHE ===== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
         <!-- ===== DATA / JPA ===== -->
@@ -127,17 +129,6 @@
             <version>${itext.version}</version>
         </dependency>
 
-        <!-- ===== YOUTUBE DATA API v3 ===== -->
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>${google.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-youtube</artifactId>
-            <version>${youtube.api.version}</version>
-        </dependency>
 
         <!-- ===== UTILITIES ===== -->
         <dependency>
