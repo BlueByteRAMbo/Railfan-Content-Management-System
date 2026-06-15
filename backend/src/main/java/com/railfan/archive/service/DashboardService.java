@@ -55,8 +55,8 @@ public class DashboardService {
         LocalDate twelveMonthsAgo = LocalDate.now().minusMonths(12).withDayOfMonth(1);
 
         // Monthly recordings
-        List<Object[]> recRows  = videoRepository.countRecordingsByMonth(twelveMonthsAgo);
-        List<Object[]> uplRows  = videoRepository.countUploadsByMonth(twelveMonthsAgo);
+        List<Object[]> recRows  = videoRepository.countRecordingsByMonthSince(twelveMonthsAgo);
+        List<Object[]> uplRows  = videoRepository.countUploadsByMonthSince(twelveMonthsAgo);
         List<Object[]> locoRows = videoRepository.findMostRecordedLocos(PageRequest.of(0, 10));
 
         // Loco type distribution

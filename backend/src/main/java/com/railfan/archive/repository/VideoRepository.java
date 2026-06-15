@@ -141,6 +141,12 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
     @Query("SELECT YEAR(v.uploadDate), DAY(v.uploadDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.uploadStatus = 'UPLOADED' AND YEAR(v.uploadDate) = :year AND MONTH(v.uploadDate) = :month GROUP BY YEAR(v.uploadDate), DAY(v.uploadDate) ORDER BY DAY(v.uploadDate)")
     List<Object[]> countUploadsByDay(@Param("year") Integer year, @Param("month") Integer month);
 
+    @Query("SELECT YEAR(v.recordingDate), MONTH(v.recordingDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.recordingDate >= :fromDate GROUP BY YEAR(v.recordingDate), MONTH(v.recordingDate) ORDER BY YEAR(v.recordingDate), MONTH(v.recordingDate)")
+    List<Object[]> countRecordingsByMonthSince(@Param("fromDate") LocalDate fromDate);
+
+    @Query("SELECT YEAR(v.uploadDate), MONTH(v.uploadDate), COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.uploadStatus = 'UPLOADED' AND v.uploadDate >= :fromDate GROUP BY YEAR(v.uploadDate), MONTH(v.uploadDate) ORDER BY YEAR(v.uploadDate), MONTH(v.uploadDate)")
+    List<Object[]> countUploadsByMonthSince(@Param("fromDate") LocalDate fromDate);
+
     // ── Statistics ────────────────────────────────────────────
     @Query("""
         SELECT v.trainName, COUNT(v) as cnt FROM Video v
