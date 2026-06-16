@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { Database, BarChart3, Shield, ArrowRight, PlayCircle, FileSpreadsheet, Zap } from 'lucide-react'
@@ -266,6 +266,9 @@ export default function LandingPage() {
   const { isAuthenticated } = useAuthStore()
   const [signalState, setSignalState] = useState<'red' | 'amber' | 'green'>('red')
 
+  const { scrollYProgress } = useScroll()
+  const locoY = useTransform(scrollYProgress, [0, 1], ['0vh', '90vh'])
+
   const handleGetStarted = () => {
     setSignalState('amber')
     setTimeout(() => setSignalState('green'), 500)
@@ -274,6 +277,19 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative text-slate-300 overflow-x-hidden" style={{ background: '#19181c' }}>
+
+      {/* ── Scroll Progress Rail ── */}
+      <div className="fixed top-0 right-4 bottom-0 w-[2px] bg-white/[0.03] z-50 pointer-events-none hidden lg:block">
+        <motion.div 
+          style={{ y: locoY }}
+          className="absolute -left-[11px] top-0 w-6 h-6 flex items-center justify-center text-[#C98A2C] drop-shadow-[0_0_8px_rgba(201,138,44,0.6)]"
+        >
+          {/* Frontal Loco SVG */}
+          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12 2C8 2 4 2.5 4 6v9.5C4 17.4 5.6 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.9 0 3.5-1.6 3.5-3.5V6c0-3.5-4-4-8-4zm0 2c3.5 0 6 .5 6 2v2H6V6c0-1.5 2.5-2 6-2zm-5 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm10 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+          </svg>
+        </motion.div>
+      </div>
 
       {/* ── Animated background train ── */}
       <style>{`
@@ -460,6 +476,38 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* ── TICKER TAPE ── */}
+      <div className="relative z-10 w-full overflow-hidden border-y border-white/[0.05] py-2 bg-[#12110f] flex mb-12">
+        <motion.div 
+          className="flex whitespace-nowrap gap-8 text-[11px] font-mono text-slate-500 uppercase tracking-widest"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ repeat: Infinity, duration: 25, ease: 'linear' }}
+        >
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex gap-8 items-center">
+              <span>• 12951 MUMBAI RAJDHANI</span>
+              <span>• 22691 RAJDHANI EXP</span>
+              <span>• 12002 BHOPAL SHATABDI</span>
+              <span>• 20501 VANDE BHARAT</span>
+              <span>• 12627 KARNATAKA EXP</span>
+              <span>• 12810 HOWRAH MAIL</span>
+              <span>• 12301 RAJDHANI EXP</span>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* ── TRACK CONNECTOR ── */}
+      <div className="relative z-0 max-w-7xl mx-auto flex justify-center -mt-12 mb-8 h-24 overflow-hidden">
+        <motion.div
+          initial={{ y: '-100%' }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, margin: '-20%' }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+          className="h-full border-l-2 border-dashed border-[#C98A2C]/30"
+        />
+      </div>
 
       {/* ── FEATURES ── */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pb-28">

@@ -8,106 +8,6 @@ import { authApi } from '../api/services'
 import { useAuthStore } from '../store/authStore'
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 
-// ── Smoke puff component ───────────────────────────────────────
-const SmokePuff = ({ delay, x }: { delay: number; x: number }) => (
-  <circle
-    cx={x}
-    cy={0}
-    r={6}
-    fill="#2a2520"
-    opacity={0.6}
-    style={{
-      animation: `smokePuff 2.8s ${delay}s ease-out infinite`,
-      transformOrigin: `${x}px 0px`,
-    }}
-  />
-)
-
-// ── Locomotive SVG silhouette (side view, facing left) ─────────
-const Locomotive = () => (
-  <svg
-    viewBox="0 0 320 80"
-    xmlns="http://www.w3.org/2000/svg"
-    className="w-[320px] h-[80px]"
-    style={{ filter: 'drop-shadow(0 4px 20px rgba(201,138,44,0.35))' }}
-  >
-    <defs>
-      <radialGradient id="headlightBeam" cx="0%" cy="50%" r="100%">
-        <stop offset="0%" stopColor="#C98A2C" stopOpacity="0.9"/>
-        <stop offset="60%" stopColor="#C98A2C" stopOpacity="0.15"/>
-        <stop offset="100%" stopColor="#C98A2C" stopOpacity="0"/>
-      </radialGradient>
-    </defs>
-
-    {/* Headlight beam cone — extends LEFT (train moves left) */}
-    <polygon
-      points="18,28 -120,8 -120,52"
-      fill="url(#headlightBeam)"
-      opacity="0.7"
-    />
-
-    {/* === Locomotive body === */}
-    {/* Main long body */}
-    <rect x="20" y="22" width="180" height="32" rx="4" fill="#1a1714"/>
-    {/* Cab section */}
-    <rect x="185" y="14" width="50" height="40" rx="3" fill="#1e1b18"/>
-    {/* Cab roof */}
-    <rect x="182" y="11" width="56" height="7" rx="2" fill="#252118"/>
-    {/* Cab window */}
-    <rect x="200" y="19" width="22" height="14" rx="2" fill="#0d0c09"/>
-    {/* Cab window inner glow (crew light) */}
-    <rect x="201" y="20" width="20" height="12" rx="1.5" fill="#1a1610" opacity="0.7"/>
-    {/* Front nose */}
-    <rect x="10" y="26" width="15" height="24" rx="3" fill="#201d1a"/>
-    {/* Headlight */}
-    <rect x="8" y="30" width="8" height="7" rx="1" fill="#111"/>
-    <rect x="9" y="31" width="6" height="5" rx="1" fill="#C98A2C"/>
-    {/* Headlight glow */}
-    <circle cx="12" cy="33.5" r="5" fill="#C98A2C" opacity="0.35"/>
-    {/* Number board */}
-    <rect x="16" y="36" width="20" height="10" rx="1" fill="#0d0c09"/>
-    <text x="26" y="44" textAnchor="middle" fill="#C98A2C" fontSize="5" fontFamily="JetBrains Mono, monospace">WAP7</text>
-    {/* Side stripes */}
-    <rect x="20" y="38" width="180" height="3" rx="1" fill="#C98A2C" opacity="0.5"/>
-    <rect x="20" y="43" width="180" height="1.5" rx="0.75" fill="#9A6820" opacity="0.4"/>
-    {/* Cab stripe */}
-    <rect x="185" y="38" width="50" height="3" rx="1" fill="#C98A2C" opacity="0.5"/>
-    {/* Pantograph base */}
-    <rect x="100" y="14" width="4" height="8" rx="1" fill="#252118"/>
-    <line x1="100" y1="14" x2="85" y2="4" stroke="#3a3530" strokeWidth="1.5"/>
-    <line x1="104" y1="14" x2="115" y2="4" stroke="#3a3530" strokeWidth="1.5"/>
-    <line x1="85" y1="4" x2="115" y2="4" stroke="#3a3530" strokeWidth="1.5"/>
-    {/* Buffer */}
-    <rect x="5" y="34" width="6" height="14" rx="1" fill="#2a2520"/>
-
-    {/* === Bogies / wheels === */}
-    {/* Front bogie */}
-    <rect x="28" y="52" width="60" height="12" rx="2" fill="#161412"/>
-    <circle cx="45" cy="64" r="9" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
-    <circle cx="45" cy="64" r="5" fill="#1a1714"/>
-    <circle cx="45" cy="64" r="2" fill="#C98A2C" opacity="0.6"/>
-    <circle cx="70" cy="64" r="9" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
-    <circle cx="70" cy="64" r="5" fill="#1a1714"/>
-    <circle cx="70" cy="64" r="2" fill="#C98A2C" opacity="0.6"/>
-    {/* Rear bogie */}
-    <rect x="155" y="52" width="60" height="12" rx="2" fill="#161412"/>
-    <circle cx="172" cy="64" r="9" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
-    <circle cx="172" cy="64" r="5" fill="#1a1714"/>
-    <circle cx="172" cy="64" r="2" fill="#C98A2C" opacity="0.6"/>
-    <circle cx="197" cy="64" r="9" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
-    <circle cx="197" cy="64" r="5" fill="#1a1714"/>
-    <circle cx="197" cy="64" r="2" fill="#C98A2C" opacity="0.6"/>
-    {/* Coupler front */}
-    <rect x="0" y="39" width="10" height="5" rx="1" fill="#1e1b18"/>
-
-    {/* Smoke stacks */}
-    <g style={{ animation: 'none' }}>
-      <SmokePuff delay={0} x={130} />
-      <SmokePuff delay={0.9} x={130} />
-      <SmokePuff delay={1.8} x={130} />
-    </g>
-  </svg>
-)
 
 // ── Railway scene with animated train ─────────────────────────
 const AnimatedRailwayScene = () => {
@@ -115,14 +15,6 @@ const AnimatedRailwayScene = () => {
     <div className="absolute inset-0 z-0 overflow-hidden" style={{ background: '#0e0d0b' }}>
       {/* Keyframe styles injected inline */}
       <style>{`
-        @keyframes trainMove {
-          0%   { transform: translateX(110vw); }
-          100% { transform: translateX(-380px); }
-        }
-        @keyframes smokePuff {
-          0%   { transform: translateY(0) scale(1);   opacity: 0.6; }
-          100% { transform: translateY(-70px) scale(4); opacity: 0; }
-        }
         @keyframes signalBlink {
           0%, 45%  { opacity: 1; }
           50%, 95% { opacity: 0.3; }
@@ -231,20 +123,86 @@ const AnimatedRailwayScene = () => {
 
         {/* Dark overlay at top — keeps it from being too bright */}
         <rect width="900" height="600" fill="black" opacity="0.28"/>
-      </svg>
 
-      {/* Animated locomotive — floats above the SVG scene */}
-      <div
-        className="absolute"
-        style={{
-          bottom: '130px',
-          left: 0,
-          animation: 'trainMove 14s linear infinite',
-          zIndex: 10,
-        }}
-      >
-        <Locomotive />
-      </div>
+        {/* ── Locomotive — inside SVG so animateTransform follows rail slope ── */}
+        {/*    Track midpoints: x=0→y=442, x=900→y=379 (slope ≈7px per 100u)  */}
+        {/*    Loco drawn with wheel-bottom at y=0, body going negative (up)    */}
+        <defs>
+          <radialGradient id="hlBeam" cx="0%" cy="50%" r="100%">
+            <stop offset="0%" stopColor="#C98A2C" stopOpacity="0.8"/>
+            <stop offset="60%" stopColor="#C98A2C" stopOpacity="0.1"/>
+            <stop offset="100%" stopColor="#C98A2C" stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        <g style={{ filter:'drop-shadow(0 3px 14px rgba(201,138,44,0.4))' }}>
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            from="1000 374"
+            to="-380 444"
+            dur="16s"
+            repeatCount="indefinite"
+          />
+          {/* Headlight beam — left */}
+          <polygon points="10,-30 -110,-8 -110,-56" fill="url(#hlBeam)" opacity="0.7"/>
+          {/* Main body */}
+          <rect x="14" y="-55" width="185" height="28" rx="4" fill="#1a1714"/>
+          {/* Cab */}
+          <rect x="192" y="-66" width="50" height="40" rx="3" fill="#1e1b18"/>
+          {/* Cab roof */}
+          <rect x="189" y="-70" width="55" height="8" rx="2" fill="#252118"/>
+          {/* Cab window */}
+          <rect x="207" y="-61" width="22" height="14" rx="2" fill="#0d0c09"/>
+          {/* Front nose */}
+          <rect x="6" y="-49" width="13" height="22" rx="3" fill="#201d1a"/>
+          {/* Headlight */}
+          <rect x="4" y="-43" width="9" height="8" rx="1.5" fill="#C98A2C"/>
+          <circle cx="8.5" cy="-39" r="7" fill="#C98A2C" opacity="0.25"/>
+          {/* Side stripe */}
+          <rect x="14" y="-39" width="185" height="3.5" rx="1.5" fill="#C98A2C" opacity="0.5"/>
+          <rect x="192" y="-39" width="50" height="3.5" rx="1.5" fill="#C98A2C" opacity="0.5"/>
+          {/* Pantograph */}
+          <rect x="108" y="-70" width="3.5" height="15" fill="#252118" rx="1"/>
+          <line x1="108" y1="-70" x2="93" y2="-82" stroke="#3a3530" strokeWidth="1.5"/>
+          <line x1="111.5" y1="-70" x2="124" y2="-82" stroke="#3a3530" strokeWidth="1.5"/>
+          <line x1="93" y1="-82" x2="124" y2="-82" stroke="#3a3530" strokeWidth="1.5"/>
+          {/* Bogie frames */}
+          <rect x="22" y="-19" width="62" height="12" rx="2.5" fill="#161412"/>
+          <rect x="150" y="-19" width="62" height="12" rx="2.5" fill="#161412"/>
+          {/* Wheels — front bogie */}
+          <circle cx="40" cy="-9" r="10" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
+          <circle cx="40" cy="-9" r="5" fill="#1a1714"/>
+          <circle cx="40" cy="-9" r="2.2" fill="#C98A2C" opacity="0.7"/>
+          <circle cx="68" cy="-9" r="10" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
+          <circle cx="68" cy="-9" r="5" fill="#1a1714"/>
+          <circle cx="68" cy="-9" r="2.2" fill="#C98A2C" opacity="0.7"/>
+          {/* Wheels — rear bogie */}
+          <circle cx="166" cy="-9" r="10" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
+          <circle cx="166" cy="-9" r="5" fill="#1a1714"/>
+          <circle cx="166" cy="-9" r="2.2" fill="#C98A2C" opacity="0.7"/>
+          <circle cx="194" cy="-9" r="10" fill="#111" stroke="#2a2520" strokeWidth="1.5"/>
+          <circle cx="194" cy="-9" r="5" fill="#1a1714"/>
+          <circle cx="194" cy="-9" r="2.2" fill="#C98A2C" opacity="0.7"/>
+          {/* Buffer */}
+          <rect x="0" y="-37" width="9" height="5" rx="1" fill="#1e1b18"/>
+          {/* Smoke puffs (use animateTransform per circle) */}
+          <circle cx="110" cy="-72" r="6" fill="#2a2520" opacity="0">
+            <animate attributeName="cy" from="-72" to="-130" dur="2.8s" begin="0s" repeatCount="indefinite"/>
+            <animate attributeName="r" from="5" to="20" dur="2.8s" begin="0s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.55;0.3;0" dur="2.8s" begin="0s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="110" cy="-72" r="6" fill="#2a2520" opacity="0">
+            <animate attributeName="cy" from="-72" to="-130" dur="2.8s" begin="0.93s" repeatCount="indefinite"/>
+            <animate attributeName="r" from="5" to="20" dur="2.8s" begin="0.93s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.55;0.3;0" dur="2.8s" begin="0.93s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="110" cy="-72" r="6" fill="#2a2520" opacity="0">
+            <animate attributeName="cy" from="-72" to="-130" dur="2.8s" begin="1.87s" repeatCount="indefinite"/>
+            <animate attributeName="r" from="5" to="20" dur="2.8s" begin="1.87s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.55;0.3;0" dur="2.8s" begin="1.87s" repeatCount="indefinite"/>
+          </circle>
+        </g>
+      </svg>
     </div>
   )
 }
