@@ -76,16 +76,8 @@ export default function Sidebar({
       {/* Logo & Toggle */}
       <div className="px-5 py-6 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="min-w-[36px] min-h-[36px]">
-            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-              <rect width="36" height="36" rx="8" fill="#C98A2C" fillOpacity="0.12"/>
-              <rect x="16.5" y="10" width="3" height="13" rx="1.5" fill="#C98A2C"/>
-              <rect x="14" y="9" width="8" height="6" rx="1.5" fill="#1c1a16" stroke="#C98A2C" strokeWidth="1"/>
-              <circle cx="18" cy="12" r="2" fill="#C98A2C"/>
-              <circle cx="18" cy="12" r="3.5" fill="#C98A2C" fillOpacity="0.2"/>
-              <rect x="13" y="22.5" width="10" height="3.5" rx="1" fill="#C98A2C" fillOpacity="0.55"/>
-              <rect x="9" y="25.5" width="18" height="2.5" rx="1.2" fill="#C98A2C"/>
-            </svg>
+          <div className="min-w-[36px] min-h-[36px] flex items-center justify-center">
+            <img src="/RF_Logo.png" alt="Railfan Archive" className="w-9 h-9 object-contain rounded-lg"/>
           </div>
           {!isCollapsed && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="whitespace-nowrap">

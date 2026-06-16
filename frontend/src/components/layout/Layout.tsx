@@ -26,10 +26,11 @@ export default function Layout({ children }: LayoutProps) {
       
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[#16161a]/95 backdrop-blur-md border-b border-white/5 z-30 flex items-center justify-between px-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button onClick={() => setIsMobileOpen(true)} className="text-slate-400 hover:text-white p-1">
             <Menu size={20} />
           </button>
+          <img src="/RF_Logo.png" alt="" className="w-6 h-6 object-contain rounded"/>
           <span className="font-bold text-white text-sm">Railfan Archive</span>
         </div>
         <button onClick={() => navigate('/videos/add')} className="text-brand-400 p-1">
