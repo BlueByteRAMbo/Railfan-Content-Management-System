@@ -18,56 +18,34 @@ public class YouTubeService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public YouTubeMetadataResponse fetchMetadata(String videoId) {
-        String url = "https://www.youtube.com/watch?v=" + videoId;
+        String oembedUrl = "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=" + videoId + "&format=json";
 
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            // Using Map to easily extract JSON fields without needing a dedicated DTO class
+            ResponseEntity<java.util.Map> response = restTemplate.getForEntity(oembedUrl, java.util.Map.class);
+            
             if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-                log.error("Failed to fetch YouTube page: HTTP {}", response.getStatusCode());
+                log.error("Failed to fetch YouTube oEmbed: HTTP {}", response.getStatusCode());
                 return YouTubeMetadataResponse.builder().build();
             }
 
-            String html = response.getBody();
-
-            // Extract Title
-            String title = extractRegex(html, "<meta\\s+(?:property|name)=\"og:title\"\\s+content=\"([^\"]+)\"");
-            if (title != null) title = org.springframework.web.util.HtmlUtils.htmlUnescape(title);
-
-            // Extract Description
-            String description = extractRegex(html, "<meta\\s+(?:property|name)=\"og:description\"\\s+content=\"([^\"]+)\"");
-            if (description != null) description = org.springframework.web.util.HtmlUtils.htmlUnescape(description);
-
-            // Extract Thumbnail
-            String thumbnailUrl = extractRegex(html, "<meta\\s+(?:property|name)=\"og:image\"\\s+content=\"([^\"]+)\"");
-
-            // Extract Duration
-            String durationStr = extractRegex(html, "\"lengthSeconds\":\"(\\d+)\"");
-            Long durationSeconds = null;
-            if (durationStr != null) {
-                try {
-                    durationSeconds = Long.parseLong(durationStr);
-                } catch (NumberFormatException ignored) {}
-            }
+            java.util.Map<String, Object> data = response.getBody();
+            
+            String title = (String) data.get("title");
+            String thumbnailUrl = (String) data.get("thumbnail_url");
 
             return YouTubeMetadataResponse.builder()
                     .title(title)
-                    .description(description)
-                    .durationSeconds(durationSeconds)
                     .thumbnailUrl(thumbnailUrl)
+                    // oEmbed doesn't provide description or duration, but getting title/thumbnail
+                    // reliably without an API key is the priority.
+                    .description("")
+                    .durationSeconds(null)
                     .build();
 
         } catch (Exception e) {
-            log.error("Error scraping YouTube HTML", e);
+            log.error("Error fetching YouTube oEmbed data", e);
             return YouTubeMetadataResponse.builder().build();
         }
-    }
-
-    private String extractRegex(String html, String regex) {
-        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(html);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
     }
 }
