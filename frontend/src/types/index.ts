@@ -74,17 +74,21 @@ export interface Video {
   // Train
   trainNumber?: string;
   trainName?: string;
-  trainCategory?: TrainCategory;
+  trainCategoryId?: number;
+  trainCategoryName?: string;
 
   // Locomotive
   locoNumber?: string;
-  locoType?: LocoType;
-  locoShed?: LocoShed;
+  locoTypeId?: number;
+  locoTypeName?: string;
+  locoShedId?: number;
+  locoShedName?: string;
   locoLivery?: string;
   kavachFitted: boolean;
 
   // Location
-  station?: Station;
+  stationId?: number;
+  stationName?: string;
   section?: string;
   state?: string;
   railwayZone?: string;

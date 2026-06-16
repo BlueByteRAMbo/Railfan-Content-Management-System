@@ -5,6 +5,7 @@ import com.railfan.archive.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,16 +62,16 @@ public class ReferenceDataController {
     }
 
     @GetMapping("/stations")
-    @Cacheable(value = "referenceData_stations", key = "#q")
     public ResponseEntity<List<Station>> getStations(
-        @RequestParam(required = false, defaultValue = "") String q
+        @RequestParam(required = false, defaultValue = "") String q,
+        @RequestParam(defaultValue = "20") int limit
     ) {
         if (q.isBlank()) {
-            return ResponseEntity.ok(stationRepository.findAll(
-                org.springframework.data.domain.Sort.by("name")));
+            // Return nothing when no query — frontend should prompt user to type
+            return ResponseEntity.ok(List.of());
         }
         return ResponseEntity.ok(
-            stationRepository.findByNameStartingWithIgnoreCaseOrderByNameAsc(q)
+            stationRepository.searchByNameOrCode(q, PageRequest.of(0, limit))
         );
     }
 

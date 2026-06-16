@@ -280,7 +280,7 @@ export default function VideoDetail() {
             <div className="space-y-2.5">
               <DetailItem label="Number" value={video.trainNumber} />
               <DetailItem label="Name"   value={video.trainName} />
-              <DetailItem label="Category" value={video.trainCategory?.name} />
+              <DetailItem label="Category" value={video.trainCategoryName} />
             </div>
           </div>
 
@@ -292,8 +292,8 @@ export default function VideoDetail() {
             </div>
             <div className="space-y-2.5">
               <DetailItem label="Number"  value={video.locoNumber} />
-              <DetailItem label="Type"    value={video.locoType?.name} />
-              <DetailItem label="Shed"    value={video.locoShed?.name} />
+              <DetailItem label="Type"    value={video.locoTypeName} />
+              <DetailItem label="Shed"    value={video.locoShedName} />
               <DetailItem label="Livery"  value={video.locoLivery} />
               {video.kavachFitted && (
                 <div className="flex items-center gap-2 pt-1">
@@ -311,7 +311,7 @@ export default function VideoDetail() {
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide">Location</h3>
             </div>
             <div className="space-y-2.5">
-              <DetailItem label="Station" value={video.station?.name} />
+              <DetailItem label="Station" value={video.stationName} />
               <DetailItem label="Section" value={video.section} />
               <DetailItem label="State"   value={video.state} />
               <DetailItem label="Zone"    value={video.railwayZone} />

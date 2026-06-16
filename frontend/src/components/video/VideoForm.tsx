@@ -4,12 +4,13 @@ import { z } from 'zod'
 import { useState } from 'react'
 import {
   useTrainCategories, useLocoTypes, useLocoSheds,
-  useStations, useTags, useCollections
+  useTags, useCollections
 } from '../../hooks/useReferenceData'
 import { useDuplicateCheck } from '../../hooks/useVideos'
 import { videosApi } from '../../api/services'
 import type { Video, VideoCreateRequest } from '../../types'
-import { AlertTriangle, Loader2, CheckCircle, Plus, X, PlayCircle } from 'lucide-react'
+import { AlertTriangle, Loader2, CheckCircle, Plus, X, PlayCircle } from 'lucide-react';
+import StationSelect from '../../components/ui/StationSelect';
 
 // ── Validation Schema ─────────────────────────────────────────
 const schema = z.object({
@@ -137,7 +138,6 @@ export default function VideoForm({
   const { data: categories = [] }  = useTrainCategories()
   const { data: locoTypes = [] }   = useLocoTypes()
   const { data: locoSheds = [] }   = useLocoSheds()
-  const { data: stations = [] }    = useStations()
   const { data: collections = [] } = useCollections()
 
   const [ytLoading, setYtLoading] = useState(false)
@@ -396,10 +396,10 @@ export default function VideoForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <FieldLabel>Station</FieldLabel>
-            <select {...register('stationId')} className="form-input">
-              <option value="">— Select station —</option>
-              {stations.map(s => <option key={s.id} value={s.id}>{s.name} {s.stationCode && `(${s.stationCode})`}</option>)}
-            </select>
+            <StationSelect
+              value={watch('stationId')}
+              onChange={id => setValue('stationId', id)}
+            />
           </div>
           <div>
             <FieldLabel>Section / Location</FieldLabel>
@@ -560,13 +560,13 @@ function mapVideoToForm(v: Partial<Video>): Partial<FormValues> {
     fps:             v.fps,
     trainNumber:     v.trainNumber,
     trainName:       v.trainName,
-    trainCategoryId: v.trainCategory?.id,
+    trainCategoryId: v.trainCategoryId,
     locoNumber:      v.locoNumber,
-    locoTypeId:      v.locoType?.id,
-    locoShedId:      v.locoShed?.id,
+    locoTypeId:      v.locoTypeId,
+    locoShedId:      v.locoShedId,
     locoLivery:      v.locoLivery,
     kavachFitted:    v.kavachFitted,
-    stationId:       v.station?.id,
+    stationId:       v.stationId,
     section:         v.section,
     state:           v.state,
     railwayZone:     v.railwayZone,
