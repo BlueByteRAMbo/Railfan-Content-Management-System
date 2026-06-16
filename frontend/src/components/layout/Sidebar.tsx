@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/authStore'
 import {
   LayoutDashboard, Video, Clock, CalendarRange, Calendar,
   ListTodo, BookMarked, BarChart3, FileInput,
-  Zap, LogOut, Train, ChevronRight, AlertTriangle, Menu
+  Zap, LogOut, ChevronRight, AlertTriangle, Menu
 } from 'lucide-react'
 
 const navSections = [
@@ -76,8 +76,16 @@ export default function Sidebar({
       {/* Logo & Toggle */}
       <div className="px-5 py-6 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="min-w-[36px] min-h-[36px] rounded-lg bg-gradient-to-br from-brand-600 to-brand-400 flex items-center justify-center shadow-glow">
-            <Train size={18} className="text-white" />
+          <div className="min-w-[36px] min-h-[36px]">
+            <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+              <rect width="36" height="36" rx="8" fill="#C98A2C" fillOpacity="0.12"/>
+              <rect x="16.5" y="10" width="3" height="13" rx="1.5" fill="#C98A2C"/>
+              <rect x="14" y="9" width="8" height="6" rx="1.5" fill="#1c1a16" stroke="#C98A2C" strokeWidth="1"/>
+              <circle cx="18" cy="12" r="2" fill="#C98A2C"/>
+              <circle cx="18" cy="12" r="3.5" fill="#C98A2C" fillOpacity="0.2"/>
+              <rect x="13" y="22.5" width="10" height="3.5" rx="1" fill="#C98A2C" fillOpacity="0.55"/>
+              <rect x="9" y="25.5" width="18" height="2.5" rx="1.2" fill="#C98A2C"/>
+            </svg>
           </div>
           {!isCollapsed && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="whitespace-nowrap">
@@ -124,7 +132,7 @@ export default function Sidebar({
                     {isActive && (
                       <motion.div
                         layoutId="activeNavPill"
-                        className="absolute inset-0 bg-brand-500/20 border border-brand-500/30 rounded-lg z-0"
+                      className="absolute inset-0 bg-[#C98A2C]/15 border border-[#C98A2C]/25 rounded-lg z-0"
                         transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -149,8 +157,9 @@ export default function Sidebar({
       <div className={`px-3 py-4 border-t border-white/5 ${isCollapsed ? 'flex justify-center' : 'flex items-center justify-between'}`}>
         {!isCollapsed && (
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-full bg-brand-900/50 flex items-center justify-center border border-brand-500/20">
-              <span className="text-xs font-bold text-brand-300">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center border"
+                 style={{ background: 'rgba(58,46,26,0.5)', borderColor: 'rgba(201,138,44,0.25)' }}>
+              <span className="text-xs font-bold" style={{ color: '#C98A2C' }}>
                 {user?.username.charAt(0).toUpperCase()}
               </span>
             </div>

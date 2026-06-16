@@ -25,7 +25,14 @@ function formatDuration(s: number): string {
   return h > 0 ? `${h}h ${m}m` : `${m}m`
 }
 
-const CHART_COLORS = ['#d98e04', '#c27303', '#3E7C8C', '#5C8A4A', '#8A7E72', '#a15606', '#81430d']
+const CHART_COLORS = [
+  '#C98A2C',  // signal amber   — brand primary
+  '#5C8A4A',  // moss green     — uploaded/safe
+  '#3E7C8C',  // slate teal     — scheduled/planned
+  '#B23A2E',  // signal red     — danger/alert
+  '#8A7E72',  // warm grey      — archived/neutral
+  '#7A6E5A',  // dark khaki     — secondary neutral
+]
 const STATUS_CONFIG: Record<UploadStatus, { label:string; className:string }> = {
   PENDING_UPLOAD:   { label:'Pending',   className:'status-pending'   },
   SCHEDULED_UPLOAD: { label:'Scheduled', className:'status-scheduled' },
