@@ -26,4 +26,3 @@ dist-ssr
 # Vite / React
 .vite/
 coverage/
-*.mp4
