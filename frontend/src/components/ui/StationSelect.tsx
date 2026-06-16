@@ -66,10 +66,8 @@ const StationSelect: React.FC<StationSelectProps> = ({ value, onChange }) => {
 
   React.useEffect(() => {
     if (!value) { setInitialOption(null); return; }
-    referenceApi.getStations('').then(res => {
-      // The endpoint returns [] for blank query; resolve via a targeted search instead
-    });
-    // Just keep the current label if value changes to something we don't have
+    // Show a temporary label while the user hasn't searched yet;
+    // once they open the dropdown and search, the real name will appear.
     if (initialOption && initialOption.value === value) return;
     setInitialOption({ value, label: `Station #${value}` });
   }, [value]);
