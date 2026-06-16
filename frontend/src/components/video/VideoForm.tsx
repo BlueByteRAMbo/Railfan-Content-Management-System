@@ -175,11 +175,12 @@ export default function VideoForm({
     try {
       const res = await videosApi.fetchYouTubeMetadata(id)
       const meta = res.data as any
-      if (meta.title)           setValue('title', meta.title)
-      if (meta.description)     setValue('description', meta.description)
-      if (meta.durationSeconds) setValue('durationSeconds', meta.durationSeconds)
-      if (meta.thumbnailUrl)    setValue('thumbnail', meta.thumbnailUrl)
-      if (meta.thumbnailUrl)    setValue('youtubeUrl', `https://youtube.com/watch?v=${id}`)
+      const opts = { shouldValidate: true, shouldDirty: true }
+      if (meta.title)           setValue('title', meta.title, opts)
+      if (meta.description)     setValue('description', meta.description, opts)
+      if (meta.durationSeconds) setValue('durationSeconds', meta.durationSeconds, opts)
+      if (meta.thumbnailUrl)    setValue('thumbnail', meta.thumbnailUrl, opts)
+      if (meta.thumbnailUrl)    setValue('youtubeUrl', `https://youtube.com/watch?v=${id}`, opts)
       setYtSuccess(true)
       setTimeout(() => setYtSuccess(false), 3000)
     } catch {
