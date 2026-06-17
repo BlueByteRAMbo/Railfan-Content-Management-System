@@ -12,4 +12,6 @@ public class TrainEncounterRequest {
     private String locoNumber;
     private Long locoTypeId;
     private Long locoShedId;
+    private java.time.LocalDate recordingDate;
+    private java.time.LocalTime recordingTime;
 }

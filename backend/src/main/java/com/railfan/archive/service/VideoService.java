@@ -271,6 +271,8 @@ public class VideoService {
                     .locoNumber(e.getLocoNumber())
                     .locoType(e.getLocoType() != null ? new com.railfan.archive.dto.response.NamedReference(e.getLocoType().getId(), e.getLocoType().getName()) : null)
                     .locoShed(e.getLocoShed() != null ? new com.railfan.archive.dto.response.NamedReference(e.getLocoShed().getId(), e.getLocoShed().getName()) : null)
+                    .recordingDate(e.getRecordingDate())
+                    .recordingTime(e.getRecordingTime())
                     .build())
                 .toList())
             .createdAt(v.getCreatedAt())
@@ -406,6 +408,8 @@ public class VideoService {
                 te.setLocoNumber(teReq.getLocoNumber());
                 te.setLocoType(teReq.getLocoTypeId() != null ? locoTypeRepository.findById(teReq.getLocoTypeId()).orElse(null) : null);
                 te.setLocoShed(teReq.getLocoShedId() != null ? locoShedRepository.findById(teReq.getLocoShedId()).orElse(null) : null);
+                te.setRecordingDate(teReq.getRecordingDate());
+                te.setRecordingTime(teReq.getRecordingTime());
                 v.getTrainEncounters().add(te);
             });
         }

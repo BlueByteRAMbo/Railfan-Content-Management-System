@@ -4,6 +4,9 @@ import com.railfan.archive.enums.EncounterType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "train_encounters")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
@@ -20,6 +23,12 @@ public class TrainEncounter {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private EncounterType encounterType;
+
+    @Column(name = "recording_date")
+    private LocalDate recordingDate;
+
+    @Column(name = "recording_time")
+    private LocalTime recordingTime;
 
     @Column(length = 10)
     private String trainNumber;

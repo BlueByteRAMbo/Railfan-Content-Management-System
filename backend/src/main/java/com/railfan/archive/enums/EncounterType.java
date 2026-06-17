@@ -2,5 +2,6 @@ package com.railfan.archive.enums;
 
 public enum EncounterType {
     CROSSING,
-    PARALLEL_RUN
+    PARALLEL_RUN,
+    SERIES_ENCOUNTER
 }

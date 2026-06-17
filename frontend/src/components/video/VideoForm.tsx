@@ -55,13 +55,15 @@ const schema = z.object({
     role: z.enum(['BANKER', 'TWIN_LEAD', 'TWIN_TRAIL', 'DEAD_ATTACHED', 'PUSH_PULL']),
   })).default([]),
   trainEncounters:  z.array(z.object({
-    encounterType: z.enum(['CROSSING', 'PARALLEL_RUN']),
+    encounterType: z.enum(['CROSSING', 'PARALLEL_RUN', 'SERIES_ENCOUNTER']),
     trainNumber: z.string().optional(),
     trainName: z.string().optional(),
     trainCategoryId: z.coerce.number().optional(),
     locoNumber: z.string().optional(),
     locoTypeId: z.coerce.number().optional(),
     locoShedId: z.coerce.number().optional(),
+    recordingDate: z.string().optional(),
+    recordingTime: z.string().optional(),
   })).default([]),
 }).refine(
   (d) => d.uploadStatus !== 'UPLOADED' || (!!d.uploadDate && !!d.uploadTime),
@@ -398,8 +400,25 @@ export default function VideoForm({
                       <input type="radio" value="PARALLEL_RUN" {...register(`trainEncounters.${index}.encounterType`)} className="text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500 focus:ring-offset-slate-900" />
                       <span className="text-sm text-slate-300">Parallel Run</span>
                     </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" value="SERIES_ENCOUNTER" {...register(`trainEncounters.${index}.encounterType`)} className="text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500 focus:ring-offset-slate-900" />
+                      <span className="text-sm text-slate-300">Series</span>
+                    </label>
                   </div>
                 </div>
+                
+                {watch(`trainEncounters.${index}.encounterType`) === 'SERIES_ENCOUNTER' && (
+                  <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                    <div>
+                      <FieldLabel required>Encounter Date</FieldLabel>
+                      <input {...register(`trainEncounters.${index}.recordingDate`)} type="date" className="form-input" />
+                    </div>
+                    <div>
+                      <FieldLabel>Encounter Time</FieldLabel>
+                      <input {...register(`trainEncounters.${index}.recordingTime`)} type="time" className="form-input" />
+                    </div>
+                  </div>
+                )}
                 
                 <div>
                   <FieldLabel>Train Number</FieldLabel>
@@ -759,7 +778,9 @@ function mapVideoToForm(v: Partial<Video>): Partial<FormValues> {
       trainCategoryId: e.trainCategory?.id,
       locoNumber: e.locoNumber,
       locoTypeId: e.locoType?.id,
-      locoShedId: e.locoShed?.id
+      locoShedId: e.locoShed?.id,
+      recordingDate: e.recordingDate,
+      recordingTime: e.recordingTime
     })) ?? [],
   }
 }

@@ -11,10 +11,12 @@ public class TrainEncounterResponse {
     private String locoNumber;
     private NamedReference locoType;
     private NamedReference locoShed;
+    private java.time.LocalDate recordingDate;
+    private java.time.LocalTime recordingTime;
 
     public TrainEncounterResponse() {}
 
-    public TrainEncounterResponse(Long id, EncounterType encounterType, String trainNumber, String trainName, NamedReference trainCategory, String locoNumber, NamedReference locoType, NamedReference locoShed) {
+    public TrainEncounterResponse(Long id, EncounterType encounterType, String trainNumber, String trainName, NamedReference trainCategory, String locoNumber, NamedReference locoType, NamedReference locoShed, java.time.LocalDate recordingDate, java.time.LocalTime recordingTime) {
         this.id = id;
         this.encounterType = encounterType;
         this.trainNumber = trainNumber;
@@ -23,6 +25,8 @@ public class TrainEncounterResponse {
         this.locoNumber = locoNumber;
         this.locoType = locoType;
         this.locoShed = locoShed;
+        this.recordingDate = recordingDate;
+        this.recordingTime = recordingTime;
     }
 
     public Long getId() { return id; }
@@ -49,6 +53,12 @@ public class TrainEncounterResponse {
     public NamedReference getLocoShed() { return locoShed; }
     public void setLocoShed(NamedReference locoShed) { this.locoShed = locoShed; }
 
+    public java.time.LocalDate getRecordingDate() { return recordingDate; }
+    public void setRecordingDate(java.time.LocalDate recordingDate) { this.recordingDate = recordingDate; }
+
+    public java.time.LocalTime getRecordingTime() { return recordingTime; }
+    public void setRecordingTime(java.time.LocalTime recordingTime) { this.recordingTime = recordingTime; }
+
     public static TrainEncounterResponseBuilder builder() {
         return new TrainEncounterResponseBuilder();
     }
@@ -62,6 +72,8 @@ public class TrainEncounterResponse {
         private String locoNumber;
         private NamedReference locoType;
         private NamedReference locoShed;
+        private java.time.LocalDate recordingDate;
+        private java.time.LocalTime recordingTime;
 
         TrainEncounterResponseBuilder() {}
 
@@ -105,8 +117,18 @@ public class TrainEncounterResponse {
             return this;
         }
 
+        public TrainEncounterResponseBuilder recordingDate(java.time.LocalDate recordingDate) {
+            this.recordingDate = recordingDate;
+            return this;
+        }
+
+        public TrainEncounterResponseBuilder recordingTime(java.time.LocalTime recordingTime) {
+            this.recordingTime = recordingTime;
+            return this;
+        }
+
         public TrainEncounterResponse build() {
-            return new TrainEncounterResponse(id, encounterType, trainNumber, trainName, trainCategory, locoNumber, locoType, locoShed);
+            return new TrainEncounterResponse(id, encounterType, trainNumber, trainName, trainCategory, locoNumber, locoType, locoShed, recordingDate, recordingTime);
         }
     }
 }

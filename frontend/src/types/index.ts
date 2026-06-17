@@ -2,7 +2,7 @@
 export type UploadStatus = 'PENDING_UPLOAD' | 'SCHEDULED_UPLOAD' | 'UPLOADED' | 'ARCHIVED';
 export type Priority = 'HIGH' | 'MEDIUM' | 'LOW';
 export type SecondaryLocoRole = 'BANKER' | 'TWIN_LEAD' | 'TWIN_TRAIL' | 'DEAD_ATTACHED' | 'PUSH_PULL';
-export type EncounterType = 'CROSSING' | 'PARALLEL_RUN';
+export type EncounterType = 'CROSSING' | 'PARALLEL_RUN' | 'SERIES_ENCOUNTER';
 
 // ── Reference Types ───────────────────────────────────────────
 export interface TrainCategory {
@@ -223,6 +223,8 @@ export interface TrainEncounter {
   locoNumber?: string;
   locoType?: { id: number; name: string };
   locoShed?: { id: number; name: string };
+  recordingDate?: string;
+  recordingTime?: string;
 }
 
 // ── Request types ─────────────────────────────────────────────
@@ -282,6 +284,8 @@ export interface TrainEncounterRequest {
   locoNumber?: string;
   locoTypeId?: number;
   locoShedId?: number;
+  recordingDate?: string;
+  recordingTime?: string;
 }
 
 export type VideoUpdateRequest = Partial<VideoCreateRequest>;
