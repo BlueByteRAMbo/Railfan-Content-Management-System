@@ -11,6 +11,7 @@ import { videosApi } from '../../api/services'
 import type { Video, VideoCreateRequest } from '../../types'
 import { AlertTriangle, Loader2, CheckCircle, Plus, X, PlayCircle } from 'lucide-react';
 import StationSelect from '../../components/ui/StationSelect';
+import SearchableSelect from '../../components/ui/SearchableSelect';
 
 // ── Validation Schema ─────────────────────────────────────────
 const schema = z.object({
@@ -453,10 +454,18 @@ export default function VideoForm({
                   </div>
                   <div className="md:col-span-2">
                     <FieldLabel>Loco Shed</FieldLabel>
-                    <select {...register(`trainEncounters.${index}.locoShedId`)} className="form-input">
-                      <option value="">— Select shed —</option>
-                      {locoSheds.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
+                    <Controller
+                      name={`trainEncounters.${index}.locoShedId`}
+                      control={control}
+                      render={({ field }) => (
+                        <SearchableSelect
+                          options={locoSheds.map(s => ({ value: s.id, label: s.name }))}
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="— Search shed —"
+                        />
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -491,10 +500,18 @@ export default function VideoForm({
           </div>
           <div>
             <FieldLabel>Loco Shed</FieldLabel>
-            <select {...register('locoShedId')} className="form-input">
-              <option value="">— Select shed —</option>
-              {locoSheds.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
+            <Controller
+              name="locoShedId"
+              control={control}
+              render={({ field }) => (
+                <SearchableSelect
+                  options={locoSheds.map(s => ({ value: s.id, label: s.name }))}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="— Search shed —"
+                />
+              )}
+            />
           </div>
           <div>
             <FieldLabel>Loco Livery</FieldLabel>
@@ -560,10 +577,18 @@ export default function VideoForm({
                 </div>
                 <div className="md:col-span-2">
                   <FieldLabel>Loco Shed</FieldLabel>
-                  <select {...register(`secondaryLocos.${index}.locoShedId`)} className="form-input">
-                    <option value="">— Select shed —</option>
-                    {locoSheds.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                  </select>
+                  <Controller
+                    name={`secondaryLocos.${index}.locoShedId`}
+                    control={control}
+                    render={({ field }) => (
+                      <SearchableSelect
+                        options={locoSheds.map(s => ({ value: s.id, label: s.name }))}
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="— Search shed —"
+                      />
+                    )}
+                  />
                 </div>
               </div>
             </div>
