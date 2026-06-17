@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Search, ChevronDown, Check } from 'lucide-react';
 
 export interface SearchableOption {
@@ -79,11 +79,10 @@ export default function SearchableSelect({
                     setIsOpen(false);
                     setSearchTerm('');
                   }}
-                  className={`px-3 py-2 text-sm cursor-pointer rounded-md flex items-center justify-between transition-colors ${
-                    value === opt.value
+                  className={`px-3 py-2 text-sm cursor-pointer rounded-md flex items-center justify-between transition-colors ${value === opt.value
                       ? 'bg-brand-500/20 text-brand-400 font-medium'
                       : 'text-slate-300 hover:bg-slate-700/50 hover:text-slate-200'
-                  }`}
+                    }`}
                 >
                   {opt.label}
                   {value === opt.value && <Check size={14} />}
