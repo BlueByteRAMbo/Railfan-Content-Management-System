@@ -81,4 +81,8 @@ public class VideoCreateRequest {
     private Set<Long> tagIds = new HashSet<>();
     private Set<String> newTagNames = new HashSet<>();  // Auto-create tags on the fly
     private Set<Long> collectionIds = new HashSet<>();
+
+    // ── Multi-Loco & Multi-Train ──────────────────────────────
+    private java.util.List<SecondaryLocoRequest> secondaryLocos = new java.util.ArrayList<>();
+    private java.util.List<TrainEncounterRequest> trainEncounters = new java.util.ArrayList<>();
 }

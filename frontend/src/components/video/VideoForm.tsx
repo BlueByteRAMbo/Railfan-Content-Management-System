@@ -1,4 +1,4 @@
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useState } from 'react'
@@ -48,6 +48,21 @@ const schema = z.object({
   observationNotes: z.string().optional(),
   newTagNames:      z.array(z.string()).default([]),
   collectionIds:    z.array(z.number()).default([]),
+  secondaryLocos:   z.array(z.object({
+    locoNumber: z.string().optional(),
+    locoTypeId: z.coerce.number().optional(),
+    locoShedId: z.coerce.number().optional(),
+    role: z.enum(['BANKER', 'TWIN_LEAD', 'TWIN_TRAIL', 'DEAD_ATTACHED', 'PUSH_PULL']),
+  })).default([]),
+  trainEncounters:  z.array(z.object({
+    encounterType: z.enum(['CROSSING', 'PARALLEL_RUN']),
+    trainNumber: z.string().optional(),
+    trainName: z.string().optional(),
+    trainCategoryId: z.coerce.number().optional(),
+    locoNumber: z.string().optional(),
+    locoTypeId: z.coerce.number().optional(),
+    locoShedId: z.coerce.number().optional(),
+  })).default([]),
 }).refine(
   (d) => d.uploadStatus !== 'UPLOADED' || (!!d.uploadDate && !!d.uploadTime),
   { message: 'Upload date and time are required when status is Uploaded', path: ['uploadDate'] }
@@ -161,6 +176,16 @@ export default function VideoForm({
   const locoNumber    = watch('locoNumber')
   const recordingDate = watch('recordingDate')
   const youtubeVideoId = watch('youtubeVideoId')
+
+  const { fields: locoFields, append: appendLoco, remove: removeLoco } = useFieldArray({
+    control,
+    name: 'secondaryLocos'
+  })
+
+  const { fields: encounterFields, append: appendEncounter, remove: removeEncounter } = useFieldArray({
+    control,
+    name: 'trainEncounters'
+  })
 
   // Duplicate check
   const { data: dupes = [] } = useDuplicateCheck(
@@ -343,6 +368,91 @@ export default function VideoForm({
             </select>
           </div>
         </div>
+
+        {/* Train Encounters (Field Array) */}
+        <div className="mt-6 space-y-4">
+          {encounterFields.map((field, index) => (
+            <div key={field.id} className="relative p-5 rounded-xl bg-white/5 border border-white/10 mt-4 animate-in fade-in slide-in-from-top-4 duration-300">
+              <button 
+                type="button" 
+                onClick={() => removeEncounter(index)}
+                className="absolute top-4 right-4 p-1.5 rounded-full bg-white/5 text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                title="Remove Encounter"
+              >
+                <X size={16} />
+              </button>
+              
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                Encounter {index + 1}
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-3">
+                  <FieldLabel required>Encounter Type</FieldLabel>
+                  <div className="flex gap-4 mt-1">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" value="CROSSING" {...register(`trainEncounters.${index}.encounterType`)} className="text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500 focus:ring-offset-slate-900" />
+                      <span className="text-sm text-slate-300">Crossing (XING)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" value="PARALLEL_RUN" {...register(`trainEncounters.${index}.encounterType`)} className="text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500 focus:ring-offset-slate-900" />
+                      <span className="text-sm text-slate-300">Parallel Run</span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div>
+                  <FieldLabel>Train Number</FieldLabel>
+                  <input {...register(`trainEncounters.${index}.trainNumber`)} className="form-input font-mono" placeholder="Number" />
+                </div>
+                <div className="md:col-span-2">
+                  <FieldLabel>Train Name</FieldLabel>
+                  <input {...register(`trainEncounters.${index}.trainName`)} className="form-input" placeholder="Name" />
+                </div>
+                <div className="md:col-span-3">
+                  <FieldLabel>Train Category</FieldLabel>
+                  <select {...register(`trainEncounters.${index}.trainCategoryId`)} className="form-input">
+                    <option value="">— Select category —</option>
+                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                </div>
+                
+                <div className="md:col-span-3 mt-2 pt-4 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <p className="text-xs text-slate-500 mb-3 uppercase tracking-wider font-semibold">Encounter Loco (Optional)</p>
+                  </div>
+                  <div>
+                    <FieldLabel>Loco Number</FieldLabel>
+                    <input {...register(`trainEncounters.${index}.locoNumber`)} className="form-input font-mono" placeholder="Number" />
+                  </div>
+                  <div>
+                    <FieldLabel>Loco Type</FieldLabel>
+                    <select {...register(`trainEncounters.${index}.locoTypeId`)} className="form-input">
+                      <option value="">— Select type —</option>
+                      {locoTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                    </select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <FieldLabel>Loco Shed</FieldLabel>
+                    <select {...register(`trainEncounters.${index}.locoShedId`)} className="form-input">
+                      <option value="">— Select shed —</option>
+                      {locoSheds.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={() => appendEncounter({ encounterType: 'CROSSING' })}
+            className="w-full py-4 rounded-xl border-2 border-dashed border-white/10 text-slate-400 font-semibold text-sm hover:border-brand-500/50 hover:text-brand-300 hover:bg-brand-500/5 transition-all flex items-center justify-center gap-2"
+          >
+            <Plus size={16} />
+            Add Train Encounter (XING / Parallel)
+          </button>
+        </div>
       </div>
 
       {/* ── Locomotive Details ── */}
@@ -388,6 +498,66 @@ export default function VideoForm({
               )}
             />
           </div>
+        </div>
+
+        {/* Secondary Locos (Field Array) */}
+        <div className="mt-6 space-y-4">
+          {locoFields.map((field, index) => (
+            <div key={field.id} className="relative p-5 rounded-xl bg-white/5 border border-white/10 mt-4 animate-in fade-in slide-in-from-top-4 duration-300">
+              <button 
+                type="button" 
+                onClick={() => removeLoco(index)}
+                className="absolute top-4 right-4 p-1.5 rounded-full bg-white/5 text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                title="Remove Secondary Loco"
+              >
+                <X size={16} />
+              </button>
+              
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                Secondary Loco {index + 1}
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <FieldLabel required>Role</FieldLabel>
+                  <select {...register(`secondaryLocos.${index}.role`)} className="form-input">
+                    <option value="BANKER">Banker (Pusher)</option>
+                    <option value="TWIN_LEAD">Leading Twin</option>
+                    <option value="TWIN_TRAIL">Trailing Twin</option>
+                    <option value="DEAD_ATTACHED">Dead Attached</option>
+                    <option value="PUSH_PULL">Push-Pull (Tail)</option>
+                  </select>
+                </div>
+                <div>
+                  <FieldLabel>Loco Number</FieldLabel>
+                  <input {...register(`secondaryLocos.${index}.locoNumber`)} className="form-input font-mono" placeholder="Number" />
+                </div>
+                <div>
+                  <FieldLabel>Loco Type</FieldLabel>
+                  <select {...register(`secondaryLocos.${index}.locoTypeId`)} className="form-input">
+                    <option value="">— Select type —</option>
+                    {locoTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <FieldLabel>Loco Shed</FieldLabel>
+                  <select {...register(`secondaryLocos.${index}.locoShedId`)} className="form-input">
+                    <option value="">— Select shed —</option>
+                    {locoSheds.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={() => appendLoco({ role: 'BANKER' })}
+            className="w-full py-4 rounded-xl border-2 border-dashed border-white/10 text-slate-400 font-semibold text-sm hover:border-brand-500/50 hover:text-brand-300 hover:bg-brand-500/5 transition-all flex items-center justify-center gap-2"
+          >
+            <Plus size={16} />
+            Add Secondary Loco (Banker / Twin)
+          </button>
         </div>
       </div>
 
@@ -576,5 +746,20 @@ function mapVideoToForm(v: Partial<Video>): Partial<FormValues> {
     observationNotes: v.observationNotes,
     newTagNames:     v.tags?.map(t => t.name) ?? [],
     collectionIds:   v.collections?.map(c => c.id) ?? [],
+    secondaryLocos:  v.secondaryLocos?.map(l => ({
+      locoNumber: l.locoNumber,
+      locoTypeId: l.locoType?.id,
+      locoShedId: l.locoShed?.id,
+      role: l.role
+    })) ?? [],
+    trainEncounters: v.trainEncounters?.map(e => ({
+      encounterType: e.encounterType,
+      trainNumber: e.trainNumber,
+      trainName: e.trainName,
+      trainCategoryId: e.trainCategory?.id,
+      locoNumber: e.locoNumber,
+      locoTypeId: e.locoType?.id,
+      locoShedId: e.locoShed?.id
+    })) ?? [],
   }
 }

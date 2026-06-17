@@ -252,6 +252,27 @@ public class VideoService {
             .collections(v.getCollections().stream()
                 .map(c -> VideoResponse.CollectionResponse.builder().id(c.getId()).name(c.getName()).build())
                 .toList())
+            .secondaryLocos(v.getSecondaryLocos().stream()
+                .map(l -> com.railfan.archive.dto.response.SecondaryLocoResponse.builder()
+                    .id(l.getId())
+                    .locoNumber(l.getLocoNumber())
+                    .locoType(l.getLocoType() != null ? new com.railfan.archive.dto.response.NamedReference(l.getLocoType().getId(), l.getLocoType().getName()) : null)
+                    .locoShed(l.getLocoShed() != null ? new com.railfan.archive.dto.response.NamedReference(l.getLocoShed().getId(), l.getLocoShed().getName()) : null)
+                    .role(l.getRole())
+                    .build())
+                .toList())
+            .trainEncounters(v.getTrainEncounters().stream()
+                .map(e -> com.railfan.archive.dto.response.TrainEncounterResponse.builder()
+                    .id(e.getId())
+                    .encounterType(e.getEncounterType())
+                    .trainNumber(e.getTrainNumber())
+                    .trainName(e.getTrainName())
+                    .trainCategory(e.getTrainCategory() != null ? new com.railfan.archive.dto.response.NamedReference(e.getTrainCategory().getId(), e.getTrainCategory().getName()) : null)
+                    .locoNumber(e.getLocoNumber())
+                    .locoType(e.getLocoType() != null ? new com.railfan.archive.dto.response.NamedReference(e.getLocoType().getId(), e.getLocoType().getName()) : null)
+                    .locoShed(e.getLocoShed() != null ? new com.railfan.archive.dto.response.NamedReference(e.getLocoShed().getId(), e.getLocoShed().getName()) : null)
+                    .build())
+                .toList())
             .createdAt(v.getCreatedAt())
             .updatedAt(v.getUpdatedAt())
             .daysBetweenRecordingAndUpload(v.getDaysBetweenRecordingAndUpload())
@@ -357,6 +378,37 @@ public class VideoService {
 
         // Collections
         v.setCollections(new HashSet<>(tagCollectionService.resolveCollectionIds(req.getCollectionIds())));
+
+        // Multi-Loco mapping
+        v.getSecondaryLocos().clear();
+        if (req.getSecondaryLocos() != null) {
+            req.getSecondaryLocos().forEach(slReq -> {
+                com.railfan.archive.entity.SecondaryLoco sl = new com.railfan.archive.entity.SecondaryLoco();
+                sl.setVideo(v);
+                sl.setLocoNumber(slReq.getLocoNumber());
+                sl.setLocoType(slReq.getLocoTypeId() != null ? locoTypeRepository.findById(slReq.getLocoTypeId()).orElse(null) : null);
+                sl.setLocoShed(slReq.getLocoShedId() != null ? locoShedRepository.findById(slReq.getLocoShedId()).orElse(null) : null);
+                sl.setRole(slReq.getRole());
+                v.getSecondaryLocos().add(sl);
+            });
+        }
+
+        // Multi-Train mapping
+        v.getTrainEncounters().clear();
+        if (req.getTrainEncounters() != null) {
+            req.getTrainEncounters().forEach(teReq -> {
+                com.railfan.archive.entity.TrainEncounter te = new com.railfan.archive.entity.TrainEncounter();
+                te.setVideo(v);
+                te.setEncounterType(teReq.getEncounterType());
+                te.setTrainNumber(teReq.getTrainNumber());
+                te.setTrainName(teReq.getTrainName());
+                te.setTrainCategory(teReq.getTrainCategoryId() != null ? trainCategoryRepository.findById(teReq.getTrainCategoryId()).orElse(null) : null);
+                te.setLocoNumber(teReq.getLocoNumber());
+                te.setLocoType(teReq.getLocoTypeId() != null ? locoTypeRepository.findById(teReq.getLocoTypeId()).orElse(null) : null);
+                te.setLocoShed(teReq.getLocoShedId() != null ? locoShedRepository.findById(teReq.getLocoShedId()).orElse(null) : null);
+                v.getTrainEncounters().add(te);
+            });
+        }
     }
 
     /** Enforce business rule: upload date/time required when status = UPLOADED */

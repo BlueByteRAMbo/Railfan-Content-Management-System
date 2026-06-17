@@ -1,6 +1,8 @@
 // ── Enums ─────────────────────────────────────────────────────
 export type UploadStatus = 'PENDING_UPLOAD' | 'SCHEDULED_UPLOAD' | 'UPLOADED' | 'ARCHIVED';
 export type Priority = 'HIGH' | 'MEDIUM' | 'LOW';
+export type SecondaryLocoRole = 'BANKER' | 'TWIN_LEAD' | 'TWIN_TRAIL' | 'DEAD_ATTACHED' | 'PUSH_PULL';
+export type EncounterType = 'CROSSING' | 'PARALLEL_RUN';
 
 // ── Reference Types ───────────────────────────────────────────
 export interface TrainCategory {
@@ -101,8 +103,13 @@ export interface Video {
   observationNotes?: string;
 
   // Relations
+  // Relations
   tags: Tag[];
   collections: RailCollection[];
+
+  // Multi-Loco & Multi-Train
+  secondaryLocos?: SecondaryLoco[];
+  trainEncounters?: TrainEncounter[];
 
   // Audit
   createdAt: string;
@@ -199,6 +206,25 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface SecondaryLoco {
+  id: number;
+  locoNumber?: string;
+  locoType?: { id: number; name: string };
+  locoShed?: { id: number; name: string };
+  role: SecondaryLocoRole;
+}
+
+export interface TrainEncounter {
+  id: number;
+  encounterType: EncounterType;
+  trainNumber?: string;
+  trainName?: string;
+  trainCategory?: { id: number; name: string };
+  locoNumber?: string;
+  locoType?: { id: number; name: string };
+  locoShed?: { id: number; name: string };
+}
+
 // ── Request types ─────────────────────────────────────────────
 export interface VideoCreateRequest {
   title: string;
@@ -237,6 +263,25 @@ export interface VideoCreateRequest {
   observationNotes?: string;
   tagIds?: number[];
   collectionIds?: number[];
+  secondaryLocos?: SecondaryLocoRequest[];
+  trainEncounters?: TrainEncounterRequest[];
+}
+
+export interface SecondaryLocoRequest {
+  locoNumber?: string;
+  locoTypeId?: number;
+  locoShedId?: number;
+  role: SecondaryLocoRole;
+}
+
+export interface TrainEncounterRequest {
+  encounterType: EncounterType;
+  trainNumber?: string;
+  trainName?: string;
+  trainCategoryId?: number;
+  locoNumber?: string;
+  locoTypeId?: number;
+  locoShedId?: number;
 }
 
 export type VideoUpdateRequest = Partial<VideoCreateRequest>;

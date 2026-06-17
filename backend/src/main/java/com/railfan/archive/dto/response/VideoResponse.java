@@ -78,6 +78,10 @@ public class VideoResponse {
     private List<TagResponse> tags;
     private List<CollectionResponse> collections;
 
+    // Multi-Loco & Multi-Train
+    private List<SecondaryLocoResponse> secondaryLocos;
+    private List<TrainEncounterResponse> trainEncounters;
+
     // Audit + computed
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

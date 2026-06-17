@@ -125,6 +125,14 @@ public class Video {
     @Column(nullable = false)
     private Boolean kavachFitted = false;
 
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<SecondaryLoco> secondaryLocos = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<TrainEncounter> trainEncounters = new java.util.ArrayList<>();
+
     // ── Location Details ──────────────────────────────────────
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "station_id")
