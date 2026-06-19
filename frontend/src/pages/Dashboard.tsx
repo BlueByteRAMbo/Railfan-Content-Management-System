@@ -11,17 +11,17 @@ import {
   Video, CheckCircle, Upload, Calendar, Archive,
   HardDrive, Clock, TrendingUp, Timer, AlertTriangle, Plus, ExternalLink
 } from 'lucide-react'
-import type { UploadStatus } from '../types'
+import SignalLoader from '../components/ui/SignalLoader'
 
 // ── Helpers ───────────────────────────────────────────────────
 function formatBytes(b: number): string {
   if (!b) return '0 B'
-  const u = ['B','KB','MB','GB','TB'], i = Math.floor(Math.log(b)/Math.log(1024))
-  return `${(b/Math.pow(1024,i)).toFixed(1)} ${u[i]}`
+  const u = ['B', 'KB', 'MB', 'GB', 'TB'], i = Math.floor(Math.log(b) / Math.log(1024))
+  return `${(b / Math.pow(1024, i)).toFixed(1)} ${u[i]}`
 }
 function formatDuration(s: number): string {
   if (!s) return '0m'
-  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60)
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60)
   return h > 0 ? `${h}h ${m}m` : `${m}m`
 }
 
@@ -33,11 +33,13 @@ const CHART_COLORS = [
   '#8A7E72',  // warm grey      — archived/neutral
   '#7A6E5A',  // dark khaki     — secondary neutral
 ]
-const STATUS_CONFIG: Record<UploadStatus, { label:string; className:string }> = {
-  PENDING_UPLOAD:   { label:'Pending',   className:'status-pending'   },
-  SCHEDULED_UPLOAD: { label:'Scheduled', className:'status-scheduled' },
-  UPLOADED:         { label:'Uploaded',  className:'status-uploaded'  },
-  ARCHIVED:         { label:'Archived',  className:'status-archived'  },
+import type { UploadStatus } from '../types';
+
+const STATUS_CONFIG: Record<UploadStatus, { label: string; className: string }> = {
+  PENDING_UPLOAD: { label: 'Pending', className: 'status-pending' },
+  SCHEDULED_UPLOAD: { label: 'Scheduled', className: 'status-scheduled' },
+  UPLOADED: { label: 'Uploaded', className: 'status-uploaded' },
+  ARCHIVED: { label: 'Archived', className: 'status-archived' },
 }
 
 // ── Animated Counter ──────────────────────────────────────────
@@ -55,7 +57,7 @@ function AnimatedCounter({ value }: { value: number }) {
 // ── Stat Card ─────────────────────────────────────────────────
 function StatCard({
   label, value, sub, icon: Icon, accent
-}: { label:string; value:string|number; sub?:string; icon:React.ElementType; accent:string }) {
+}: { label: string; value: string | number; sub?: string; icon: React.ElementType; accent: string }) {
   return (
     <motion.div variants={fadeUp} whileHover={{ y: -4 }} className="glass-card group relative overflow-hidden p-4 sm:p-6">
       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${accent}/5 to-transparent`} />
@@ -71,10 +73,6 @@ function StatCard({
       </div>
     </motion.div>
   )
-}
-
-function StatSkeleton() {
-  return <div className="stat-card animate-pulse"><div className="w-10 h-10 rounded-xl bg-white/5 mb-4"/><div className="h-8 bg-white/5 rounded w-20 mb-2"/><div className="h-4 bg-white/5 rounded w-32"/></div>
 }
 
 // ── Custom Tooltip ────────────────────────────────────────────
@@ -93,9 +91,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 // ── Dashboard ─────────────────────────────────────────────────
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { data: stats,   isLoading: statsLoading  } = useDashboardStats()
-  const { data: charts,  isLoading: chartsLoading } = useDashboardCharts()
-  const { data: recent = []                       } = useRecentVideos()
+  const { data: stats, isLoading: statsLoading } = useDashboardStats()
+  const { data: charts, isLoading: chartsLoading } = useDashboardCharts()
+  const { data: recent = [] } = useRecentVideos()
 
   return (
     <div className="p-4 md:p-8 animate-fade-in">
@@ -111,38 +109,47 @@ export default function Dashboard() {
       </div>
 
       {/* ── Primary stat cards ── */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4 mb-6"
       >
-        {statsLoading ? Array.from({length:5}).map((_,i)=><StatSkeleton key={i}/>) : (
+        {statsLoading ? (
+          <div className="col-span-full flex justify-center py-12 scale-75">
+            <SignalLoader message="LOADING STATS..." />
+          </div>
+        ) : (
           <>
-            <StatCard label="Total Videos"    value={stats?.totalVideos ?? 0}    icon={Video}        accent="from-brand-600" />
-            <StatCard label="Uploaded"        value={stats?.uploadedVideos ?? 0}  icon={CheckCircle}  accent="from-emerald-500" />
-            <StatCard label="Pending Upload"  value={stats?.pendingVideos ?? 0}   icon={Upload}       accent="from-amber-500" />
-            <StatCard label="Scheduled"       value={stats?.scheduledVideos ?? 0} icon={Calendar}     accent="from-blue-500" />
-            <StatCard label="Archived"        value={stats?.archivedVideos ?? 0}  icon={Archive}      accent="from-slate-500" />
+            <StatCard label="Total Videos" value={stats?.totalVideos ?? 0} icon={Video} accent="from-brand-600" />
+            <StatCard label="Uploaded" value={stats?.uploadedVideos ?? 0} icon={CheckCircle} accent="from-emerald-500" />
+            <StatCard label="Pending Upload" value={stats?.pendingVideos ?? 0} icon={Upload} accent="from-amber-500" />
+            <StatCard label="Scheduled" value={stats?.scheduledVideos ?? 0} icon={Calendar} accent="from-blue-500" />
+            <StatCard label="Archived" value={stats?.archivedVideos ?? 0} icon={Archive} accent="from-slate-500" />
           </>
         )}
       </motion.div>
 
       {/* ── Secondary stat cards ── */}
-      <motion.div 
+      <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8"
       >
-        {statsLoading ? Array.from({length:4}).map((_,i)=><StatSkeleton key={i}/>) : (
+        {statsLoading ? (
+          <div className="col-span-full flex justify-center py-12 scale-75">
+            <SignalLoader message="LOADING MORE STATS..." />
+          </div>
+        ) : (
           <>
-            <StatCard label="Total Storage"         value={formatBytes(stats?.totalStorageBytes ?? 0)}       icon={HardDrive}   accent="from-purple-500" />
-            <StatCard label="Total Recorded"        value={formatDuration(stats?.totalDurationSeconds ?? 0)} icon={Clock}       accent="from-pink-500" />
-            <StatCard label="Recorded This Month"   value={stats?.videosRecordedThisMonth ?? 0}              icon={TrendingUp}  accent="from-cyan-500" sub="new recordings" />
-            <StatCard label="Pending Action"        value={(stats?.pendingVideos ?? 0) + (stats?.scheduledVideos ?? 0)} icon={Timer} accent="from-rose-500" sub="uploads left" />
+            <StatCard label="Total Storage" value={formatBytes(stats?.totalStorageBytes ?? 0)} icon={HardDrive} accent="from-purple-500" />
+            <StatCard label="Total Recorded" value={formatDuration(stats?.totalDurationSeconds ?? 0)} icon={Clock} accent="from-pink-500" />
+            <StatCard label="Recorded This Month" value={stats?.videosRecordedThisMonth ?? 0} icon={TrendingUp} accent="from-cyan-500" sub="new recordings" />
+            <StatCard label="Pending Action" value={(stats?.pendingVideos ?? 0) + (stats?.scheduledVideos ?? 0)} icon={Timer} accent="from-rose-500" sub="uploads left" />
           </>
-        )}
+        )
+        }
       </motion.div>
 
       {/* ── Alert banner ── */}
@@ -168,13 +175,13 @@ export default function Dashboard() {
               <AreaChart data={charts?.recordingsPerMonth ?? []}>
                 <defs>
                   <linearGradient id="recGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#d98e04" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#d98e04" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#d98e04" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#d98e04" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="label" tick={{ fill:'#64748b', fontSize:11 }} />
-                <YAxis tick={{ fill:'#64748b', fontSize:11 }} />
+                <XAxis dataKey="label" tick={{ fill: '#64748b', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="count" name="Recordings" stroke="#d98e04" fill="url(#recGrad)" strokeWidth={2} />
               </AreaChart>
@@ -192,13 +199,13 @@ export default function Dashboard() {
               <AreaChart data={charts?.uploadsPerMonth ?? []}>
                 <defs>
                   <linearGradient id="uplGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#3E7C8C" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3E7C8C" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#3E7C8C" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#3E7C8C" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="label" tick={{ fill:'#64748b', fontSize:11 }} />
-                <YAxis tick={{ fill:'#64748b', fontSize:11 }} />
+                <XAxis dataKey="label" tick={{ fill: '#64748b', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="count" name="Uploads" stroke="#3E7C8C" fill="url(#uplGrad)" strokeWidth={2} />
               </AreaChart>
@@ -224,7 +231,7 @@ export default function Dashboard() {
                   nameKey="name"
                   cx="50%" cy="50%"
                   outerRadius={75}
-                  label={({ name, percent }) => `${name} ${((percent ?? 0)*100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                   labelLine={false}
                 >
                   {(charts?.locoTypeDistribution ?? []).map((_, i) => (
@@ -251,15 +258,15 @@ export default function Dashboard() {
               <BarChart data={charts?.trainCategoryDistribution ?? []}>
                 <defs>
                   <linearGradient id="gradCat" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#e29737" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#a15606" stopOpacity={0.6}/>
+                    <stop offset="0%" stopColor="#e29737" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#a15606" stopOpacity={0.6} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fill:'#64748b', fontSize:10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill:'#64748b', fontSize:11 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                <Bar dataKey="count" name="Videos" fill="url(#gradCat)" radius={[4,4,0,0]} isAnimationActive={true} animationDuration={1000} />
+                <Bar dataKey="count" name="Videos" fill="url(#gradCat)" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1000} />
               </BarChart>
             </ResponsiveContainer>
           )}

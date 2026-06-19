@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { videosApi } from '../api/services'
 import { useNavigate } from 'react-router-dom'
 import { HardDrive, Edit2, PlayCircle } from 'lucide-react'
+import SignalLoader from '../components/ui/SignalLoader'
 
 export default function PendingQueue() {
   const navigate = useNavigate()
@@ -20,7 +21,7 @@ export default function PendingQueue() {
 
       <div className="glass-card overflow-hidden">
         {isLoading ? (
-          <div className="p-8 text-center text-slate-500">Loading pending videos...</div>
+          <SignalLoader message="LOADING PENDING VIDEOS..." />
         ) : page?.content.length === 0 ? (
           <div className="p-12 text-center">
             <h2 className="text-lg font-bold text-slate-300">All caught up!</h2>

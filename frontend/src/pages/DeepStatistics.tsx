@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Train, MapPin, Building, Activity } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { staggerContainer, fadeUp } from '../lib/motion'
+import SignalLoader from '../components/ui/SignalLoader'
 
 // ── Custom Tooltip ────────────────────────────────────────────
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -20,10 +21,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function DeepStatistics() {
   
-  const { data: trains = [] } = useQuery({ queryKey: ['stats', 'trains'], queryFn: () => statsApi.getMostRecordedTrains(5).then(r => r.data) })
-  const { data: locos = [] } = useQuery({ queryKey: ['stats', 'locos'], queryFn: () => statsApi.getMostRecordedLocos(5).then(r => r.data) })
-  const { data: sheds = [] } = useQuery({ queryKey: ['stats', 'sheds'], queryFn: () => statsApi.getMostRecordedSheds(5).then(r => r.data) })
-  const { data: stations = [] } = useQuery({ queryKey: ['stats', 'stations'], queryFn: () => statsApi.getMostRecordedStations(5).then(r => r.data) })
+  const { data: trains = [], isLoading: trainsLoading } = useQuery({ queryKey: ['stats', 'trains'], queryFn: () => statsApi.getMostRecordedTrains(5).then(r => r.data) })
+  const { data: locos = [], isLoading: locosLoading } = useQuery({ queryKey: ['stats', 'locos'], queryFn: () => statsApi.getMostRecordedLocos(5).then(r => r.data) })
+  const { data: sheds = [], isLoading: shedsLoading } = useQuery({ queryKey: ['stats', 'sheds'], queryFn: () => statsApi.getMostRecordedSheds(5).then(r => r.data) })
+  const { data: stations = [], isLoading: stationsLoading } = useQuery({ queryKey: ['stats', 'stations'], queryFn: () => statsApi.getMostRecordedStations(5).then(r => r.data) })
 
   return (
     <div className="max-w-6xl mx-auto p-8 animate-fade-in">
@@ -45,22 +46,28 @@ export default function DeepStatistics() {
             <Train size={18} className="text-brand-400" />
             Top 5 Most Recorded Trains
           </h2>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={trains} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gradTrains" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#c27303" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#d98e04" stopOpacity={1}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
-                <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                <Bar dataKey="count" fill="url(#gradTrains)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-64 relative">
+            {trainsLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center scale-75">
+                <SignalLoader message="LOADING TRAINS..." />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={trains} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="gradTrains" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#c27303" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="#d98e04" stopOpacity={1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
+                  <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                  <Bar dataKey="count" fill="url(#gradTrains)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
 
@@ -70,22 +77,28 @@ export default function DeepStatistics() {
             <Activity size={18} className="text-amber-400" />
             Top 5 Most Recorded Locomotives
           </h2>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={locos} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gradLocos" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#8A7E72" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#C98A2C" stopOpacity={1}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
-                <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                <Bar dataKey="count" fill="url(#gradLocos)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-64 relative">
+            {locosLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center scale-75">
+                <SignalLoader message="LOADING LOCOS..." />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={locos} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="gradLocos" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#8A7E72" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="#C98A2C" stopOpacity={1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
+                  <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                  <Bar dataKey="count" fill="url(#gradLocos)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
 
@@ -95,22 +108,28 @@ export default function DeepStatistics() {
             <Building size={18} className="text-[#3E7C8C]" />
             Top 5 Most Recorded Sheds
           </h2>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={sheds} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gradSheds" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#2c5f6e" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#3E7C8C" stopOpacity={1}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
-                <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                <Bar dataKey="count" fill="url(#gradSheds)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-64 relative">
+            {shedsLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center scale-75">
+                <SignalLoader message="LOADING SHEDS..." />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={sheds} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="gradSheds" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#2c5f6e" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="#3E7C8C" stopOpacity={1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
+                  <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                  <Bar dataKey="count" fill="url(#gradSheds)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
 
@@ -120,22 +139,28 @@ export default function DeepStatistics() {
             <MapPin size={18} className="text-[#5C8A4A]" />
             Top 5 Most Recorded Stations
           </h2>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stations} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gradStations" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#476e38" stopOpacity={0.6}/>
-                    <stop offset="100%" stopColor="#5C8A4A" stopOpacity={1}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
-                <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                <Bar dataKey="count" fill="url(#gradStations)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-64 relative">
+            {stationsLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center scale-75">
+                <SignalLoader message="LOADING STATIONS..." />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stations} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="gradStations" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#476e38" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="#5C8A4A" stopOpacity={1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
+                  <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                  <Bar dataKey="count" fill="url(#gradStations)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
 

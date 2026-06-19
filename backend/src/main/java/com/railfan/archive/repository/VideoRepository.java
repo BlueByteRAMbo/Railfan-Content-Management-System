@@ -181,4 +181,7 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
 
     @Query("SELECT s.name, COUNT(v) FROM Video v JOIN v.station s WHERE v.isDeleted = false GROUP BY s.name ORDER BY COUNT(v) DESC")
     List<Object[]> countByStation(Pageable pageable);
+
+    @Query("SELECT c.name, COUNT(v) FROM Video v JOIN v.trainCategory c WHERE v.isDeleted = false GROUP BY c.name ORDER BY COUNT(v) DESC")
+    List<Object[]> countByTrainCategory(Pageable pageable);
 }

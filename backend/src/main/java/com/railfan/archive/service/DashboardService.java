@@ -121,7 +121,12 @@ public class DashboardService {
     }
 
     private List<CategoryPoint> buildTrainCategoryDistribution() {
-        // Re-use most recorded trains query for now; dedicated query added in Phase 3
-        return List.of();
+        return videoRepository.countByTrainCategory(PageRequest.of(0, 15))
+            .stream()
+            .map(r -> CategoryPoint.builder()
+                .name((String) r[0])
+                .count(((Number) r[1]).longValue())
+                .build())
+            .toList();
     }
 }
