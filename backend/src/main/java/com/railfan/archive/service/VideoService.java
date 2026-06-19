@@ -41,12 +41,24 @@ import java.util.stream.Collectors;
 public class VideoService {
 
     private final VideoRepository videoRepository;
+    private final UserRepository userRepository;
     private final TrainCategoryRepository trainCategoryRepository;
     private final LocoTypeRepository locoTypeRepository;
     private final LocoShedRepository locoShedRepository;
     private final StationRepository stationRepository;
     private final DuplicateAlertRepository duplicateAlertRepository;
     private final TagCollectionService tagCollectionService;
+
+    private User getCurrentUser() {
+        org.springframework.security.core.Authentication auth =
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new org.springframework.security.authentication.BadCredentialsException("Not authenticated");
+        }
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException("User not found: " + username));
+    }
 
     // ── Read operations ───────────────────────────────────────
 
@@ -63,11 +75,12 @@ public class VideoService {
         Boolean kavachFitted, Long collectionId,
         Pageable pageable
     ) {
+        User currentUser = getCurrentUser();
         Specification<Video> spec = VideoSpecification.build(
             q, uploadStatus, priority, trainNumber, trainName, locoNumber,
             locoTypeId, locoShedId, trainCategoryId, stationId,
             recordingDateFrom, recordingDateTo, uploadDateFrom, uploadDateTo,
-            kavachFitted, collectionId
+            kavachFitted, collectionId, currentUser.getId()
         );
         return videoRepository.findAll(spec, pageable).map(this::toSummary);
     }
@@ -75,8 +88,12 @@ public class VideoService {
     /** Get a single video by ID (throws VideoNotFoundException if deleted or missing) */
     @Transactional(readOnly = true)
     public VideoResponse findById(Long id) {
+        User currentUser = getCurrentUser();
         Video video = videoRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new VideoNotFoundException(id));
+        if (video.getUser() == null || !video.getUser().getId().equals(currentUser.getId())) {
+            throw new VideoNotFoundException(id);
+        }
         return toResponse(video);
     }
 
@@ -86,9 +103,11 @@ public class VideoService {
     @Transactional
     public VideoResponse create(VideoCreateRequest req) {
         validateUploadBusinessRules(req);
+        User currentUser = getCurrentUser();
 
         Video video = new Video();
         applyRequest(video, req);
+        video.setUser(currentUser);
         Video saved = videoRepository.save(video);
 
         // Async duplicate check
@@ -101,8 +120,13 @@ public class VideoService {
     /** Update an existing video */
     @Transactional
     public VideoResponse update(Long id, VideoCreateRequest req) {
+        User currentUser = getCurrentUser();
         Video video = videoRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new VideoNotFoundException(id));
+
+        if (video.getUser() == null || !video.getUser().getId().equals(currentUser.getId())) {
+            throw new VideoNotFoundException(id);
+        }
 
         validateUploadBusinessRules(req);
         applyRequest(video, req);
@@ -117,8 +141,13 @@ public class VideoService {
     public VideoResponse updateStatus(Long id, UploadStatus newStatus,
                                       LocalDate uploadDate, LocalTime uploadTime,
                                       LocalDate scheduledDate) {
+        User currentUser = getCurrentUser();
         Video video = videoRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new VideoNotFoundException(id));
+
+        if (video.getUser() == null || !video.getUser().getId().equals(currentUser.getId())) {
+            throw new VideoNotFoundException(id);
+        }
 
         if (newStatus == UploadStatus.UPLOADED) {
             if (uploadDate == null || uploadTime == null) {
@@ -141,8 +170,14 @@ public class VideoService {
     /** Soft-delete a video */
     @Transactional
     public void delete(Long id) {
+        User currentUser = getCurrentUser();
         Video video = videoRepository.findByIdAndIsDeletedFalse(id)
             .orElseThrow(() -> new VideoNotFoundException(id));
+
+        if (video.getUser() == null || !video.getUser().getId().equals(currentUser.getId())) {
+            throw new VideoNotFoundException(id);
+        }
+
         video.setIsDeleted(true);
         videoRepository.save(video);
         log.info("Soft-deleted video id={}", id);
@@ -151,9 +186,10 @@ public class VideoService {
     /** Bulk action on multiple videos */
     @Transactional
     public void bulkAction(BulkActionRequest req) {
+        User currentUser = getCurrentUser();
         List<Video> videos = videoRepository.findAllById(req.getVideoIds())
             .stream()
-            .filter(v -> !v.getIsDeleted())
+            .filter(v -> !v.getIsDeleted() && v.getUser() != null && v.getUser().getId().equals(currentUser.getId()))
             .toList();
 
         switch (req.getAction()) {
@@ -187,16 +223,17 @@ public class VideoService {
     @Transactional(readOnly = true)
     public List<VideoSummaryResponse> checkDuplicates(String trainNumber, String locoNumber,
                                                        LocalDate recordingDate, Long excludeId) {
+        User currentUser = getCurrentUser();
         Set<Video> duplicates = new HashSet<>();
 
         if (StringUtils.hasText(trainNumber)) {
             duplicates.addAll(
-                videoRepository.findPotentialDuplicatesByTrainAndDate(trainNumber, recordingDate, excludeId)
+                videoRepository.findPotentialDuplicatesByTrainAndDate(trainNumber, recordingDate, excludeId, currentUser)
             );
         }
         if (StringUtils.hasText(locoNumber)) {
             duplicates.addAll(
-                videoRepository.findPotentialDuplicatesByLocoAndDate(locoNumber, recordingDate, excludeId)
+                videoRepository.findPotentialDuplicatesByLocoAndDate(locoNumber, recordingDate, excludeId, currentUser)
             );
         }
         return duplicates.stream().map(this::toSummary).toList();
@@ -429,14 +466,20 @@ public class VideoService {
 
     /** Find and persist duplicate alerts for a newly created/updated video */
     private void checkAndSaveDuplicates(Video video) {
+        User currentUser = video.getUser();
+        if (currentUser == null) {
+            currentUser = getCurrentUser();
+        }
+        final User userParam = currentUser;
+
         if (video.getTrainNumber() != null && video.getRecordingDate() != null) {
             List<Video> dupes = videoRepository.findPotentialDuplicatesByTrainAndDate(
-                video.getTrainNumber(), video.getRecordingDate(), video.getId());
+                video.getTrainNumber(), video.getRecordingDate(), video.getId(), userParam);
             dupes.forEach(d -> saveDuplicateAlert(video, d, "Same train number + recording date"));
         }
         if (video.getLocoNumber() != null && video.getRecordingDate() != null) {
             List<Video> dupes = videoRepository.findPotentialDuplicatesByLocoAndDate(
-                video.getLocoNumber(), video.getRecordingDate(), video.getId());
+                video.getLocoNumber(), video.getRecordingDate(), video.getId(), userParam);
             dupes.forEach(d -> saveDuplicateAlert(video, d, "Same loco number + recording date"));
         }
     }

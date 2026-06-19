@@ -5,6 +5,7 @@ import com.railfan.archive.dto.response.DashboardChartsResponse.MonthlyPoint;
 import com.railfan.archive.dto.response.DashboardChartsResponse.CategoryPoint;
 import com.railfan.archive.dto.response.DashboardStatsResponse;
 import com.railfan.archive.dto.response.VideoSummaryResponse;
+import com.railfan.archive.entity.User;
 import com.railfan.archive.enums.UploadStatus;
 import com.railfan.archive.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -28,41 +29,54 @@ import java.util.Locale;
 public class DashboardService {
 
     private final VideoRepository videoRepository;
+    private final UserRepository userRepository;
     private final DuplicateAlertRepository duplicateAlertRepository;
     private final VideoService videoService;
+
+    private User getCurrentUser() {
+        org.springframework.security.core.Authentication auth =
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new org.springframework.security.authentication.BadCredentialsException("Not authenticated");
+        }
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException("User not found: " + username));
+    }
 
     /** All stat card values */
     public DashboardStatsResponse getStats() {
         LocalDate now = LocalDate.now();
+        User currentUser = getCurrentUser();
 
         return DashboardStatsResponse.builder()
-            .totalVideos(videoRepository.countByIsDeletedFalse())
-            .uploadedVideos(videoRepository.countByUploadStatusAndIsDeletedFalse(UploadStatus.UPLOADED))
-            .pendingVideos(videoRepository.countByUploadStatusAndIsDeletedFalse(UploadStatus.PENDING_UPLOAD))
-            .scheduledVideos(videoRepository.countByUploadStatusAndIsDeletedFalse(UploadStatus.SCHEDULED_UPLOAD))
-            .archivedVideos(videoRepository.countByUploadStatusAndIsDeletedFalse(UploadStatus.ARCHIVED))
-            .totalStorageBytes(videoRepository.sumFileSizeBytes())
-            .totalDurationSeconds(videoRepository.sumDurationSeconds())
-            .averageDurationSeconds(videoRepository.avgDurationSeconds())
-            .videosRecordedThisMonth(videoRepository.countRecordedInMonth(now.getYear(), now.getMonthValue()))
-            .videosUploadedThisMonth(videoRepository.countUploadedInMonth(now.getYear(), now.getMonthValue()))
-            .unresolvedDuplicates(duplicateAlertRepository.countByResolvedFalse())
+            .totalVideos(videoRepository.countByUserAndIsDeletedFalse(currentUser))
+            .uploadedVideos(videoRepository.countByUploadStatusAndUserAndIsDeletedFalse(UploadStatus.UPLOADED, currentUser))
+            .pendingVideos(videoRepository.countByUploadStatusAndUserAndIsDeletedFalse(UploadStatus.PENDING_UPLOAD, currentUser))
+            .scheduledVideos(videoRepository.countByUploadStatusAndUserAndIsDeletedFalse(UploadStatus.SCHEDULED_UPLOAD, currentUser))
+            .archivedVideos(videoRepository.countByUploadStatusAndUserAndIsDeletedFalse(UploadStatus.ARCHIVED, currentUser))
+            .totalStorageBytes(videoRepository.sumFileSizeBytes(currentUser))
+            .totalDurationSeconds(videoRepository.sumDurationSeconds(currentUser))
+            .averageDurationSeconds(videoRepository.avgDurationSeconds(currentUser))
+            .videosRecordedThisMonth(videoRepository.countRecordedInMonth(now.getYear(), now.getMonthValue(), currentUser))
+            .videosUploadedThisMonth(videoRepository.countUploadedInMonth(now.getYear(), now.getMonthValue(), currentUser))
+            .unresolvedDuplicates(duplicateAlertRepository.countByResolvedFalseAndUser(currentUser))
             .build();
     }
 
     /** All chart data for the last 12 months */
     public DashboardChartsResponse getCharts() {
         LocalDate twelveMonthsAgo = LocalDate.now().minusMonths(12).withDayOfMonth(1);
+        User currentUser = getCurrentUser();
 
         // Monthly recordings
-        List<Object[]> recRows  = videoRepository.countRecordingsByMonthSince(twelveMonthsAgo);
-        List<Object[]> uplRows  = videoRepository.countUploadsByMonthSince(twelveMonthsAgo);
-        List<Object[]> locoRows = videoRepository.findMostRecordedLocos(PageRequest.of(0, 10));
+        List<Object[]> recRows  = videoRepository.countRecordingsByMonthSince(twelveMonthsAgo, currentUser);
+        List<Object[]> uplRows  = videoRepository.countUploadsByMonthSince(twelveMonthsAgo, currentUser);
 
         // Loco type distribution
-        List<CategoryPoint> locoTypeDist = buildLocoTypeDistribution();
-        List<CategoryPoint> shedDist     = buildShedDistribution();
-        List<CategoryPoint> catDist      = buildTrainCategoryDistribution();
+        List<CategoryPoint> locoTypeDist = buildLocoTypeDistribution(currentUser);
+        List<CategoryPoint> shedDist     = buildShedDistribution(currentUser);
+        List<CategoryPoint> catDist      = buildTrainCategoryDistribution(currentUser);
 
         return DashboardChartsResponse.builder()
             .recordingsPerMonth(toMonthlyPoints(recRows))
@@ -75,12 +89,12 @@ public class DashboardService {
 
     /** 10 most recently added videos */
     public List<VideoSummaryResponse> getRecentVideos() {
+        User currentUser = getCurrentUser();
         return videoRepository
-            .findAll(PageRequest.of(0, 10,
+            .findByUserAndIsDeletedFalse(currentUser, PageRequest.of(0, 10,
                 org.springframework.data.domain.Sort.by("createdAt").descending()))
             .getContent()
             .stream()
-            .filter(v -> !v.getIsDeleted())
             .map(videoService::toSummary)
             .toList();
     }
@@ -100,8 +114,8 @@ public class DashboardService {
         return points;
     }
 
-    private List<CategoryPoint> buildLocoTypeDistribution() {
-        return videoRepository.findMostRecordedLocoTypes(PageRequest.of(0, 15))
+    private List<CategoryPoint> buildLocoTypeDistribution(User user) {
+        return videoRepository.findMostRecordedLocoTypes(PageRequest.of(0, 15), user)
             .stream()
             .map(r -> CategoryPoint.builder()
                 .name((String) r[0])
@@ -110,8 +124,8 @@ public class DashboardService {
             .toList();
     }
 
-    private List<CategoryPoint> buildShedDistribution() {
-        return videoRepository.findMostRecordedTrains(PageRequest.of(0, 10))
+    private List<CategoryPoint> buildShedDistribution(User user) {
+        return videoRepository.findMostRecordedTrains(PageRequest.of(0, 10), user)
             .stream()
             .map(r -> CategoryPoint.builder()
                 .name((String) r[0])
@@ -120,8 +134,8 @@ public class DashboardService {
             .toList();
     }
 
-    private List<CategoryPoint> buildTrainCategoryDistribution() {
-        return videoRepository.countByTrainCategory(PageRequest.of(0, 15))
+    private List<CategoryPoint> buildTrainCategoryDistribution(User user) {
+        return videoRepository.countByTrainCategory(PageRequest.of(0, 15), user)
             .stream()
             .map(r -> CategoryPoint.builder()
                 .name((String) r[0])

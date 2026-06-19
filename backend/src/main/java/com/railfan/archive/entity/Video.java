@@ -183,6 +183,10 @@ public class Video {
     @Builder.Default
     private Set<RailCollection> collections = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     // ── Audit ─────────────────────────────────────────────────
     @Column(nullable = false)
     private Boolean isDeleted = false;

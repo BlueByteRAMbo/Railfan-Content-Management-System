@@ -37,6 +37,18 @@ public class ImportExportService {
 
     private final VideoRepository videoRepository;
     private final VideoService videoService; // to re-use create logic
+    private final com.railfan.archive.repository.UserRepository userRepository;
+
+    private com.railfan.archive.entity.User getCurrentUser() {
+        org.springframework.security.core.Authentication auth =
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new org.springframework.security.authentication.BadCredentialsException("Not authenticated");
+        }
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException("User not found: " + username));
+    }
 
     // ── EXPORT ──────────────────────────────────────────────────
 
@@ -48,11 +60,12 @@ public class ImportExportService {
         LocalDate uploadDateFrom, LocalDate uploadDateTo,
         Boolean kavachFitted, Long collectionId
     ) {
+        com.railfan.archive.entity.User currentUser = getCurrentUser();
         Specification<Video> spec = VideoSpecification.build(
             q, uploadStatus, priority, trainNumber, trainName, locoNumber,
             locoTypeId, locoShedId, trainCategoryId, stationId,
             recordingDateFrom, recordingDateTo, uploadDateFrom, uploadDateTo,
-            kavachFitted, collectionId
+            kavachFitted, collectionId, currentUser.getId()
         );
         return videoRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "recordingDate"));
     }

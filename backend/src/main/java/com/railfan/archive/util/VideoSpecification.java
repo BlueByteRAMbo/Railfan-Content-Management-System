@@ -41,13 +41,19 @@ public class VideoSpecification {
         LocalDate uploadDateFrom,
         LocalDate uploadDateTo,
         Boolean kavachFitted,
-        Long collectionId
+        Long collectionId,
+        Long userId
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             // Always exclude soft-deleted
             predicates.add(cb.isFalse(root.get("isDeleted")));
+
+            // Filter by Owner/User ID
+            if (userId != null) {
+                predicates.add(cb.equal(root.get("user").get("id"), userId));
+            }
 
             // Full-text search across title, trainName, trainNumber, locoNumber, notes
             if (StringUtils.hasText(q)) {

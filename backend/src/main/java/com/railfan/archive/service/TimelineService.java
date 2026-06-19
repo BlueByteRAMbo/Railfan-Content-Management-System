@@ -2,6 +2,8 @@ package com.railfan.archive.service;
 
 import com.railfan.archive.dto.response.TimelineMonthResponse;
 import com.railfan.archive.repository.VideoRepository;
+import com.railfan.archive.repository.UserRepository;
+import com.railfan.archive.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,29 +18,43 @@ import java.util.Locale;
 public class TimelineService {
 
     private final VideoRepository videoRepository;
+    private final UserRepository userRepository;
+
+    private User getCurrentUser() {
+        org.springframework.security.core.Authentication auth =
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new org.springframework.security.authentication.BadCredentialsException("Not authenticated");
+        }
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException("User not found: " + username));
+    }
 
     @Transactional(readOnly = true)
     public List<TimelineMonthResponse> getRecordingTimeline(Integer year, Integer month) {
+        User currentUser = getCurrentUser();
         List<Object[]> results;
         if (year != null && month != null) {
-            results = videoRepository.countRecordingsByDay(year, month);
+            results = videoRepository.countRecordingsByDay(year, month, currentUser);
         } else if (year != null) {
-            results = videoRepository.countRecordingsByMonth(year);
+            results = videoRepository.countRecordingsByMonth(year, currentUser);
         } else {
-            results = videoRepository.countRecordingsByMonthAllTime();
+            results = videoRepository.countRecordingsByMonthAllTime(currentUser);
         }
         return mapToTimeline(results, year, month);
     }
 
     @Transactional(readOnly = true)
     public List<TimelineMonthResponse> getUploadTimeline(Integer year, Integer month) {
+        User currentUser = getCurrentUser();
         List<Object[]> results;
         if (year != null && month != null) {
-            results = videoRepository.countUploadsByDay(year, month);
+            results = videoRepository.countUploadsByDay(year, month, currentUser);
         } else if (year != null) {
-            results = videoRepository.countUploadsByMonth(year);
+            results = videoRepository.countUploadsByMonth(year, currentUser);
         } else {
-            results = videoRepository.countUploadsByMonthAllTime();
+            results = videoRepository.countUploadsByMonthAllTime(currentUser);
         }
         return mapToTimeline(results, year, month);
     }

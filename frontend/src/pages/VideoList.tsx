@@ -127,11 +127,11 @@ export default function VideoList() {
       <AnimatePresence>
         {showFilters && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden mb-6"
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="mb-6"
           >
             <div className="glass-card p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div>
@@ -305,15 +305,9 @@ export default function VideoList() {
         {/* Mobile Card List */}
         <div className="md:hidden flex flex-col divide-y divide-white/5">
           {isLoading ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="p-4 flex gap-4">
-                <div className="w-20 h-14 bg-white/5 rounded animate-pulse" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-white/5 rounded w-3/4 animate-pulse" />
-                  <div className="h-3 bg-white/5 rounded w-1/2 animate-pulse" />
-                </div>
-              </div>
-            ))
+            <div className="py-12">
+              <SignalLoader message="FETCHING VIDEOS..." />
+            </div>
           ) : page?.content.length === 0 ? (
             <div className="text-center py-12 text-slate-500 text-sm">
               No videos found. Add your first video to get started!

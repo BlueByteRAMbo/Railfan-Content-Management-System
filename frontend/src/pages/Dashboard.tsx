@@ -116,9 +116,13 @@ export default function Dashboard() {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4 mb-6"
       >
         {statsLoading ? (
-          <div className="col-span-full flex justify-center py-12 scale-75">
-            <SignalLoader message="LOADING STATS..." />
-          </div>
+          <>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING VIDEOS" /></div>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING UPLOADED" /></div>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING PENDING" /></div>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING SCHEDULED" /></div>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING ARCHIVED" /></div>
+          </>
         ) : (
           <>
             <StatCard label="Total Videos" value={stats?.totalVideos ?? 0} icon={Video} accent="from-brand-600" />
@@ -138,9 +142,12 @@ export default function Dashboard() {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8"
       >
         {statsLoading ? (
-          <div className="col-span-full flex justify-center py-12 scale-75">
-            <SignalLoader message="LOADING MORE STATS..." />
-          </div>
+          <>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING STORAGE" /></div>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING TIME" /></div>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING RECORDED" /></div>
+            <div className="glass-card p-4 sm:p-6 min-h-[140px] flex items-center justify-center"><SignalLoader size="sm" message="LOADING PENDING ACTION" /></div>
+          </>
         ) : (
           <>
             <StatCard label="Total Storage" value={formatBytes(stats?.totalStorageBytes ?? 0)} icon={HardDrive} accent="from-purple-500" />
@@ -148,8 +155,7 @@ export default function Dashboard() {
             <StatCard label="Recorded This Month" value={stats?.videosRecordedThisMonth ?? 0} icon={TrendingUp} accent="from-cyan-500" sub="new recordings" />
             <StatCard label="Pending Action" value={(stats?.pendingVideos ?? 0) + (stats?.scheduledVideos ?? 0)} icon={Timer} accent="from-rose-500" sub="uploads left" />
           </>
-        )
-        }
+        )}
       </motion.div>
 
       {/* ── Alert banner ── */}
