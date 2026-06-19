@@ -157,10 +157,18 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
 
     @Query("""
         SELECT v.locoNumber, COUNT(v) as cnt FROM Video v
-        WHERE v.isDeleted = false AND v.locoNumber IS NOT NULL
+        WHERE v.isDeleted = false AND v.locoNumber IS NOT NULL AND TRIM(v.locoNumber) != ''
         GROUP BY v.locoNumber ORDER BY cnt DESC
         """)
     List<Object[]> findMostRecordedLocos(Pageable pageable);
+
+    @Query("""
+        SELECT lt.name, COUNT(v) as cnt FROM Video v
+        JOIN v.locoType lt
+        WHERE v.isDeleted = false AND lt.name IS NOT NULL AND TRIM(lt.name) != ''
+        GROUP BY lt.name ORDER BY cnt DESC
+        """)
+    List<Object[]> findMostRecordedLocoTypes(Pageable pageable);
 
     // ── Upload planner ────────────────────────────────────────
     List<Video> findByUploadStatusAndScheduledUploadDateBetweenAndIsDeletedFalseOrderByScheduledUploadDateAsc(
@@ -170,18 +178,18 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
     // ── YouTube ID check ──────────────────────────────────────
     boolean existsByYoutubeVideoIdAndIsDeletedFalse(String youtubeVideoId);
     // ── Deep Statistics ───────────────────────────────────────
-    @Query("SELECT v.trainName, COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.trainName IS NOT NULL GROUP BY v.trainName ORDER BY COUNT(v) DESC")
+    @Query("SELECT v.trainName, COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.trainName IS NOT NULL AND TRIM(v.trainName) != '' GROUP BY v.trainName ORDER BY COUNT(v) DESC")
     List<Object[]> countByTrainName(Pageable pageable);
 
-    @Query("SELECT v.locoNumber, COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.locoNumber IS NOT NULL GROUP BY v.locoNumber ORDER BY COUNT(v) DESC")
+    @Query("SELECT v.locoNumber, COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.locoNumber IS NOT NULL AND TRIM(v.locoNumber) != '' GROUP BY v.locoNumber ORDER BY COUNT(v) DESC")
     List<Object[]> countByLocoNumber(Pageable pageable);
 
-    @Query("SELECT s.name, COUNT(v) FROM Video v JOIN v.locoShed s WHERE v.isDeleted = false GROUP BY s.name ORDER BY COUNT(v) DESC")
+    @Query("SELECT s.name, COUNT(v) FROM Video v JOIN v.locoShed s WHERE v.isDeleted = false AND s.name IS NOT NULL AND TRIM(s.name) != '' GROUP BY s.name ORDER BY COUNT(v) DESC")
     List<Object[]> countByLocoShed(Pageable pageable);
 
-    @Query("SELECT s.name, COUNT(v) FROM Video v JOIN v.station s WHERE v.isDeleted = false GROUP BY s.name ORDER BY COUNT(v) DESC")
+    @Query("SELECT s.name, COUNT(v) FROM Video v JOIN v.station s WHERE v.isDeleted = false AND s.name IS NOT NULL AND TRIM(s.name) != '' GROUP BY s.name ORDER BY COUNT(v) DESC")
     List<Object[]> countByStation(Pageable pageable);
 
-    @Query("SELECT c.name, COUNT(v) FROM Video v JOIN v.trainCategory c WHERE v.isDeleted = false GROUP BY c.name ORDER BY COUNT(v) DESC")
+    @Query("SELECT c.name, COUNT(v) FROM Video v JOIN v.trainCategory c WHERE v.isDeleted = false AND c.name IS NOT NULL AND TRIM(c.name) != '' GROUP BY c.name ORDER BY COUNT(v) DESC")
     List<Object[]> countByTrainCategory(Pageable pageable);
 }

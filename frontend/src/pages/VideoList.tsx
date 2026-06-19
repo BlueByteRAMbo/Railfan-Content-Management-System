@@ -42,6 +42,7 @@ export default function VideoList() {
     page: 0, size: 20, sort: 'recordingDate', direction: 'DESC'
   })
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [showFilters, setShowFilters] = useState(false)
 
   const { data: page, isLoading } = useQuery({
     queryKey: ['videos', filters],
@@ -114,11 +115,113 @@ export default function VideoList() {
           <option value="UPLOADED">Uploaded</option>
           <option value="ARCHIVED">Archived</option>
         </select>
-        <button className="btn-secondary flex items-center gap-2">
+        <button 
+          onClick={() => setShowFilters(!showFilters)} 
+          className={`btn-secondary flex items-center gap-2 transition-all ${showFilters ? 'bg-brand-500/10 border-brand-500 text-brand-400' : ''}`}
+        >
           <Filter size={15} />
           Filters
         </button>
       </div>
+
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden mb-6"
+          >
+            <div className="glass-card p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Recorded From</label>
+                <input
+                  type="date"
+                  className="form-input text-xs"
+                  value={filters.recordingDateFrom || ''}
+                  onChange={(e) => setFilters(f => ({ ...f, recordingDateFrom: e.target.value || undefined, page: 0 }))}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Recorded To</label>
+                <input
+                  type="date"
+                  className="form-input text-xs"
+                  value={filters.recordingDateTo || ''}
+                  onChange={(e) => setFilters(f => ({ ...f, recordingDateTo: e.target.value || undefined, page: 0 }))}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Priority</label>
+                <select
+                  className="form-input text-xs"
+                  value={filters.priority || ''}
+                  onChange={(e) => setFilters(f => ({ ...f, priority: e.target.value as any || undefined, page: 0 }))}
+                >
+                  <option value="">All Priorities</option>
+                  <option value="HIGH">High</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="LOW">Low</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Kavach Status</label>
+                <select
+                  className="form-input text-xs"
+                  value={filters.kavachFitted === undefined ? '' : String(filters.kavachFitted)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFilters(f => ({
+                      ...f,
+                      kavachFitted: val === '' ? undefined : val === 'true',
+                      page: 0
+                    }));
+                  }}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="true">Kavach Fitted</option>
+                  <option value="false">Not Fitted</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Sort By</label>
+                <select
+                  className="form-input text-xs"
+                  value={filters.sort || 'recordingDate'}
+                  onChange={(e) => setFilters(f => ({ ...f, sort: e.target.value, page: 0 }))}
+                >
+                  <option value="recordingDate">Recording Date</option>
+                  <option value="title">Title</option>
+                  <option value="durationSeconds">Duration</option>
+                  <option value="fileSizeBytes">File Size</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Direction</label>
+                <select
+                  className="form-input text-xs"
+                  value={filters.direction || 'DESC'}
+                  onChange={(e) => setFilters(f => ({ ...f, direction: e.target.value as 'ASC' | 'DESC', page: 0 }))}
+                >
+                  <option value="DESC">Descending</option>
+                  <option value="ASC">Ascending</option>
+                </select>
+              </div>
+              <div className="sm:col-span-2 md:col-span-2 flex items-end justify-end">
+                <button
+                  onClick={() => {
+                    setFilters({ page: 0, size: 20, sort: 'recordingDate', direction: 'DESC' });
+                  }}
+                  className="btn-secondary py-1.5 px-4 text-xs w-full sm:w-auto bg-white/5 hover:bg-white/10 border-white/10"
+                >
+                  Reset Filters
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Table & Cards */}
       <div className="glass-card overflow-hidden">

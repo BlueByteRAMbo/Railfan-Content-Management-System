@@ -101,7 +101,7 @@ public class DashboardService {
     }
 
     private List<CategoryPoint> buildLocoTypeDistribution() {
-        return videoRepository.findMostRecordedLocos(PageRequest.of(0, 15))
+        return videoRepository.findMostRecordedLocoTypes(PageRequest.of(0, 15))
             .stream()
             .map(r -> CategoryPoint.builder()
                 .name((String) r[0])
