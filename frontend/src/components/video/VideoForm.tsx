@@ -155,7 +155,7 @@ export default function VideoForm({
 }: VideoFormProps) {
   const { data: categories = [] }  = useTrainCategories()
   const { data: locoTypes = [] }   = useLocoTypes()
-  const { data: locoSheds = [] }   = useLocoSheds()
+  const { data: locoSheds = [], isLoading: shedsLoading } = useLocoSheds()
   const { data: collections = [] } = useCollections()
 
   const [ytLoading, setYtLoading] = useState(false)
@@ -463,6 +463,7 @@ export default function VideoForm({
                           value={field.value}
                           onChange={field.onChange}
                           placeholder="— Search shed —"
+                          isLoading={shedsLoading}
                         />
                       )}
                     />
@@ -509,6 +510,7 @@ export default function VideoForm({
                   value={field.value}
                   onChange={field.onChange}
                   placeholder="— Search shed —"
+                  isLoading={shedsLoading}
                 />
               )}
             />
@@ -586,6 +588,7 @@ export default function VideoForm({
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="— Search shed —"
+                        isLoading={shedsLoading}
                       />
                     )}
                   />

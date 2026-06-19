@@ -68,14 +68,14 @@ export default function LoginPage() {
   })
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#19181c' }}>
+    <div className="min-h-screen flex relative" style={{ background: '#19181c' }}>
 
       {/* ── Left panel — Animated Railway Scene ── */}
-      <div className="hidden lg:flex lg:flex-col lg:w-[58%] relative overflow-hidden">
+      <div className="absolute inset-0 z-0 lg:relative lg:flex lg:flex-col lg:w-[58%] overflow-hidden">
         <VideoBackground />
 
         {/* Bottom-left identity copy */}
-        <div className="absolute bottom-10 left-10 z-20 pointer-events-none">
+        <div className="hidden lg:block absolute bottom-10 left-10 z-20 pointer-events-none">
           <div className="flex items-center gap-3 mb-4">
             <img src="/RF_Logo.png" alt="Railfan Archive" className="w-8 h-8 object-contain" />
             <p className="text-[11px] font-semibold tracking-[0.18em] uppercase"
@@ -97,24 +97,11 @@ export default function LoginPage() {
 
       {/* ── Right panel — Form ── */}
       <div
-        className="flex-1 flex flex-col justify-between p-8 lg:p-12 relative"
+        className="flex-1 flex flex-col justify-between p-8 lg:p-12 relative z-10 bg-black/70 backdrop-blur-md lg:bg-[#211f1c] lg:backdrop-blur-none"
         style={{
-          background: '#211f1c',
           borderLeft: '1px solid rgba(255,255,255,0.06)',
         }}
       >
-        {/* Mobile: mini railway strip */}
-        <div className="lg:hidden absolute top-0 left-0 right-0 h-24 overflow-hidden opacity-25 pointer-events-none">
-          <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice" className="w-full h-full">
-            <rect width="400" height="96" fill="#0e0d0b"/>
-            <path d="M 50 96 L 185 30" stroke="#2e2b26" strokeWidth="3"/>
-            <path d="M 80 96 L 195 30" stroke="#2e2b26" strokeWidth="3"/>
-            <path d="M 350 96 L 215 30" stroke="#2e2b26" strokeWidth="3"/>
-            <path d="M 320 96 L 205 30" stroke="#2e2b26" strokeWidth="3"/>
-            <circle cx="200" cy="18" r="6" fill="#C98A2C"/>
-            <circle cx="200" cy="18" r="14" fill="#C98A2C" fillOpacity="0.15"/>
-          </svg>
-        </div>
 
         {/* Form area */}
         <div className="flex-1 flex flex-col justify-center max-w-sm w-full mx-auto">

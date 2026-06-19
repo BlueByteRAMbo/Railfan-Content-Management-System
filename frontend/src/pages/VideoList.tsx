@@ -5,6 +5,7 @@ import { videosApi } from '../api/services'
 import type { VideoFilterParams, UploadStatus } from '../types'
 import { Plus, Search, Filter, Clock, HardDrive } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import SignalLoader from '../components/ui/SignalLoader'
 
 const STATUS_LABELS: Record<UploadStatus, string> = {
   PENDING_UPLOAD:   'Pending',
@@ -143,13 +144,11 @@ export default function VideoList() {
             </thead>
             <tbody>
               {isLoading ? (
-                Array.from({ length: 8 }).map((_, i) => (
-                  <tr key={i}>
-                    {Array.from({ length: 8 }).map((_, j) => (
-                      <td key={j}><div className="h-4 bg-white/5 rounded animate-pulse" /></td>
-                    ))}
-                  </tr>
-                ))
+                <tr>
+                  <td colSpan={9} className="py-12">
+                    <SignalLoader message="FETCHING VIDEOS..." />
+                  </td>
+                </tr>
               ) : page?.content.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="text-center py-16 text-slate-600">

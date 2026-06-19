@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, ChevronDown, Check } from 'lucide-react';
+import SignalLoader from './SignalLoader';
 
 export interface SearchableOption {
   value: string | number;
@@ -12,6 +13,7 @@ interface SearchableSelectProps {
   onChange: (value: string | number) => void;
   placeholder?: string;
   className?: string;
+  isLoading?: boolean;
 }
 
 export default function SearchableSelect({
@@ -20,6 +22,7 @@ export default function SearchableSelect({
   onChange,
   placeholder = 'Select an option...',
   className = '',
+  isLoading = false,
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,7 +71,11 @@ export default function SearchableSelect({
             />
           </div>
           <div className="max-h-60 overflow-y-auto p-1 custom-scrollbar">
-            {filteredOptions.length === 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center scale-75 transform origin-top py-4">
+                <SignalLoader message="LOADING SHEDS..." />
+              </div>
+            ) : filteredOptions.length === 0 ? (
               <div className="p-3 text-center text-sm text-slate-500">No results found.</div>
             ) : (
               filteredOptions.map((opt) => (
