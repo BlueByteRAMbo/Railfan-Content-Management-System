@@ -4,7 +4,7 @@ import type {
   Video, VideoSummary, VideoCreateRequest, VideoUpdateRequest,
   PagedResponse, VideoFilterParams, DashboardStats, DashboardCharts,
   TrainCategory, LocoType, LocoShed, Station, Tag, RailCollection,
-  BulkActionRequest, TimelineMonth, DuplicateAlert,
+  BulkActionRequest, TimelineMonth, DuplicateAlert, TrainHistoryResponse
 } from '../types';
 
 // ── Auth ──────────────────────────────────────────────────────

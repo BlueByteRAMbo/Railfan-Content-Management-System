@@ -121,7 +121,7 @@ export default function TrainRunTracker() {
 
               {/* History Timeline */}
               <div className="relative border-l border-white/5 ml-4 pl-6 space-y-8">
-                {history.map((run, runIdx) => (
+                {history.map((run) => (
                   <div key={run.date} className="relative group">
                     {/* Timeline node icon */}
                     <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-900 border-2 border-brand-500 shadow-[0_0_8px_rgba(217,142,4,0.5)] transition-all group-hover:scale-125" />
@@ -142,7 +142,7 @@ export default function TrainRunTracker() {
 
                     {/* Appearances list for the date */}
                     <div className="grid grid-cols-1 gap-3">
-                      {run.appearances.map((app, appIdx) => (
+                      {run.appearances.map((app: any, appIdx: number) => (
                         <div key={appIdx} className="glass-card p-4 hover:border-white/10 transition-colors">
                           <div className="flex flex-wrap items-start justify-between gap-4">
                             <div>
