@@ -3,12 +3,14 @@ package com.railfan.archive.controller;
 import com.railfan.archive.dto.response.StatCountResponse;
 import com.railfan.archive.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -23,29 +25,37 @@ public class StatisticsController {
 
     @GetMapping("/most-recorded-trains")
     public ResponseEntity<List<StatCountResponse>> getMostRecordedTrains(
-        @RequestParam(defaultValue = "10") int limit
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return ResponseEntity.ok(statisticsService.getMostRecordedTrains(limit));
+        return ResponseEntity.ok(statisticsService.getMostRecordedTrains(limit, startDate, endDate));
     }
 
     @GetMapping("/most-recorded-locos")
     public ResponseEntity<List<StatCountResponse>> getMostRecordedLocos(
-        @RequestParam(defaultValue = "10") int limit
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return ResponseEntity.ok(statisticsService.getMostRecordedLocos(limit));
+        return ResponseEntity.ok(statisticsService.getMostRecordedLocos(limit, startDate, endDate));
     }
 
     @GetMapping("/most-recorded-sheds")
     public ResponseEntity<List<StatCountResponse>> getMostRecordedSheds(
-        @RequestParam(defaultValue = "10") int limit
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return ResponseEntity.ok(statisticsService.getMostRecordedSheds(limit));
+        return ResponseEntity.ok(statisticsService.getMostRecordedSheds(limit, startDate, endDate));
     }
 
     @GetMapping("/most-recorded-stations")
     public ResponseEntity<List<StatCountResponse>> getMostRecordedStations(
-        @RequestParam(defaultValue = "10") int limit
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return ResponseEntity.ok(statisticsService.getMostRecordedStations(limit));
+        return ResponseEntity.ok(statisticsService.getMostRecordedStations(limit, startDate, endDate));
     }
 }

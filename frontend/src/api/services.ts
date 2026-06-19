@@ -92,6 +92,8 @@ export const tagsApi = {
   getAll:        ()          => apiClient.get<Tag[]>('/api/tags'),
   autocomplete:  (q: string) => apiClient.get<Tag[]>('/api/tags/autocomplete', { params: { q } }),
   create:        (name: string) => apiClient.post<Tag>('/api/tags', { name }),
+  update:        (id: number, name: string) => apiClient.put<Tag>(`/api/tags/${id}`, { name }),
+  delete:        (id: number) => apiClient.delete(`/api/tags/${id}`),
 };
 
 // ── Collections ───────────────────────────────────────────────
@@ -133,10 +135,15 @@ export const duplicatesApi = {
 
 // ── Statistics ────────────────────────────────────────────────
 export const statsApi = {
-  getMostRecordedTrains:  (limit?: number) => apiClient.get('/api/stats/most-recorded-trains', { params: { limit } }),
-  getMostRecordedLocos:   (limit?: number) => apiClient.get('/api/stats/most-recorded-locos', { params: { limit } }),
-  getMostRecordedSheds:   (limit?: number) => apiClient.get('/api/stats/most-recorded-sheds', { params: { limit } }),
-  getMostRecordedStations:(limit?: number) => apiClient.get('/api/stats/most-recorded-stations', { params: { limit } }),
+  getMostRecordedTrains:  (limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-trains', { params: { limit, startDate, endDate } }),
+  getMostRecordedLocos:   (limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-locos', { params: { limit, startDate, endDate } }),
+  getMostRecordedSheds:   (limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-sheds', { params: { limit, startDate, endDate } }),
+  getMostRecordedStations:(limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-stations', { params: { limit, startDate, endDate } }),
   getUploadFrequency:     ()               => apiClient.get('/api/stats/upload-frequency'),
   getAvgDaysBetween:      ()               => apiClient.get('/api/stats/avg-days-between'),
+};
+
+// ── Train History ─────────────────────────────────────────────
+export const trainsApi = {
+  getHistory: (trainNumber: string) => apiClient.get<TrainHistoryResponse[]>(`/api/trains/${trainNumber}/history`),
 };

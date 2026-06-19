@@ -18,12 +18,13 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      token: null,
-      user: null,
-      isAuthenticated: false,
+      token: localStorage.getItem('access_token') || null,
+      user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
+      isAuthenticated: !!localStorage.getItem('access_token'),
 
       setAuth: (auth: AuthResponse) => {
         localStorage.setItem('access_token', auth.accessToken);
+        localStorage.setItem('user', JSON.stringify({ username: auth.username, email: auth.email, role: auth.role }));
         set({
           token: auth.accessToken,
           user: { username: auth.username, email: auth.email, role: auth.role },
@@ -33,6 +34,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
         set({ token: null, user: null, isAuthenticated: false });
       },
     }),

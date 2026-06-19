@@ -48,4 +48,16 @@ public class TagController {
         Tag tag = tagCollectionService.findOrCreateTag(body.get("name"));
         return ResponseEntity.status(HttpStatus.CREATED).body(tag);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Tag> update(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        Tag updated = tagCollectionService.updateTag(id, body.get("name"));
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        tagCollectionService.deleteTag(id);
+        return ResponseEntity.noContent().build();
+    }
 }

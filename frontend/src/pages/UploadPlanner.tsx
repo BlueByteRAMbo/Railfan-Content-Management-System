@@ -47,8 +47,7 @@ export default function UploadPlanner() {
                 <div className="flex-1 min-w-0 w-full">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded flex items-center gap-1">
-                      <CalendarIcon size={12} /> Releases: {/* Wait, scheduled upload date is not in VideoSummary by default, it is in full video! Let's display recording date if scheduled is missing */}
-                      {v.recordingDate}
+                      <CalendarIcon size={12} /> Releases: {v.scheduledUploadDate || 'Not scheduled'}
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-slate-200 truncate">{v.title}</h3>

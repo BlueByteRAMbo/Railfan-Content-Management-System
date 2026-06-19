@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/authStore'
 import {
   LayoutDashboard, Video, Clock, CalendarRange, Calendar,
   ListTodo, BookMarked, BarChart3, FileInput,
-  Zap, LogOut, ChevronRight, AlertTriangle, Menu
+  Zap, LogOut, ChevronRight, AlertTriangle, Menu, Sparkles
 } from 'lucide-react'
 
 const navSections = [
@@ -29,6 +29,7 @@ const navSections = [
       { to: '/timeline',   icon: Clock,           label: 'Timeline' },
       { to: '/calendar',   icon: Calendar,        label: 'Calendar' },
       { to: '/collections',icon: BookMarked,      label: 'Collections' },
+      { to: '/train-tracker', icon: Sparkles,     label: 'Train Tracker' },
     ]
   },
   {
@@ -99,6 +100,34 @@ export default function Sidebar({
           <button onClick={toggleCollapse} className="text-slate-400 hover:text-white transition-colors">
             <Menu size={18} />
           </button>
+        </div>
+      )}
+
+      {/* Global Search */}
+      {!isCollapsed && (
+        <div className="px-4 py-2 mt-2">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const q = (e.currentTarget.elements.namedItem('q') as HTMLInputElement).value;
+              if (q.trim()) {
+                navigate(`/videos?q=${encodeURIComponent(q.trim())}`);
+              }
+            }}
+            className="relative"
+          >
+            <input
+              type="text"
+              name="q"
+              placeholder="Search archive..."
+              className="w-full bg-white/5 border border-white/10 rounded-lg py-1.5 pl-9 pr-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500/50 transition-colors"
+            />
+            <span className="absolute left-3 top-2.5 text-slate-500 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </span>
+          </form>
         </div>
       )}
 

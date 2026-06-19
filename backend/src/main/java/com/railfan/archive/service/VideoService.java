@@ -338,6 +338,7 @@ public class VideoService {
             .fileSizeBytes(v.getFileSizeBytes())
             .thumbnail(v.getThumbnail())
             .youtubeVideoId(v.getYoutubeVideoId())
+            .scheduledUploadDate(v.getScheduledUploadDate())
             .kavachFitted(v.getKavachFitted())
             .tagNames(v.getTags().stream().map(Tag::getName).toList())
             .build();

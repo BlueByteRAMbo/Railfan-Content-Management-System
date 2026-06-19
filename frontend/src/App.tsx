@@ -19,6 +19,7 @@ import DuplicateResolver from './pages/DuplicateResolver'
 import CollectionsTagsManager from './pages/CollectionsTagsManager'
 import QuickAddView from './pages/QuickAddView'
 import ImportExportView from './pages/ImportExportView'
+import TrainRunTracker from './pages/TrainRunTracker'
 
 // ── Protected route wrapper ───────────────────────────────────
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -67,6 +68,7 @@ export default function App() {
                   <Route path="/duplicates"    element={<PageTransition><DuplicateResolver /></PageTransition>} />
                   <Route path="/quick-add"     element={<PageTransition><QuickAddView /></PageTransition>} />
                   <Route path="/import-export" element={<PageTransition><ImportExportView /></PageTransition>} />
+                  <Route path="/train-tracker" element={<PageTransition><TrainRunTracker /></PageTransition>} />
 
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

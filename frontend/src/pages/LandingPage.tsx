@@ -145,40 +145,7 @@ function CountUp({ to, duration = 1800, suffix = '' }: { to: number; duration?: 
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>
 }
 
-// ─────────────────────────────────────────────────────────────
-// TRAIN SILHOUETTE (landscape, smaller for landing bg)
-// ─────────────────────────────────────────────────────────────
-const LandingTrain = () => (
-  <svg viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg" className="w-[280px] h-[60px]"
-    style={{ filter: 'drop-shadow(0 2px 12px rgba(201,138,44,0.25))' }}>
-    <defs>
-      <radialGradient id="landingBeam" cx="0%" cy="50%" r="100%">
-        <stop offset="0%" stopColor="#C98A2C" stopOpacity="0.8"/>
-        <stop offset="100%" stopColor="#C98A2C" stopOpacity="0"/>
-      </radialGradient>
-    </defs>
-    <polygon points="14,20 -90,6 -90,40" fill="url(#landingBeam)" opacity="0.6"/>
-    <rect x="18" y="16" width="150" height="26" rx="3" fill="#1a1714"/>
-    <rect x="160" y="10" width="42" height="32" rx="2.5" fill="#1e1b18"/>
-    <rect x="158" y="8" width="46" height="6" rx="1.5" fill="#252118"/>
-    <rect x="173" y="14" width="18" height="11" rx="1.5" fill="#0d0c09"/>
-    <rect x="8" y="19" width="13" height="19" rx="2.5" fill="#201d1a"/>
-    <rect x="6" y="23" width="7" height="6" rx="0.8" fill="#C98A2C" opacity="0.9"/>
-    <circle cx="6" cy="26" r="4" fill="#C98A2C" opacity="0.3"/>
-    <rect x="18" y="29" width="150" height="2.5" rx="1" fill="#C98A2C" opacity="0.45"/>
-    <rect x="160" y="29" width="42" height="2.5" rx="1" fill="#C98A2C" opacity="0.45"/>
-    <circle cx="38" cy="48" r="7" fill="#111" stroke="#2a2520" strokeWidth="1.2"/>
-    <circle cx="38" cy="48" r="3.5" fill="#1a1714"/>
-    <circle cx="60" cy="48" r="7" fill="#111" stroke="#2a2520" strokeWidth="1.2"/>
-    <circle cx="60" cy="48" r="3.5" fill="#1a1714"/>
-    <circle cx="140" cy="48" r="7" fill="#111" stroke="#2a2520" strokeWidth="1.2"/>
-    <circle cx="140" cy="48" r="3.5" fill="#1a1714"/>
-    <circle cx="162" cy="48" r="7" fill="#111" stroke="#2a2520" strokeWidth="1.2"/>
-    <circle cx="162" cy="48" r="3.5" fill="#1a1714"/>
-    <rect x="2" y="28" width="8" height="4" rx="0.8" fill="#1e1b18"/>
-  </svg>
-)
-
+// Train silhouette removed per user request
 // ─────────────────────────────────────────────────────────────
 // FEATURE CARD (improved)
 // ─────────────────────────────────────────────────────────────
@@ -291,15 +258,10 @@ export default function LandingPage() {
         </motion.div>
       </div>
 
-      {/* ── Animated background train ── */}
+      {/* ── Animated background styles ── */}
       <style>{`
-        @keyframes landingTrain {
-          0%   { transform: translateX(105vw); }
-          100% { transform: translateX(-320px); }
-        }
-        @keyframes trackPulse {
-          0%, 100% { opacity: 0.3; }
-          50%       { opacity: 0.6; }
+        @keyframes shimmer {
+          100% { transform: translateX(100%); }
         }
       `}</style>
 
@@ -311,22 +273,7 @@ export default function LandingPage() {
           style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(62,124,140,0.04) 0%, transparent 70%)' }}/>
       </div>
 
-      {/* Track lines across full width */}
-      <div className="fixed bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ zIndex: 1 }}>
-        <svg className="w-full h-full" viewBox="0 0 1440 96" preserveAspectRatio="none">
-          <line x1="0" y1="40" x2="1440" y2="40" stroke="#2e2b26" strokeWidth="2"
-            style={{ animation:'trackPulse 4s ease-in-out infinite' }}/>
-          <line x1="0" y1="52" x2="1440" y2="52" stroke="#2e2b26" strokeWidth="2"
-            style={{ animation:'trackPulse 4s 0.5s ease-in-out infinite' }}/>
-          {Array.from({length:36},(_,i)=>(
-            <line key={i} x1={i*40} y1={38} x2={i*40+24} y2={54} stroke="#201d18" strokeWidth="1.5"/>
-          ))}
-        </svg>
-        {/* Animated train crossing the bottom */}
-        <div className="absolute" style={{ bottom:'20px', left:0, animation:'landingTrain 22s linear infinite' }}>
-          <LandingTrain />
-        </div>
-      </div>
+      {/* Track lines removed per user request */}
 
       {/* ── NAV ── */}
       <header className="relative z-20 border-b border-white/[0.04]"
@@ -336,15 +283,26 @@ export default function LandingPage() {
             <img src="/RF_Logo.png" alt="Railfan Archive" className="w-9 h-9 object-contain rounded-lg"/>
             <span className="text-base font-bold text-white">Railfan Archive</span>
           </div>
+          {/* Desktop Self-Highlighting Button */}
           <button onClick={() => navigate(isAuthenticated ? '/dashboard' : '/login')}
-            className="text-sm font-semibold px-4 py-2 rounded-lg transition-all duration-200 border border-transparent hover:border-white/10"
-            style={{ color: '#C98A2C' }}
-            onMouseOver={e => (e.currentTarget.style.background = 'rgba(201,138,44,0.08)')}
-            onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
-            {isAuthenticated ? 'Go to Dashboard →' : 'Sign In'}
+            className="hidden md:flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full bg-[#C98A2C]/10 border border-[#C98A2C]/50 text-[#C98A2C] hover:bg-[#C98A2C] hover:text-white shadow-[0_0_20px_rgba(201,138,44,0.4)] transition-all duration-300 relative overflow-hidden group"
+          >
+            <span className="relative z-10">{isAuthenticated ? 'Go to Dashboard' : 'Launch App'}</span>
+            <ArrowRight size={16} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+            {/* Shimmer animation element */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite] group-hover:hidden" />
           </button>
         </div>
       </header>
+
+      {/* ── MOBILE FIXED CTA ── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-[#19181c] via-[#19181c]/80 to-transparent pb-6 pt-12 pointer-events-none">
+        <button onClick={() => navigate(isAuthenticated ? '/dashboard' : '/login')}
+          className="pointer-events-auto w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-[#C98A2C] to-[#d99f46] shadow-[0_10px_30px_rgba(201,138,44,0.4)] border border-[#e0a64e]/50 flex items-center justify-center gap-2 transition-transform active:scale-95"
+        >
+          {isAuthenticated ? 'Go to Dashboard' : 'Launch App'} <ArrowRight size={18} />
+        </button>
+      </div>
 
       {/* ── HERO ── */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-24">
@@ -544,11 +502,8 @@ export default function LandingPage() {
             <img src="/RF_Logo.png" alt="" className="w-6 h-6 object-contain opacity-60"/>
             <span className="text-xs text-slate-600">© {new Date().getFullYear()} Railfan Archive — Built for the community.</span>
           </div>
-          <button onClick={() => navigate(isAuthenticated ? '/dashboard' : '/login')}
-            className="text-xs font-semibold transition-colors"
-            style={{ color: '#C98A2C' }}>
-            Launch App →
-          </button>
+          {/* Mobile Footer Spacing buffer so it doesn't overlap content */}
+          <div className="h-16 md:hidden w-full"></div>
         </div>
       </footer>
     </div>

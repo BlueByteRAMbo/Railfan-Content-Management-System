@@ -44,6 +44,8 @@ const schema = z.object({
   section:          z.string().optional(),
   state:            z.string().optional(),
   railwayZone:      z.string().optional(),
+  gpsLat:           z.preprocess((val) => val === '' ? undefined : val, z.coerce.number().optional()),
+  gpsLng:           z.preprocess((val) => val === '' ? undefined : val, z.coerce.number().optional()),
   notes:            z.string().optional(),
   interestingEvents: z.string().optional(),
   observationNotes: z.string().optional(),
@@ -631,6 +633,16 @@ export default function VideoForm({
             <FieldLabel>Railway Zone</FieldLabel>
             <input {...register('railwayZone')} className="form-input" placeholder="CR, WR, NR…" />
           </div>
+          <div>
+            <FieldLabel>GPS Latitude</FieldLabel>
+            <input {...register('gpsLat')} type="number" step="any" className="form-input" placeholder="18.9218" />
+            <FieldError message={errors.gpsLat?.message} />
+          </div>
+          <div>
+            <FieldLabel>GPS Longitude</FieldLabel>
+            <input {...register('gpsLng')} type="number" step="any" className="form-input" placeholder="72.8347" />
+            <FieldError message={errors.gpsLng?.message} />
+          </div>
         </div>
       </div>
 
@@ -788,6 +800,8 @@ function mapVideoToForm(v: Partial<Video>): Partial<FormValues> {
     section:         v.section,
     state:           v.state,
     railwayZone:     v.railwayZone,
+    gpsLat:          v.gpsLat,
+    gpsLng:          v.gpsLng,
     notes:           v.notes,
     interestingEvents: v.interestingEvents,
     observationNotes: v.observationNotes,

@@ -45,6 +45,7 @@ public class VideoSummaryResponse {
 
     // YouTube
     private String youtubeVideoId;
+    private LocalDate scheduledUploadDate;
 
     // Flags
     private Boolean kavachFitted;

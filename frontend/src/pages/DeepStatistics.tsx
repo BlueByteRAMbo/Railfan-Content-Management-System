@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { statsApi } from '../api/services'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Train, MapPin, Building, Activity } from 'lucide-react'
+import { Train, MapPin, Building, Activity, Calendar } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { staggerContainer, fadeUp } from '../lib/motion'
 import SignalLoader from '../components/ui/SignalLoader'
@@ -20,11 +21,25 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 export default function DeepStatistics() {
+  const [startDate, setStartDate] = useState<string>('')
+  const [endDate, setEndDate] = useState<string>('')
   
-  const { data: trainsData = [], isLoading: trainsLoading } = useQuery({ queryKey: ['stats', 'trains'], queryFn: () => statsApi.getMostRecordedTrains(5).then(r => r.data) })
-  const { data: locosData = [], isLoading: locosLoading } = useQuery({ queryKey: ['stats', 'locos'], queryFn: () => statsApi.getMostRecordedLocos(5).then(r => r.data) })
-  const { data: shedsData = [], isLoading: shedsLoading } = useQuery({ queryKey: ['stats', 'sheds'], queryFn: () => statsApi.getMostRecordedSheds(5).then(r => r.data) })
-  const { data: stationsData = [], isLoading: stationsLoading } = useQuery({ queryKey: ['stats', 'stations'], queryFn: () => statsApi.getMostRecordedStations(5).then(r => r.data) })
+  const { data: trainsData = [], isLoading: trainsLoading } = useQuery({
+    queryKey: ['stats', 'trains', startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedTrains(5, startDate || undefined, endDate || undefined).then(r => r.data)
+  })
+  const { data: locosData = [], isLoading: locosLoading } = useQuery({
+    queryKey: ['stats', 'locos', startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedLocos(5, startDate || undefined, endDate || undefined).then(r => r.data)
+  })
+  const { data: shedsData = [], isLoading: shedsLoading } = useQuery({
+    queryKey: ['stats', 'sheds', startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedSheds(5, startDate || undefined, endDate || undefined).then(r => r.data)
+  })
+  const { data: stationsData = [], isLoading: stationsLoading } = useQuery({
+    queryKey: ['stats', 'stations', startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedStations(5, startDate || undefined, endDate || undefined).then(r => r.data)
+  })
 
   const trains = trainsData.filter((d: any) => d.name && d.name.trim() !== '')
   const locos = locosData.filter((d: any) => d.name && d.name.trim() !== '')
@@ -36,6 +51,43 @@ export default function DeepStatistics() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">Deep Statistics</h1>
         <p className="text-slate-500 text-sm mt-1">Advanced analytics on your railfan activity</p>
+      </div>
+
+      {/* Date Range Picker */}
+      <div className="flex flex-wrap items-center gap-4 bg-white/5 border border-white/5 rounded-xl p-4 mb-8">
+        <div className="flex items-center gap-2 text-slate-400">
+          <Calendar size={15} />
+          <span className="text-xs font-semibold uppercase tracking-wide">Filter by recording date:</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-slate-500">From</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="form-input text-xs py-1.5 w-36"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-slate-500">To</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="form-input text-xs py-1.5 w-36"
+          />
+        </div>
+        {(startDate || endDate) && (
+          <button
+            onClick={() => {
+              setStartDate('');
+              setEndDate('');
+            }}
+            className="text-xs text-brand-400 hover:text-brand-300 transition-colors font-medium ml-auto"
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
 
       <motion.div 

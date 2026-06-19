@@ -20,15 +20,18 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 
 ### ✨ Key Features
 
+- 🚂 **Train Run Tracker**: Track and analyze physical runs of specific trains across your archive. Detects rare locomotive swaps automatically.
+- 🗺️ **Interactive Geolocation**: Add GPS coordinates to generate dynamic, stunning dark-mode maps embedded directly in your video archives.
 - 🔍 **Searchable Station Picker**: A live search dropdown backed by a full Indian Railways station database (7 000+ stations). Type any station name or code and get instant results from the backend — zero client-side JSON bundle.
 - 🆓 **API-Free YouTube Metadata Scraping**: Paste a YouTube Video ID to automatically extract Title, Description, Duration, and high-quality Thumbnail — no paid API key required.
 - 📤 **Google Takeout Auto-Importer**: Drop your raw `videos.csv` from Google Takeout directly into the dashboard. The backend automatically detects the format and builds your database instantly.
 - 🚀 **Quick Add Mode**: Lightning-fast sequential data entry designed for logging massive backlogs without touching your mouse.
 - 🗃️ **Mass Import & Export**: Import legacy Excel/CSV files. Export your entire archive to PDF reports, Excel spreadsheets, or CSV backups.
 - 📦 **Bulk Action Engine**: Multi-select hundreds of videos using checkboxes, then Archive or Delete them with a floating action bar.
-- 📊 **Deep Analytics Dashboard**: Interactive Recharts visualisations of top trains, locos, sheds, and stations. Compare upload velocity vs. recording frequency.
+- 📊 **Deep Analytics Dashboard**: Interactive Recharts visualisations of top trains, locos, sheds, and stations. Instantly filterable by custom date ranges.
 - 📅 **Temporal Workflows**: Upload Planner, Pending Queues, and an Interactive Calendar to track what you recorded and when.
 - 🚨 **Duplicate Detection**: Automated backend daemon flags potential duplicate recordings (same train, same day).
+- 🏷️ **Taxonomy Management**: Fully interactive, inline Tag and Collection manager with complete CRUD capabilities.
 
 ### 🎨 Design & UX
 - **"Signal & Steel" Identity**: Deep Charcoal/Graphite base with vibrant Signal Amber accents.

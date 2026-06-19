@@ -180,18 +180,80 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
     // ── YouTube ID check ──────────────────────────────────────
     boolean existsByUserAndYoutubeVideoIdAndIsDeletedFalse(User user, String youtubeVideoId);
     // ── Deep Statistics ───────────────────────────────────────
-    @Query("SELECT v.trainName, COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.user = :user AND v.trainName IS NOT NULL AND TRIM(v.trainName) != '' GROUP BY v.trainName ORDER BY COUNT(v) DESC")
-    List<Object[]> countByTrainName(Pageable pageable, @Param("user") User user);
+    @Query("""
+        SELECT v.trainName, COUNT(v) FROM Video v
+        WHERE v.isDeleted = false AND v.user = :user
+        AND v.trainName IS NOT NULL AND TRIM(v.trainName) != ''
+        AND (:startDate IS NULL OR v.recordingDate >= :startDate)
+        AND (:endDate IS NULL OR v.recordingDate <= :endDate)
+        GROUP BY v.trainName ORDER BY COUNT(v) DESC
+        """)
+    List<Object[]> countByTrainName(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
+        Pageable pageable,
+        @Param("user") User user
+    );
 
-    @Query("SELECT v.locoNumber, COUNT(v) FROM Video v WHERE v.isDeleted = false AND v.user = :user AND v.locoNumber IS NOT NULL AND TRIM(v.locoNumber) != '' GROUP BY v.locoNumber ORDER BY COUNT(v) DESC")
-    List<Object[]> countByLocoNumber(Pageable pageable, @Param("user") User user);
+    @Query("""
+        SELECT v.locoNumber, COUNT(v) FROM Video v
+        WHERE v.isDeleted = false AND v.user = :user
+        AND v.locoNumber IS NOT NULL AND TRIM(v.locoNumber) != ''
+        AND (:startDate IS NULL OR v.recordingDate >= :startDate)
+        AND (:endDate IS NULL OR v.recordingDate <= :endDate)
+        GROUP BY v.locoNumber ORDER BY COUNT(v) DESC
+        """)
+    List<Object[]> countByLocoNumber(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
+        Pageable pageable,
+        @Param("user") User user
+    );
 
-    @Query("SELECT s.name, COUNT(v) FROM Video v JOIN v.locoShed s WHERE v.isDeleted = false AND v.user = :user AND s.name IS NOT NULL AND TRIM(s.name) != '' GROUP BY s.name ORDER BY COUNT(v) DESC")
-    List<Object[]> countByLocoShed(Pageable pageable, @Param("user") User user);
+    @Query("""
+        SELECT s.name, COUNT(v) FROM Video v JOIN v.locoShed s
+        WHERE v.isDeleted = false AND v.user = :user
+        AND s.name IS NOT NULL AND TRIM(s.name) != ''
+        AND (:startDate IS NULL OR v.recordingDate >= :startDate)
+        AND (:endDate IS NULL OR v.recordingDate <= :endDate)
+        GROUP BY s.name ORDER BY COUNT(v) DESC
+        """)
+    List<Object[]> countByLocoShed(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
+        Pageable pageable,
+        @Param("user") User user
+    );
 
-    @Query("SELECT s.name, COUNT(v) FROM Video v JOIN v.station s WHERE v.isDeleted = false AND v.user = :user AND s.name IS NOT NULL AND TRIM(s.name) != '' GROUP BY s.name ORDER BY COUNT(v) DESC")
-    List<Object[]> countByStation(Pageable pageable, @Param("user") User user);
+    @Query("""
+        SELECT s.name, COUNT(v) FROM Video v JOIN v.station s
+        WHERE v.isDeleted = false AND v.user = :user
+        AND s.name IS NOT NULL AND TRIM(s.name) != ''
+        AND (:startDate IS NULL OR v.recordingDate >= :startDate)
+        AND (:endDate IS NULL OR v.recordingDate <= :endDate)
+        GROUP BY s.name ORDER BY COUNT(v) DESC
+        """)
+    List<Object[]> countByStation(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
+        Pageable pageable,
+        @Param("user") User user
+    );
 
     @Query("SELECT c.name, COUNT(v) FROM Video v JOIN v.trainCategory c WHERE v.isDeleted = false AND v.user = :user AND c.name IS NOT NULL AND TRIM(c.name) != '' GROUP BY c.name ORDER BY COUNT(v) DESC")
     List<Object[]> countByTrainCategory(Pageable pageable, @Param("user") User user);
+
+    @Query("""
+        SELECT v FROM Video v
+        LEFT JOIN FETCH v.station
+        LEFT JOIN FETCH v.locoType
+        LEFT JOIN FETCH v.locoShed
+        WHERE v.isDeleted = false AND v.user = :user
+        AND v.trainNumber = :trainNumber
+        ORDER BY v.recordingDate ASC, v.recordingTime ASC
+        """)
+    List<Video> findTrainHistory(
+        @Param("trainNumber") String trainNumber,
+        @Param("user") User user
+    );
 }

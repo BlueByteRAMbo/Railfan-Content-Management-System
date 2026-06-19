@@ -86,9 +86,17 @@ export default function CalendarView() {
 
       {/* Details Column */}
       <div>
-        <h2 className="text-lg font-bold text-white mb-4">
-          {format(date, 'MMMM d, yyyy')}
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-white">
+            {format(date, 'MMMM d, yyyy')}
+          </h2>
+          <button
+            onClick={() => navigate(`/videos?recordingDateFrom=${selectedDateStr}&recordingDateTo=${selectedDateStr}`)}
+            className="text-xs text-brand-400 hover:text-brand-300 transition-colors font-medium"
+          >
+            View in List
+          </button>
+        </div>
         
         <div className="space-y-6">
           {/* Recordings */}

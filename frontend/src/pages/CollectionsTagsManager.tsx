@@ -6,6 +6,8 @@ import { Tag as TagIcon, Folder, Trash2, Edit2, Plus } from 'lucide-react'
 export default function CollectionsTagsManager() {
   const qc = useQueryClient()
   const [activeTab, setActiveTab] = useState<'collections'|'tags'>('collections')
+  const [editingTagId, setEditingTagId] = useState<number | null>(null)
+  const [editingTagName, setEditingTagName] = useState<string>('')
   
   const { data: collections = [] } = useQuery({ queryKey: ['collections'], queryFn: () => collectionsApi.getAll().then(r => r.data) })
   const { data: tags = [] } = useQuery({ queryKey: ['tags'], queryFn: () => tagsApi.getAll().then(r => r.data) })
@@ -15,7 +17,18 @@ export default function CollectionsTagsManager() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['collections'] })
   })
 
-  // We don't have tag delete/update endpoints yet, but we'll show them.
+  const deleteTag = useMutation({
+    mutationFn: (id: number) => tagsApi.delete(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['tags'] })
+  })
+
+  const updateTag = useMutation({
+    mutationFn: ({ id, name }: { id: number; name: string }) => tagsApi.update(id, name),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['tags'] })
+      setEditingTagId(null)
+    }
+  })
 
   return (
     <div className="max-w-5xl mx-auto p-8 animate-fade-in">
@@ -67,11 +80,65 @@ export default function CollectionsTagsManager() {
               <h2 className="text-lg font-bold text-white">All Tags ({tags.length})</h2>
             </div>
             <div className="flex flex-wrap gap-2">
-              {tags.map(t => (
-                <div key={t.id} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700">
-                  <span className="text-sm font-medium text-slate-300">{t.name}</span>
-                </div>
-              ))}
+              {tags.map(t => {
+                const isEditing = editingTagId === t.id;
+                if (isEditing) {
+                  return (
+                    <div key={t.id} className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-brand-500">
+                      <input
+                        type="text"
+                        value={editingTagName}
+                        onChange={(e) => setEditingTagName(e.target.value)}
+                        className="bg-transparent text-sm font-medium text-slate-200 outline-none w-24"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => {
+                          if (editingTagName.trim()) {
+                            updateTag.mutate({ id: t.id, name: editingTagName.trim() })
+                          }
+                        }}
+                        className="text-xs text-emerald-400 hover:text-emerald-300 font-bold"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingTagId(null)}
+                        className="text-xs text-slate-400 hover:text-slate-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={t.id} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 hover:border-slate-600 transition-colors group">
+                    <span className="text-sm font-medium text-slate-300">#{t.name}</span>
+                    <button
+                      onClick={() => {
+                        setEditingTagId(t.id)
+                        setEditingTagName(t.name)
+                      }}
+                      className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-slate-400 hover:text-brand-400 transition-all"
+                      title="Edit tag"
+                    >
+                      <Edit2 size={12} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete tag #${t.name}? This will remove it from all videos.`)) {
+                          deleteTag.mutate(t.id)
+                        }
+                      }}
+                      className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-slate-400 hover:text-red-400 transition-all"
+                      title="Delete tag"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

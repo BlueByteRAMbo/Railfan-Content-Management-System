@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,36 +31,36 @@ public class StatisticsService {
     }
 
     @Transactional(readOnly = true)
-    public List<StatCountResponse> getMostRecordedTrains(int limit) {
+    public List<StatCountResponse> getMostRecordedTrains(int limit, LocalDate startDate, LocalDate endDate) {
         User currentUser = getCurrentUser();
-        return videoRepository.countByTrainName(PageRequest.of(0, limit), currentUser)
+        return videoRepository.countByTrainName(startDate, endDate, PageRequest.of(0, limit), currentUser)
             .stream()
             .map(row -> new StatCountResponse((String) row[0], ((Number) row[1]).longValue()))
             .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<StatCountResponse> getMostRecordedLocos(int limit) {
+    public List<StatCountResponse> getMostRecordedLocos(int limit, LocalDate startDate, LocalDate endDate) {
         User currentUser = getCurrentUser();
-        return videoRepository.countByLocoNumber(PageRequest.of(0, limit), currentUser)
+        return videoRepository.countByLocoNumber(startDate, endDate, PageRequest.of(0, limit), currentUser)
             .stream()
             .map(row -> new StatCountResponse((String) row[0], ((Number) row[1]).longValue()))
             .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<StatCountResponse> getMostRecordedSheds(int limit) {
+    public List<StatCountResponse> getMostRecordedSheds(int limit, LocalDate startDate, LocalDate endDate) {
         User currentUser = getCurrentUser();
-        return videoRepository.countByLocoShed(PageRequest.of(0, limit), currentUser)
+        return videoRepository.countByLocoShed(startDate, endDate, PageRequest.of(0, limit), currentUser)
             .stream()
             .map(row -> new StatCountResponse((String) row[0], ((Number) row[1]).longValue()))
             .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<StatCountResponse> getMostRecordedStations(int limit) {
+    public List<StatCountResponse> getMostRecordedStations(int limit, LocalDate startDate, LocalDate endDate) {
         User currentUser = getCurrentUser();
-        return videoRepository.countByStation(PageRequest.of(0, limit), currentUser)
+        return videoRepository.countByStation(startDate, endDate, PageRequest.of(0, limit), currentUser)
             .stream()
             .map(row -> new StatCountResponse((String) row[0], ((Number) row[1]).longValue()))
             .toList();

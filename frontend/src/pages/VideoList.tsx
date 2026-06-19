@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { videosApi } from '../api/services'
 import type { VideoFilterParams, UploadStatus } from '../types'
 import { Plus, Search, Filter, Clock, HardDrive } from 'lucide-react'
@@ -38,9 +38,29 @@ function formatBytes(bytes?: number): string {
 export default function VideoList() {
   const navigate = useNavigate()
   const qc = useQueryClient()
+  const [searchParams] = useSearchParams()
   const [filters, setFilters] = useState<VideoFilterParams>({
-    page: 0, size: 20, sort: 'recordingDate', direction: 'DESC'
+    page: 0,
+    size: 20,
+    sort: 'recordingDate',
+    direction: 'DESC',
+    q: searchParams.get('q') || undefined,
+    recordingDateFrom: searchParams.get('recordingDateFrom') || undefined,
+    recordingDateTo: searchParams.get('recordingDateTo') || undefined,
   })
+
+  useEffect(() => {
+    setFilters(f => ({
+      ...f,
+      q: searchParams.get('q') || undefined,
+      recordingDateFrom: searchParams.get('recordingDateFrom') || undefined,
+      recordingDateTo: searchParams.get('recordingDateTo') || undefined,
+      page: 0
+    }))
+    if (searchParams.get('recordingDateFrom') || searchParams.get('recordingDateTo')) {
+      setShowFilters(true)
+    }
+  }, [searchParams])
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [showFilters, setShowFilters] = useState(false)
 
@@ -98,7 +118,8 @@ export default function VideoList() {
             type="text"
             placeholder="Search by title, train, loco…"
             className="form-input pl-9"
-            onChange={(e) => setFilters(f => ({ ...f, q: e.target.value, page: 0 }))}
+            value={filters.q || ''}
+            onChange={(e) => setFilters(f => ({ ...f, q: e.target.value || undefined, page: 0 }))}
           />
         </div>
         <select

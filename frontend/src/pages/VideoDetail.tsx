@@ -316,7 +316,17 @@ export default function VideoDetail() {
               <DetailItem label="State"   value={video.state} />
               <DetailItem label="Zone"    value={video.railwayZone} />
               {video.gpsLat && video.gpsLng && (
-                <DetailItem label="GPS" value={`${video.gpsLat}, ${video.gpsLng}`} />
+                <>
+                  <DetailItem label="GPS" value={`${video.gpsLat}, ${video.gpsLng}`} />
+                  <div className="mt-3 overflow-hidden rounded-lg aspect-video border border-white/5 relative">
+                    <iframe
+                      src={`https://maps.google.com/maps?q=${video.gpsLat},${video.gpsLng}&z=13&output=embed`}
+                      className="w-full h-full border-0 invert-[0.9] hue-rotate-[180deg]"
+                      loading="lazy"
+                      title="Location Map"
+                    />
+                  </div>
+                </>
               )}
             </div>
           </div>

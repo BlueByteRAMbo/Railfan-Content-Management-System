@@ -3,18 +3,25 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { videosApi } from '../api/services'
 import type { VideoCreateRequest, UploadStatus, Priority } from '../types'
 import { Zap, CheckCircle, Loader2 } from 'lucide-react'
+import StationSelect from '../components/ui/StationSelect'
 
 export default function QuickAddView() {
   const qc = useQueryClient()
   const firstInputRef = useRef<HTMLInputElement>(null)
   
   const [successMsg, setSuccessMsg] = useState('')
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    recordingDate: string;
+    trainNumber: string;
+    locoNumber: string;
+    stationId?: number;
+  }>({
     title: '',
     recordingDate: new Date().toISOString().split('T')[0],
     trainNumber: '',
     locoNumber: '',
-    stationName: '' // Using station mapping will require search in normal form, but here we keep it raw or omit stationId for now to make it fast.
+    stationId: undefined,
   })
 
   const mutation = useMutation({
@@ -30,7 +37,7 @@ export default function QuickAddView() {
         title: '',
         trainNumber: '',
         locoNumber: '',
-        stationName: ''
+        stationId: undefined,
       }))
       
       // Focus back on title
@@ -51,9 +58,7 @@ export default function QuickAddView() {
       priority: 'MEDIUM' as Priority,
       trainNumber: formData.trainNumber || undefined,
       locoNumber: formData.locoNumber || undefined,
-      // To keep it simple for Quick Add without looking up station IDs, we put stationName in notes or skip it.
-      // Or if you want you can store it in observationNotes
-      observationNotes: formData.stationName ? `Station: ${formData.stationName}` : undefined
+      stationId: formData.stationId,
     }
 
     mutation.mutate(req)
@@ -99,12 +104,9 @@ export default function QuickAddView() {
             </div>
             <div>
               <label className="form-label">Station / Location</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="e.g. Surat (ST)"
-                value={formData.stationName}
-                onChange={e => setFormData({ ...formData, stationName: e.target.value })}
+              <StationSelect
+                value={formData.stationId}
+                onChange={id => setFormData({ ...formData, stationId: id })}
               />
             </div>
           </div>

@@ -61,4 +61,22 @@ public class TagCollectionService {
                 .orElseThrow(() -> new IllegalArgumentException("Collection not found: " + id)))
             .collect(Collectors.toSet());
     }
+
+    @Transactional
+    public Tag updateTag(Long id, String name) {
+        Tag tag = tagRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + id));
+        tag.setName(name.trim().toLowerCase());
+        return tagRepository.save(tag);
+    }
+
+    @Transactional
+    public void deleteTag(Long id) {
+        Tag tag = tagRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + id));
+        for (com.railfan.archive.entity.Video video : tag.getVideos()) {
+            video.getTags().remove(tag);
+        }
+        tagRepository.delete(tag);
+    }
 }

@@ -135,6 +135,7 @@ export interface VideoSummary {
   fileSizeBytes?: number;
   thumbnail?: string;
   youtubeVideoId?: string;
+  scheduledUploadDate?: string;
   kavachFitted: boolean;
   tagNames: string[];
 }
@@ -346,4 +347,21 @@ export interface VideoFilterParams {
   collectionId?: number;
   year?: number;
   month?: number;
+}
+
+// ── Train Runs Tracker Types ──────────────────────────────────
+export interface TrainAppearanceDto {
+  videoId: number;
+  videoTitle: string;
+  recordingTime?: string;
+  locoNumber?: string;
+  locoTypeName?: string;
+  locoShedName?: string;
+  stationName?: string;
+}
+
+export interface TrainHistoryResponse {
+  date: string;
+  locoChanged: boolean;
+  appearances: TrainAppearanceDto[];
 }
