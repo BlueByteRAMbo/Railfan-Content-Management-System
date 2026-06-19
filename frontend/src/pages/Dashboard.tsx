@@ -169,10 +169,12 @@ export default function Dashboard() {
         <div className="glass-card p-6">
           <h3 className="text-sm font-semibold text-slate-300 mb-5">📹 Recordings Per Month</h3>
           {chartsLoading ? (
-            <div className="h-48 bg-white/3 rounded-lg animate-pulse" />
+            <div className="h-48 flex justify-center items-center scale-75">
+              <SignalLoader message="LOADING CHART..." />
+            </div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={charts?.recordingsPerMonth ?? []}>
+              <AreaChart data={(charts?.recordingsPerMonth ?? []).filter(d => d.label && d.label.trim() !== '')}>
                 <defs>
                   <linearGradient id="recGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#d98e04" stopOpacity={0.3} />
@@ -193,10 +195,12 @@ export default function Dashboard() {
         <div className="glass-card p-6">
           <h3 className="text-sm font-semibold text-slate-300 mb-5">🚀 Uploads Per Month</h3>
           {chartsLoading ? (
-            <div className="h-48 bg-white/3 rounded-lg animate-pulse" />
+            <div className="h-48 flex justify-center items-center scale-75">
+              <SignalLoader message="LOADING CHART..." />
+            </div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={charts?.uploadsPerMonth ?? []}>
+              <AreaChart data={(charts?.uploadsPerMonth ?? []).filter(d => d.label && d.label.trim() !== '')}>
                 <defs>
                   <linearGradient id="uplGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3E7C8C" stopOpacity={0.3} />
@@ -217,8 +221,10 @@ export default function Dashboard() {
         <div className="glass-card p-6">
           <h3 className="text-sm font-semibold text-slate-300 mb-5">🚂 Loco Type Distribution</h3>
           {chartsLoading ? (
-            <div className="h-48 bg-white/3 rounded-lg animate-pulse" />
-          ) : (charts?.locoTypeDistribution?.length ?? 0) === 0 ? (
+            <div className="h-48 flex justify-center items-center scale-75">
+              <SignalLoader message="LOADING CHART..." />
+            </div>
+          ) : (charts?.locoTypeDistribution?.filter(d => d.name && d.name.trim() !== '')?.length ?? 0) === 0 ? (
             <div className="h-48 flex items-center justify-center text-slate-600 text-sm">
               No data yet — add some videos to see distribution
             </div>
@@ -226,7 +232,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
-                  data={charts?.locoTypeDistribution ?? []}
+                  data={(charts?.locoTypeDistribution ?? []).filter(d => d.name && d.name.trim() !== '')}
                   dataKey="count"
                   nameKey="name"
                   cx="50%" cy="50%"
@@ -234,7 +240,7 @@ export default function Dashboard() {
                   label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                   labelLine={false}
                 >
-                  {(charts?.locoTypeDistribution ?? []).map((_, i) => (
+                  {((charts?.locoTypeDistribution ?? []).filter(d => d.name && d.name.trim() !== '')).map((_, i) => (
                     <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                   ))}
                 </Pie>
@@ -248,14 +254,16 @@ export default function Dashboard() {
         <div className="glass-card p-6">
           <h3 className="text-sm font-semibold text-slate-300 mb-5">🏷️ Train Category Distribution</h3>
           {chartsLoading ? (
-            <div className="h-48 bg-white/3 rounded-lg animate-pulse" />
-          ) : (charts?.trainCategoryDistribution?.length ?? 0) === 0 ? (
+            <div className="h-48 flex justify-center items-center scale-75">
+              <SignalLoader message="LOADING CHART..." />
+            </div>
+          ) : (charts?.trainCategoryDistribution?.filter(d => d.name && d.name.trim() !== '')?.length ?? 0) === 0 ? (
             <div className="h-48 flex items-center justify-center text-slate-600 text-sm">
               No data yet — add some videos to see distribution
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={charts?.trainCategoryDistribution ?? []}>
+              <BarChart data={(charts?.trainCategoryDistribution ?? []).filter(d => d.name && d.name.trim() !== '')}>
                 <defs>
                   <linearGradient id="gradCat" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#e29737" stopOpacity={1} />

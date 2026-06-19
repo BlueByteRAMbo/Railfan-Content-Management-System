@@ -21,10 +21,15 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function DeepStatistics() {
   
-  const { data: trains = [], isLoading: trainsLoading } = useQuery({ queryKey: ['stats', 'trains'], queryFn: () => statsApi.getMostRecordedTrains(5).then(r => r.data) })
-  const { data: locos = [], isLoading: locosLoading } = useQuery({ queryKey: ['stats', 'locos'], queryFn: () => statsApi.getMostRecordedLocos(5).then(r => r.data) })
-  const { data: sheds = [], isLoading: shedsLoading } = useQuery({ queryKey: ['stats', 'sheds'], queryFn: () => statsApi.getMostRecordedSheds(5).then(r => r.data) })
-  const { data: stations = [], isLoading: stationsLoading } = useQuery({ queryKey: ['stats', 'stations'], queryFn: () => statsApi.getMostRecordedStations(5).then(r => r.data) })
+  const { data: trainsData = [], isLoading: trainsLoading } = useQuery({ queryKey: ['stats', 'trains'], queryFn: () => statsApi.getMostRecordedTrains(5).then(r => r.data) })
+  const { data: locosData = [], isLoading: locosLoading } = useQuery({ queryKey: ['stats', 'locos'], queryFn: () => statsApi.getMostRecordedLocos(5).then(r => r.data) })
+  const { data: shedsData = [], isLoading: shedsLoading } = useQuery({ queryKey: ['stats', 'sheds'], queryFn: () => statsApi.getMostRecordedSheds(5).then(r => r.data) })
+  const { data: stationsData = [], isLoading: stationsLoading } = useQuery({ queryKey: ['stats', 'stations'], queryFn: () => statsApi.getMostRecordedStations(5).then(r => r.data) })
+
+  const trains = trainsData.filter((d: any) => d.name && d.name.trim() !== '')
+  const locos = locosData.filter((d: any) => d.name && d.name.trim() !== '')
+  const sheds = shedsData.filter((d: any) => d.name && d.name.trim() !== '')
+  const stations = stationsData.filter((d: any) => d.name && d.name.trim() !== '')
 
   return (
     <div className="max-w-6xl mx-auto p-8 animate-fade-in">
