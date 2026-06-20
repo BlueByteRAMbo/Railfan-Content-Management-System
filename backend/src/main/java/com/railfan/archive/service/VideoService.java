@@ -78,7 +78,7 @@ public class VideoService {
         Long locoTypeId, Long locoShedId, Long trainCategoryId,
         Long stationId, LocalDate recordingDateFrom, LocalDate recordingDateTo,
         LocalDate uploadDateFrom, LocalDate uploadDateTo,
-        Boolean kavachFitted, Long collectionId,
+        Boolean kavachFitted, Boolean isOfflink, Long collectionId,
         Pageable pageable
     ) {
         User currentUser = getCurrentUser();
@@ -86,7 +86,7 @@ public class VideoService {
             q, uploadStatus, priority, trainNumber, trainName, locoNumber,
             locoTypeId, locoShedId, trainCategoryId, stationId,
             recordingDateFrom, recordingDateTo, uploadDateFrom, uploadDateTo,
-            kavachFitted, collectionId, currentUser.getId()
+            kavachFitted, isOfflink, collectionId, currentUser.getId()
         );
         return videoRepository.findAll(spec, pageable).map(this::toSummary);
     }

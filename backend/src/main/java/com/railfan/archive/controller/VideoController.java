@@ -68,6 +68,7 @@ public class VideoController {
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate uploadDateFrom,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate uploadDateTo,
         @RequestParam(required = false) Boolean kavachFitted,
+        @RequestParam(required = false) Boolean isOfflink,
         @RequestParam(required = false) Long collectionId,
         @RequestParam(defaultValue = "0")    int page,
         @RequestParam(defaultValue = "20")   int size,
@@ -81,7 +82,7 @@ public class VideoController {
             q, uploadStatus, priority, trainNumber, trainName, locoNumber,
             locoTypeId, locoShedId, trainCategoryId, stationId,
             recordingDateFrom, recordingDateTo, uploadDateFrom, uploadDateTo,
-            kavachFitted, collectionId, pageable
+            kavachFitted, isOfflink, collectionId, pageable
         );
 
         return ResponseEntity.ok(PagedResponse.<VideoSummaryResponse>builder()

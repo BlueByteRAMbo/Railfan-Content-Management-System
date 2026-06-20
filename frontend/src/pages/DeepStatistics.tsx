@@ -41,11 +41,16 @@ export default function DeepStatistics() {
     queryKey: ['stats', 'stations', limit, startDate, endDate],
     queryFn: () => statsApi.getMostRecordedStations(limit, startDate || undefined, endDate || undefined).then(r => r.data)
   })
+  const { data: zonesData = [], isLoading: zonesLoading } = useQuery({
+    queryKey: ['stats', 'zones', limit, startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedZones(limit, startDate || undefined, endDate || undefined).then(r => r.data)
+  })
 
   const trains = trainsData.filter((d: any) => d.name && d.name.trim() !== '')
   const locos = locosData.filter((d: any) => d.name && d.name.trim() !== '')
   const sheds = shedsData.filter((d: any) => d.name && d.name.trim() !== '')
   const stations = stationsData.filter((d: any) => d.name && d.name.trim() !== '')
+  const zones = zonesData.filter((d: any) => d.name && d.name.trim() !== '')
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8 animate-fade-in">
@@ -146,7 +151,7 @@ export default function DeepStatistics() {
         <motion.div variants={fadeUp} className="glass-card p-6">
           <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
             <Activity size={18} className="text-amber-400" />
-            Top {limit} Most Recorded Locomotives
+            Top {limit} Most Recorded Loco Types
           </h2>
           <div className="h-64 relative">
             {locosLoading ? (
@@ -229,6 +234,37 @@ export default function DeepStatistics() {
                   <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
                   <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
                   <Bar dataKey="count" fill="url(#gradStations)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Zones */}
+        <motion.div variants={fadeUp} className="glass-card p-6 md:col-span-2 lg:col-span-1">
+          <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
+            <Building size={18} className="text-brand-400" />
+            Top {limit} Most Visited Zones
+          </h2>
+          <div className="h-64 relative">
+            {zonesLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center scale-75">
+                <SignalLoader message="LOADING ZONES..." />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={zones} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="gradZones" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#14b8a6" stopOpacity={0.6}/>
+                      <stop offset="100%" stopColor="#0d9488" stopOpacity={1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={true} vertical={false} />
+                  <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={120} tickLine={false} axisLine={false} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                  <Bar dataKey="count" fill="url(#gradZones)" radius={[0, 4, 4, 0]} barSize={24} isAnimationActive={true} animationDuration={1000} />
                 </BarChart>
               </ResponsiveContainer>
             )}

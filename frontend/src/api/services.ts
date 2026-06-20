@@ -137,12 +137,26 @@ export const duplicatesApi = {
   resolve:       (id: number) => apiClient.patch(`/api/duplicates/${id}/resolve`),
 };
 
+// ── Expected Loco Config ───────────────────────────────────────
+export interface ExpectedLocoConfig {
+  id: number;
+  trainNumber: string;
+  expectedLocoType: LocoType;
+}
+
+export const expectedLocoConfigApi = {
+  getAll: () => apiClient.get<ExpectedLocoConfig[]>('/api/expected-loco-config'),
+  create: (data: { trainNumber: string; expectedLocoTypeId: number }) => apiClient.post<ExpectedLocoConfig>('/api/expected-loco-config', data),
+  delete: (id: number) => apiClient.delete(`/api/expected-loco-config/${id}`)
+};
+
 // ── Statistics ────────────────────────────────────────────────
 export const statsApi = {
   getMostRecordedTrains:  (limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-trains', { params: { limit, startDate, endDate } }),
   getMostRecordedLocos:   (limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-locos', { params: { limit, startDate, endDate } }),
   getMostRecordedSheds:   (limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-sheds', { params: { limit, startDate, endDate } }),
   getMostRecordedStations:(limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-stations', { params: { limit, startDate, endDate } }),
+  getMostRecordedZones:   (limit?: number, startDate?: string, endDate?: string) => apiClient.get('/api/stats/most-recorded-zones', { params: { limit, startDate, endDate } }),
   getUploadFrequency:     ()               => apiClient.get('/api/stats/upload-frequency'),
   getAvgDaysBetween:      ()               => apiClient.get('/api/stats/avg-days-between'),
 };

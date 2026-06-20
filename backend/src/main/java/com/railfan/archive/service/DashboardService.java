@@ -77,6 +77,7 @@ public class DashboardService {
         List<CategoryPoint> locoTypeDist = buildLocoTypeDistribution(currentUser);
         List<CategoryPoint> shedDist     = buildShedDistribution(currentUser);
         List<CategoryPoint> catDist      = buildTrainCategoryDistribution(currentUser);
+        List<CategoryPoint> zoneDist     = buildRailwayZoneDistribution(currentUser);
 
         return DashboardChartsResponse.builder()
             .recordingsPerMonth(toMonthlyPoints(recRows))
@@ -84,6 +85,7 @@ public class DashboardService {
             .locoTypeDistribution(locoTypeDist)
             .shedDistribution(shedDist)
             .trainCategoryDistribution(catDist)
+            .railwayZoneDistribution(zoneDist)
             .build();
     }
 
@@ -136,6 +138,16 @@ public class DashboardService {
 
     private List<CategoryPoint> buildTrainCategoryDistribution(User user) {
         return videoRepository.countByTrainCategory(PageRequest.of(0, 15), user)
+            .stream()
+            .map(r -> CategoryPoint.builder()
+                .name((String) r[0])
+                .count(((Number) r[1]).longValue())
+                .build())
+            .toList();
+    }
+
+    private List<CategoryPoint> buildRailwayZoneDistribution(User user) {
+        return videoRepository.countByRailwayZone(null, null, PageRequest.of(0, 15), user)
             .stream()
             .map(r -> CategoryPoint.builder()
                 .name((String) r[0])

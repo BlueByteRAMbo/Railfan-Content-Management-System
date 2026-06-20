@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { locosApi } from '../api/services'
-import { Search, Hash, Train, Calendar, TrendingUp } from 'lucide-react'
+import { Search, Hash, Train, Calendar, TrendingUp, AlertTriangle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import SignalLoader from '../components/ui/SignalLoader'
 
@@ -38,6 +38,13 @@ export default function LocoDirectory() {
             className="pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-brand-500/50 transition-colors w-full md:w-64"
           />
         </div>
+        <button 
+          onClick={() => navigate('/offlink-rules')}
+          className="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors flex items-center gap-2 text-sm font-semibold"
+        >
+          <AlertTriangle size={16} />
+          Offlink Rules
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

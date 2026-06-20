@@ -65,7 +65,7 @@ public class ImportExportService {
             q, uploadStatus, priority, trainNumber, trainName, locoNumber,
             locoTypeId, locoShedId, trainCategoryId, stationId,
             recordingDateFrom, recordingDateTo, uploadDateFrom, uploadDateTo,
-            kavachFitted, collectionId, currentUser.getId()
+            kavachFitted, null, collectionId, currentUser.getId()
         );
         return videoRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "recordingDate"));
     }

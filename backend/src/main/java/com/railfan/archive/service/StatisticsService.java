@@ -42,7 +42,7 @@ public class StatisticsService {
     @Transactional(readOnly = true)
     public List<StatCountResponse> getMostRecordedLocos(int limit, LocalDate startDate, LocalDate endDate) {
         User currentUser = getCurrentUser();
-        return videoRepository.countByLocoNumber(startDate, endDate, PageRequest.of(0, limit), currentUser)
+        return videoRepository.countByLocoType(startDate, endDate, PageRequest.of(0, limit), currentUser)
             .stream()
             .map(row -> new StatCountResponse((String) row[0], ((Number) row[1]).longValue()))
             .toList();
@@ -61,6 +61,15 @@ public class StatisticsService {
     public List<StatCountResponse> getMostRecordedStations(int limit, LocalDate startDate, LocalDate endDate) {
         User currentUser = getCurrentUser();
         return videoRepository.countByStation(startDate, endDate, PageRequest.of(0, limit), currentUser)
+            .stream()
+            .map(row -> new StatCountResponse((String) row[0], ((Number) row[1]).longValue()))
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<StatCountResponse> getMostRecordedZones(int limit, LocalDate startDate, LocalDate endDate) {
+        User currentUser = getCurrentUser();
+        return videoRepository.countByRailwayZone(startDate, endDate, PageRequest.of(0, limit), currentUser)
             .stream()
             .map(row -> new StatCountResponse((String) row[0], ((Number) row[1]).longValue()))
             .toList();

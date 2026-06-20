@@ -18,6 +18,7 @@ public class DashboardChartsResponse {
     private List<CategoryPoint> locoTypeDistribution;
     private List<CategoryPoint> shedDistribution;
     private List<CategoryPoint> trainCategoryDistribution;
+    private List<CategoryPoint> railwayZoneDistribution;
 
     @Data @Builder @NoArgsConstructor @AllArgsConstructor
     public static class MonthlyPoint {

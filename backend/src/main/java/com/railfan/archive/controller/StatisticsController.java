@@ -58,4 +58,13 @@ public class StatisticsController {
     ) {
         return ResponseEntity.ok(statisticsService.getMostRecordedStations(limit, startDate, endDate));
     }
+
+    @GetMapping("/most-recorded-zones")
+    public ResponseEntity<List<StatCountResponse>> getMostRecordedZones(
+        @RequestParam(defaultValue = "10") int limit,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        return ResponseEntity.ok(statisticsService.getMostRecordedZones(limit, startDate, endDate));
+    }
 }

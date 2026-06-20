@@ -225,6 +225,25 @@ export default function VideoList() {
                 </select>
               </div>
               <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1.5">Offlink Status</label>
+                <select
+                  className="form-input text-xs"
+                  value={filters.isOfflink === undefined ? '' : String(filters.isOfflink)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFilters(f => ({
+                      ...f,
+                      isOfflink: val === '' ? undefined : val === 'true',
+                      page: 0
+                    }));
+                  }}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="true">Offlinks Only</option>
+                  <option value="false">Standard Only</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-xs font-semibold text-slate-400 mb-1.5">Sort By</label>
                 <select
                   className="form-input text-xs"

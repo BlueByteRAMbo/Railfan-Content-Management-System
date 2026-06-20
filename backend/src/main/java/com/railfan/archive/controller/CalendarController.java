@@ -36,7 +36,7 @@ public class CalendarController {
         // Fetch max 500 for a single month view to prevent overload
         return ResponseEntity.ok(
             videoService.findAll(null, null, null, null, null, null, null, null, null, null,
-                start, end, null, null, null, null,
+                start, end, null, null, null, null, null,
                 PageRequest.of(0, 500, Sort.by(Sort.Direction.ASC, "recordingDate"))
             ).getContent()
         );
@@ -52,7 +52,7 @@ public class CalendarController {
         
         return ResponseEntity.ok(
             videoService.findAll(null, UploadStatus.UPLOADED, null, null, null, null, null, null, null, null,
-                null, null, start, end, null, null,
+                null, null, start, end, null, null, null,
                 PageRequest.of(0, 500, Sort.by(Sort.Direction.ASC, "uploadDate"))
             ).getContent()
         );

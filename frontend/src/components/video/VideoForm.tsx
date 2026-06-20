@@ -9,6 +9,7 @@ import {
 import { useDuplicateCheck } from '../../hooks/useVideos'
 import { videosApi } from '../../api/services'
 import type { Video, VideoCreateRequest } from '../../types'
+import { INDIAN_RAILWAY_ZONES } from '../../types'
 import { AlertTriangle, Loader2, CheckCircle, Plus, X, PlayCircle } from 'lucide-react';
 import StationSelect from '../../components/ui/StationSelect';
 import SearchableSelect from '../../components/ui/SearchableSelect';
@@ -643,7 +644,12 @@ export default function VideoForm({
           </div>
           <div>
             <FieldLabel>Railway Zone</FieldLabel>
-            <input {...register('railwayZone')} className="form-input" placeholder="CR, WR, NR…" />
+            <select {...register('railwayZone')} className="form-input text-slate-300">
+              <option value="">— Select zone —</option>
+              {INDIAN_RAILWAY_ZONES.map(z => (
+                <option key={z} value={z}>{z}</option>
+              ))}
+            </select>
           </div>
           <div className="md:col-span-2">
             <FieldLabel>Location Map</FieldLabel>

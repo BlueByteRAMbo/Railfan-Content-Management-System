@@ -26,11 +26,11 @@ function createTractionIcon(locoTypeName?: string) {
   if (locoTypeName) {
     const name = locoTypeName.toUpperCase()
     if (name.startsWith('WAP') || name.startsWith('WAG') || name.startsWith('WAM')) {
-      color = '#f59e0b' // Amber
+      color = '#C98A2C' // Amber
     } else if (name.startsWith('WDP') || name.startsWith('WDG') || name.startsWith('WDM')) {
-      color = '#10b981' // Green
+      color = '#5C8A4A' // Moss Green
     } else if (name.startsWith('WCAM') || name.startsWith('WCM')) {
-      color = '#14b8a6' // Teal
+      color = '#3E7C8C' // Slate Teal
     }
   }
   

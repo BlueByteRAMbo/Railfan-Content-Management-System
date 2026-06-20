@@ -45,10 +45,12 @@ export default function LocoDetail() {
   else if (totalEncounters >= 25) topMilestone = "25+ Encounters"
   else if (totalEncounters >= 10) topMilestone = "Frequent (10+)"
 
-  let runningCount = totalEncounters;
-  const historyWithMilestones = history.map(day => {
-    const appearancesWithMilestones = day.appearances.map((app: any) => {
-      const currentCount = runningCount--;
+  let runningCount = 1;
+  const reversedHistory = [...history].reverse();
+  const reversedHistoryWithMilestones = reversedHistory.map(day => {
+    const reversedApps = [...day.appearances].reverse();
+    const appearancesWithMilestones = reversedApps.map((app: any) => {
+      const currentCount = runningCount++;
       let milestone = null;
       if (currentCount === 1) milestone = "First Capture"
       else if (currentCount === 10) milestone = "10th Encounter"
@@ -57,8 +59,9 @@ export default function LocoDetail() {
       else if (currentCount === 100) milestone = "100th Encounter"
       return { ...app, currentCount, milestone };
     });
-    return { ...day, appearances: appearancesWithMilestones };
+    return { ...day, appearances: appearancesWithMilestones.reverse() };
   });
+  const historyWithMilestones = reversedHistoryWithMilestones.reverse();
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 animate-fade-in pb-32">

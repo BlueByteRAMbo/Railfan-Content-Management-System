@@ -24,6 +24,7 @@ import SpotterMap from './pages/SpotterMap'
 import QuickAddView from './pages/QuickAddView'
 import ImportExportView from './pages/ImportExportView'
 import TrainRunTracker from './pages/TrainRunTracker'
+import OfflinkRules from './pages/OfflinkRules'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import SignalLoader from './components/ui/SignalLoader'
 import { Suspense } from 'react'
@@ -81,6 +82,7 @@ export default function App() {
                   <Route path="/locos"         element={<PageTransition><LocoDirectory /></PageTransition>} />
                   <Route path="/locos/:number" element={<PageTransition><LocoDetail /></PageTransition>} />
                   <Route path="/map"           element={<PageTransition><SpotterMap /></PageTransition>} />
+                  <Route path="/offlink-rules" element={<PageTransition><OfflinkRules /></PageTransition>} />
 
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

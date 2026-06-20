@@ -41,6 +41,7 @@ public class VideoSpecification {
         LocalDate uploadDateFrom,
         LocalDate uploadDateTo,
         Boolean kavachFitted,
+        Boolean isOfflink,
         Long collectionId,
         Long userId
     ) {
@@ -137,6 +138,11 @@ public class VideoSpecification {
             // KAVACH filter
             if (kavachFitted != null) {
                 predicates.add(cb.equal(root.get("kavachFitted"), kavachFitted));
+            }
+
+            // Offlink filter
+            if (isOfflink != null) {
+                predicates.add(cb.equal(root.get("isOfflink"), isOfflink));
             }
 
             // Deduplicate results when joins create cartesian products

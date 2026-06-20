@@ -17,12 +17,12 @@ import java.util.Map;
 /**
  * Collection management endpoints.
  *
- * GET    /api/collections                    → all collections
- * GET    /api/collections/{id}               → single collection
- * POST   /api/collections                    → create collection
- * PUT    /api/collections/{id}               → update collection
- * DELETE /api/collections/{id}               → delete collection
- * GET    /api/collections/{id}/videos        → paginated videos in collection
+ * GET /api/collections → all collections
+ * GET /api/collections/{id} → single collection
+ * POST /api/collections → create collection
+ * PUT /api/collections/{id} → update collection
+ * DELETE /api/collections/{id} → delete collection
+ * GET /api/collections/{id}/videos → paginated videos in collection
  */
 @RestController
 @RequestMapping("/api/collections")
@@ -40,8 +40,8 @@ public class CollectionController {
     @GetMapping("/{id}")
     public ResponseEntity<RailCollection> getById(@PathVariable Long id) {
         return collectionRepository.findById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -54,49 +54,50 @@ public class CollectionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<RailCollection> update(
-        @PathVariable Long id,
-        @RequestBody Map<String, String> body
-    ) {
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
         return collectionRepository.findById(id).map(col -> {
-            if (body.containsKey("name"))        col.setName(body.get("name"));
-            if (body.containsKey("description")) col.setDescription(body.get("description"));
-            if (body.containsKey("coverThumbnail")) col.setCoverThumbnail(body.get("coverThumbnail"));
+            if (body.containsKey("name"))
+                col.setName(body.get("name"));
+            if (body.containsKey("description"))
+                col.setDescription(body.get("description"));
+            if (body.containsKey("coverThumbnail"))
+                col.setCoverThumbnail(body.get("coverThumbnail"));
             return ResponseEntity.ok(collectionRepository.save(col));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (!collectionRepository.existsById(id)) return ResponseEntity.notFound().build();
+        if (!collectionRepository.existsById(id))
+            return ResponseEntity.notFound().build();
         collectionRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/videos")
     public ResponseEntity<PagedResponse<VideoSummaryResponse>> getVideos(
-        @PathVariable Long id,
-        @RequestParam(defaultValue = "0")    int page,
-        @RequestParam(defaultValue = "20")   int size,
-        @RequestParam(defaultValue = "recordingDate") String sort,
-        @RequestParam(defaultValue = "DESC") String direction
-    ) {
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "recordingDate") String sort,
+            @RequestParam(defaultValue = "DESC") String direction) {
         Pageable pageable = PageRequest.of(page, size,
-            Sort.by(Sort.Direction.fromString(direction), sort));
+                Sort.by(Sort.Direction.fromString(direction), sort));
 
         Page<VideoSummaryResponse> result = videoService.findAll(
-            null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null,
-            null, id, pageable
-        );
+                null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null,
+                null, null, id, pageable);
 
         return ResponseEntity.ok(PagedResponse.<VideoSummaryResponse>builder()
-            .content(result.getContent())
-            .totalElements(result.getTotalElements())
-            .totalPages(result.getTotalPages())
-            .size(result.getSize())
-            .number(result.getNumber())
-            .first(result.isFirst())
-            .last(result.isLast())
-            .build());
+                .content(result.getContent())
+                .totalElements(result.getTotalElements())
+                .totalPages(result.getTotalPages())
+                .size(result.getSize())
+                .number(result.getNumber())
+                .first(result.isFirst())
+                .last(result.isLast())
+                .build());
     }
 }

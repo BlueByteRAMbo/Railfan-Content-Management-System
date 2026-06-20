@@ -211,6 +211,21 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
     );
 
     @Query("""
+        SELECT lt.name, COUNT(v) FROM Video v JOIN v.locoType lt
+        WHERE v.isDeleted = false AND v.user = :user
+        AND lt.name IS NOT NULL AND TRIM(lt.name) != ''
+        AND (:startDate IS NULL OR v.recordingDate >= :startDate)
+        AND (:endDate IS NULL OR v.recordingDate <= :endDate)
+        GROUP BY lt.name ORDER BY COUNT(v) DESC
+        """)
+    List<Object[]> countByLocoType(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
+        Pageable pageable,
+        @Param("user") User user
+    );
+
+    @Query("""
         SELECT s.name, COUNT(v) FROM Video v JOIN v.locoShed s
         WHERE v.isDeleted = false AND v.user = :user
         AND s.name IS NOT NULL AND TRIM(s.name) != ''
@@ -242,6 +257,21 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
 
     @Query("SELECT c.name, COUNT(v) FROM Video v JOIN v.trainCategory c WHERE v.isDeleted = false AND v.user = :user AND c.name IS NOT NULL AND TRIM(c.name) != '' GROUP BY c.name ORDER BY COUNT(v) DESC")
     List<Object[]> countByTrainCategory(Pageable pageable, @Param("user") User user);
+
+    @Query("""
+        SELECT v.railwayZone, COUNT(v) FROM Video v
+        WHERE v.isDeleted = false AND v.user = :user
+        AND v.railwayZone IS NOT NULL AND TRIM(v.railwayZone) != ''
+        AND (:startDate IS NULL OR v.recordingDate >= :startDate)
+        AND (:endDate IS NULL OR v.recordingDate <= :endDate)
+        GROUP BY v.railwayZone ORDER BY COUNT(v) DESC
+        """)
+    List<Object[]> countByRailwayZone(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
+        Pageable pageable,
+        @Param("user") User user
+    );
 
     @Query("""
         SELECT v FROM Video v

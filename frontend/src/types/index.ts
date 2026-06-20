@@ -4,6 +4,11 @@ export type Priority = 'HIGH' | 'MEDIUM' | 'LOW';
 export type SecondaryLocoRole = 'BANKER' | 'TWIN_LEAD' | 'TWIN_TRAIL' | 'DEAD_ATTACHED' | 'PUSH_PULL';
 export type EncounterType = 'CROSSING' | 'PARALLEL_RUN' | 'SERIES_ENCOUNTER';
 
+export const INDIAN_RAILWAY_ZONES = [
+  'CR', 'ER', 'ECR', 'ECoR', 'NR', 'NCR', 'NER', 'NFR', 'NWR',
+  'SR', 'SCR', 'SER', 'SECR', 'SWR', 'WR', 'WCR', 'SCoR', 'KR'
+];
+
 // ── Reference Types ───────────────────────────────────────────
 export interface TrainCategory {
   id: number;
@@ -355,6 +360,7 @@ export interface VideoFilterParams {
   uploadDateFrom?: string;
   uploadDateTo?: string;
   kavachFitted?: boolean;
+  isOfflink?: boolean;
   tagIds?: number[];
   collectionId?: number;
   year?: number;
