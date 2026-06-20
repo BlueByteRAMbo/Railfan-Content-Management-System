@@ -68,7 +68,7 @@ export default function OfflinkRules() {
             <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Expected Loco Type</label>
             <SearchableSelect
               options={locoTypes.map(t => ({ value: t.id, label: t.name }))}
-              value={expectedLocoTypeId}
+              value={expectedLocoTypeId ?? undefined}
               onChange={(val) => setExpectedLocoTypeId(val as number)}
               placeholder="— Select loco type —"
               isLoading={typesLoading}
