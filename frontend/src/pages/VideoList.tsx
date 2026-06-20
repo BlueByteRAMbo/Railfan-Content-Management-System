@@ -62,6 +62,8 @@ export default function VideoList() {
     }
   }, [searchParams])
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [schedulePromptOpen, setSchedulePromptOpen] = useState(false)
+  const [scheduleDate, setScheduleDate] = useState('')
   const [showFilters, setShowFilters] = useState(false)
 
   const { data: page, isLoading } = useQuery({
@@ -91,7 +93,24 @@ export default function VideoList() {
 
   const handleBulkAction = (action: string) => {
     if (!selectedIds.length) return
-    bulkMutation.mutate({ videoIds: selectedIds, action })
+    if (action === 'SCHEDULE_UPLOAD') {
+      setSchedulePromptOpen(true)
+      return
+    }
+    
+    let extra = {}
+    if (action === 'MARK_UPLOADED') {
+      const now = new Date()
+      extra = { uploadDate: now.toISOString().split('T')[0], uploadTime: now.toTimeString().split(' ')[0].substring(0, 5) }
+    }
+    bulkMutation.mutate({ videoIds: selectedIds, action, ...extra })
+  }
+
+  const confirmSchedule = () => {
+    if (!scheduleDate) return
+    bulkMutation.mutate({ videoIds: selectedIds, action: 'SCHEDULE_UPLOAD', scheduledDate: scheduleDate })
+    setSchedulePromptOpen(false)
+    setScheduleDate('')
   }
 
   return (
@@ -414,16 +433,27 @@ export default function VideoList() {
             animate={{ y: 0, opacity: 1, x: '-50%' }}
             exit={{ y: 100, opacity: 0, x: '-50%' }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            className="fixed bottom-8 md:bottom-12 left-1/2 bg-white/5 backdrop-blur-xl border border-white/10 shadow-glow rounded-full px-6 py-3 flex items-center gap-4 z-50"
+            className="fixed bottom-8 md:bottom-12 left-1/2 bg-[#16161a] border border-white/10 shadow-glow rounded-2xl md:rounded-full px-6 py-3 flex flex-col md:flex-row items-center gap-4 z-50"
           >
-            <span className="text-sm font-bold text-white bg-brand-500 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(217,142,4,0.5)]">
-              {selectedIds.length}
-            </span>
-            <span className="text-sm text-slate-300 mr-2 font-medium">selected</span>
-            <button onClick={() => handleBulkAction('MARK_UPLOADED')} className="btn-secondary py-1.5 px-3 text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20">Mark Uploaded</button>
-            <button onClick={() => handleBulkAction('SCHEDULE_UPLOAD')} className="btn-secondary py-1.5 px-3 text-xs bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 border-brand-500/20">Schedule</button>
-            <button onClick={() => handleBulkAction('ARCHIVE')} className="btn-secondary py-1.5 px-3 text-xs bg-white/5 hover:bg-white/10 border-white/10">Archive</button>
-            <button onClick={() => handleBulkAction('DELETE')} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border-red-500/20">Delete</button>
+            {schedulePromptOpen ? (
+               <div className="flex items-center gap-3">
+                 <span className="text-sm font-bold text-white whitespace-nowrap">Schedule Date:</span>
+                 <input type="date" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} className="form-input text-xs py-1.5 bg-slate-800 text-white" />
+                 <button onClick={confirmSchedule} className="btn-primary py-1.5 px-3 text-xs whitespace-nowrap" disabled={!scheduleDate || bulkMutation.isPending}>Confirm</button>
+                 <button onClick={() => { setSchedulePromptOpen(false); setScheduleDate(''); }} className="btn-secondary py-1.5 px-3 text-xs whitespace-nowrap">Cancel</button>
+               </div>
+            ) : (
+               <>
+                  <span className="text-sm font-bold text-white bg-brand-500 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(217,142,4,0.5)]">
+                    {selectedIds.length}
+                  </span>
+                  <span className="text-sm text-slate-300 mr-2 font-medium">selected</span>
+                  <button onClick={() => handleBulkAction('MARK_UPLOADED')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20">Mark Uploaded</button>
+                  <button onClick={() => handleBulkAction('SCHEDULE_UPLOAD')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 border-brand-500/20">Schedule</button>
+                  <button onClick={() => handleBulkAction('ARCHIVE')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-white/5 hover:bg-white/10 border-white/10">Archive</button>
+                  <button onClick={() => handleBulkAction('DELETE')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border-red-500/20">Delete</button>
+               </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

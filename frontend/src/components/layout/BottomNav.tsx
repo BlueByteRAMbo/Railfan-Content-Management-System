@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, Video, Zap, ListTodo, BarChart3 } from 'lucide-react'
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dash' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dash' },
   { to: '/videos', icon: Video, label: 'Videos' },
   { to: '/quick-add', icon: Zap, label: 'Quick Add' },
   { to: '/queue', icon: ListTodo, label: 'Queue' },

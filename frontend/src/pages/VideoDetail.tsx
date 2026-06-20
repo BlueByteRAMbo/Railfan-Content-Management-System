@@ -1,5 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { videosApi } from '../api/services'
 import { useVideo, useUpdateVideo, useDeleteVideo, useUpdateVideoStatus } from '../hooks/useVideos'
 import VideoForm from '../components/video/VideoForm'
 import type { VideoCreateRequest, UploadStatus } from '../types'
@@ -379,6 +381,68 @@ export default function VideoDetail() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Related Videos Section */}
+      <RelatedVideos trainNumber={video.trainNumber} locoNumber={video.locoNumber} currentVideoId={video.id} />
+    </div>
+  )
+}
+
+function RelatedVideos({ trainNumber, locoNumber, currentVideoId }: { trainNumber?: string; locoNumber?: string; currentVideoId: number }) {
+  const navigate = useNavigate()
+  const { data } = useQuery({
+    queryKey: ['videos', 'related', trainNumber, locoNumber],
+    queryFn: () => videosApi.getAll({ 
+      trainNumber: trainNumber || undefined, 
+      locoNumber: !trainNumber ? locoNumber : undefined, 
+      size: 6, 
+      sort: 'recordingDate', 
+      direction: 'DESC' 
+    }).then(r => r.data),
+    enabled: !!trainNumber || !!locoNumber
+  })
+
+  if (!data?.content) return null
+  const related = data.content.filter(v => v.id !== currentVideoId).slice(0, 5)
+  if (related.length === 0) return null
+
+  return (
+    <div className="mt-12 pt-8 border-t border-white/10 animate-fade-in">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+          <Film className="text-brand-400" />
+          Related Encounters
+        </h3>
+        <span className="text-sm font-medium text-slate-400">
+          {trainNumber ? `Train ${trainNumber}` : `Loco ${locoNumber}`}
+        </span>
+      </div>
+      
+      <div className="flex overflow-x-auto gap-4 pb-6 snap-x hide-scrollbar">
+        {related.map(v => (
+          <div 
+            key={v.id} 
+            onClick={() => navigate(`/videos/${v.id}`)} 
+            className="snap-start shrink-0 w-[280px] bg-white/5 border border-white/5 hover:border-brand-500/50 rounded-xl overflow-hidden cursor-pointer group transition-all"
+          >
+            <div className="h-40 bg-slate-800 relative">
+              {v.thumbnail ? (
+                <img src={v.thumbnail.startsWith('http') ? v.thumbnail : `data:image/jpeg;base64,${v.thumbnail}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Thumbnail" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-slate-600 group-hover:text-brand-400 transition-colors">
+                  <PlayCircle size={32} />
+                </div>
+              )}
+            </div>
+            <div className="p-4">
+              <h4 className="font-bold text-slate-200 text-sm line-clamp-2 leading-snug group-hover:text-brand-400 transition-colors mb-2">{v.title}</h4>
+              <p className="text-xs text-slate-500 flex items-center gap-1">
+                <Calendar size={12} /> {v.recordingDate || 'Unknown Date'}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

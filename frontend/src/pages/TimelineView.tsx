@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { timelineApi } from '../api/services'
 import { Calendar as CalendarIcon, Video, Upload } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 export default function TimelineView() {
+  const navigate = useNavigate()
   const [year, setYear] = useState(new Date().getFullYear())
   
   const { data: recData } = useQuery({
@@ -54,12 +56,18 @@ export default function TimelineView() {
                 </div>
                 
                 {/* Content */}
-                <div className="pl-6 md:pl-10">
-                  <h3 className="text-lg font-bold text-slate-200 mb-4">{monthName} {year}</h3>
+                <div 
+                  className="pl-6 md:pl-10 cursor-pointer group/month"
+                  onClick={() => navigate(`/videos?year=${year}&month=${month}`)}
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <h3 className="text-lg font-bold text-slate-200 group-hover/month:text-brand-400 transition-colors">{monthName} {year}</h3>
+                    <span className="text-xs text-brand-500/0 group-hover/month:text-brand-500 transition-colors">View All &rarr;</span>
+                  </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Recording block */}
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 relative overflow-hidden group">
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 relative overflow-hidden group hover:border-brand-500/50 transition-colors">
                       <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-400 group-hover:scale-110 transition-transform">
                         <Video size={48} />
                       </div>
@@ -68,7 +76,7 @@ export default function TimelineView() {
                     </div>
 
                     {/* Upload block */}
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 relative overflow-hidden group">
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 relative overflow-hidden group hover:border-emerald-500/50 transition-colors">
                       <div className="absolute top-0 right-0 p-4 opacity-10 text-emerald-400 group-hover:scale-110 transition-transform">
                         <Upload size={48} />
                       </div>

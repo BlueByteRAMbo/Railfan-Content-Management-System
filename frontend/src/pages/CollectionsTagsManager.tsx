@@ -9,6 +9,10 @@ export default function CollectionsTagsManager() {
   const [editingTagId, setEditingTagId] = useState<number | null>(null)
   const [editingTagName, setEditingTagName] = useState<string>('')
   
+  const [editingCollectionId, setEditingCollectionId] = useState<number | 'new' | null>(null)
+  const [editColName, setEditColName] = useState('')
+  const [editColDesc, setEditColDesc] = useState('')
+  
   const { data: collections = [] } = useQuery({ queryKey: ['collections'], queryFn: () => collectionsApi.getAll().then(r => r.data) })
   const { data: tags = [] } = useQuery({ queryKey: ['tags'], queryFn: () => tagsApi.getAll().then(r => r.data) })
 
@@ -69,10 +73,9 @@ export default function CollectionsTagsManager() {
               <h2 className="text-lg font-bold text-white">Your Collections ({collections.length})</h2>
               <button 
                 onClick={() => {
-                  const name = prompt('Enter new collection name:');
-                  if (!name) return;
-                  const description = prompt('Enter description (optional):') || '';
-                  createCollection.mutate({ name, description });
+                  setEditingCollectionId('new');
+                  setEditColName('');
+                  setEditColDesc('');
                 }}
                 className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
               >
@@ -80,26 +83,66 @@ export default function CollectionsTagsManager() {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {collections.map(c => (
-                <div key={c.id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors group">
-                  <h3 className="font-bold text-slate-200 mb-1">{c.name}</h3>
-                  <p className="text-xs text-slate-500 line-clamp-2 h-8">{c.description || 'No description'}</p>
-                  <div className="flex justify-end gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={() => {
-                        const name = prompt('Enter new name:', c.name);
-                        if (!name) return;
-                        const description = prompt('Enter new description:', c.description || '') || '';
-                        updateCollection.mutate({ id: c.id, data: { name, description } });
-                      }}
-                      className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-brand-400 transition-colors"
-                    >
-                      <Edit2 size={14} />
-                    </button>
-                    <button onClick={() => deleteCollection.mutate(c.id)} className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
+              {editingCollectionId === 'new' && (
+                <div className="p-4 rounded-xl bg-slate-800 border border-brand-500 shadow-[0_0_15px_rgba(201,138,44,0.15)] flex flex-col gap-3">
+                  <input type="text" placeholder="Collection Name" value={editColName} onChange={e => setEditColName(e.target.value)} className="form-input text-sm font-bold bg-slate-900 border-slate-700" autoFocus />
+                  <textarea placeholder="Description (optional)" value={editColDesc} onChange={e => setEditColDesc(e.target.value)} className="form-input text-xs h-16 bg-slate-900 border-slate-700 resize-none" />
+                  <div className="flex justify-end gap-2 mt-2">
+                    <button onClick={() => setEditingCollectionId(null)} className="btn-secondary py-1.5 px-3 text-xs">Cancel</button>
+                    <button onClick={() => {
+                      if (editColName.trim()) {
+                        createCollection.mutate({ name: editColName.trim(), description: editColDesc.trim() });
+                        setEditingCollectionId(null);
+                      }
+                    }} className="btn-primary py-1.5 px-3 text-xs">Create</button>
                   </div>
                 </div>
-              ))}
+              )}
+
+              {collections.map(c => {
+                if (editingCollectionId === c.id) {
+                  return (
+                    <div key={c.id} className="p-4 rounded-xl bg-slate-800 border border-brand-500 shadow-[0_0_15px_rgba(201,138,44,0.15)] flex flex-col gap-3">
+                      <input type="text" placeholder="Collection Name" value={editColName} onChange={e => setEditColName(e.target.value)} className="form-input text-sm font-bold bg-slate-900 border-slate-700" autoFocus />
+                      <textarea placeholder="Description (optional)" value={editColDesc} onChange={e => setEditColDesc(e.target.value)} className="form-input text-xs h-16 bg-slate-900 border-slate-700 resize-none" />
+                      <div className="flex justify-end gap-2 mt-2">
+                        <button onClick={() => setEditingCollectionId(null)} className="btn-secondary py-1.5 px-3 text-xs">Cancel</button>
+                        <button onClick={() => {
+                          if (editColName.trim()) {
+                            updateCollection.mutate({ id: c.id, data: { name: editColName.trim(), description: editColDesc.trim() } });
+                            setEditingCollectionId(null);
+                          }
+                        }} className="btn-primary py-1.5 px-3 text-xs">Save</button>
+                      </div>
+                    </div>
+                  )
+                }
+
+                return (
+                  <div key={c.id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors group flex flex-col h-full">
+                    <div className="flex items-start justify-between mb-1">
+                      <h3 className="font-bold text-slate-200">{c.name}</h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-slate-300 whitespace-nowrap">
+                        {c.videoCount || 0} Videos
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 line-clamp-2 mb-4 flex-1">{c.description || 'No description'}</p>
+                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
+                      <button 
+                        onClick={() => {
+                          setEditingCollectionId(c.id);
+                          setEditColName(c.name);
+                          setEditColDesc(c.description || '');
+                        }}
+                        className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-brand-400 transition-colors"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button onClick={() => { if(confirm(`Delete collection "${c.name}"?`)) deleteCollection.mutate(c.id); }} className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
