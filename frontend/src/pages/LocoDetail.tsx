@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { locosApi } from '../api/services'
 import { ArrowLeft, Film, Clock, Navigation, Zap, Calendar as CalendarIcon, Hash } from 'lucide-react'
+import SignalLoader from '../components/ui/SignalLoader'
 
 export default function LocoDetail() {
   const { number } = useParams<{ number: string }>()
@@ -14,7 +15,11 @@ export default function LocoDetail() {
   })
 
   if (isLoading) {
-    return <div className="p-8 text-slate-500 animate-pulse">Loading locomotive logbook...</div>
+    return (
+      <div className="p-4 md:p-8 h-64 flex justify-center items-center">
+        <SignalLoader message={`LOADING LOCOMOTIVE ${number}...`} />
+      </div>
+    )
   }
 
   if (!history || history.length === 0) {
@@ -27,7 +32,7 @@ export default function LocoDetail() {
   const currentLivery = history[0]?.currentLivery || 'Standard'
 
   return (
-    <div className="max-w-4xl mx-auto p-8 animate-fade-in pb-32">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 animate-fade-in pb-32">
       <div className="flex items-center gap-4 mb-8">
         <button onClick={() => navigate('/locos')} className="btn-secondary p-2">
           <ArrowLeft size={18} />

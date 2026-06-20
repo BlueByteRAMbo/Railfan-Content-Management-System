@@ -21,7 +21,7 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 ### ✨ Key Features
 
 - 🚂 **Train Run Tracker & Locomotive Logbook**: Track physical runs of specific trains across your archive, and maintain a "passport" for every locomotive you capture. Detects shed and livery changes automatically.
-- 🗺️ **Interactive Spotter Map**: Add GPS coordinates to generate dynamic, stunning dark-mode maps using `react-leaflet`. Click pins to view custom popups of your geographical encounters.
+- 🗺️ **Interactive Spotter Map & Location Picker**: Add GPS coordinates via a visual, interactive `react-leaflet` map integrated directly into the video addition form. View all your encounters on a massive interactive Spotter Map.
 - 🔍 **Searchable Station Picker**: A live search dropdown backed by a full Indian Railways station database (7 000+ stations). Type any station name or code and get instant results from the backend.
 - 🆓 **API-Free YouTube Metadata Scraping**: Paste a YouTube Video ID to automatically extract Title, Description, Duration, and high-quality Thumbnail — no paid API key required.
 - 📤 **Google Takeout Auto-Importer**: Drop your raw `videos.csv` from Google Takeout directly into the dashboard. The backend automatically detects the format and builds your database instantly.
@@ -35,9 +35,10 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 
 ### 🎨 Design & UX
 - **"Signal & Steel" Identity**: Deep Charcoal/Graphite base with vibrant Signal Amber accents.
+- **Unified Custom Loaders**: The entire app utilizes a bespoke `<SignalLoader />` animation. Dashboards hold back renders until data is fully loaded, eliminating jittery per-component spinners.
 - **Framer Motion**: Staggered page loads, layout transitions, animated stat counters.
 - **Glassmorphism**: Backdrop-blur card layouts and glowing hover states over a radial mesh background.
-- **Mobile-First**: Off-canvas drawer sidebar, bottom navigation, and touch-friendly stacked cards on small screens.
+- **Mobile-First**: Off-canvas drawer sidebar, bottom navigation, and touch-friendly stacked cards on small screens with responsive padding.
 
 ---
 

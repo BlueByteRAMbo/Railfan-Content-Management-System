@@ -48,7 +48,7 @@ export default function DeepStatistics() {
   const stations = stationsData.filter((d: any) => d.name && d.name.trim() !== '')
 
   return (
-    <div className="max-w-6xl mx-auto p-8 animate-fade-in">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 animate-fade-in">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">Deep Statistics</h1>
         <p className="text-slate-500 text-sm mt-1">Advanced analytics on your railfan activity</p>
@@ -115,7 +115,7 @@ export default function DeepStatistics() {
         <motion.div variants={fadeUp} className="glass-card p-6">
           <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
             <Train size={18} className="text-brand-400" />
-            Top 5 Most Recorded Trains
+            Top {limit} Most Recorded Trains
           </h2>
           <div className="h-64 relative">
             {trainsLoading ? (
@@ -146,7 +146,7 @@ export default function DeepStatistics() {
         <motion.div variants={fadeUp} className="glass-card p-6">
           <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
             <Activity size={18} className="text-amber-400" />
-            Top 5 Most Recorded Locomotives
+            Top {limit} Most Recorded Locomotives
           </h2>
           <div className="h-64 relative">
             {locosLoading ? (
@@ -177,7 +177,7 @@ export default function DeepStatistics() {
         <motion.div variants={fadeUp} className="glass-card p-6">
           <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
             <Building size={18} className="text-[#3E7C8C]" />
-            Top 5 Most Recorded Sheds
+            Top {limit} Most Recorded Sheds
           </h2>
           <div className="h-64 relative">
             {shedsLoading ? (
@@ -208,7 +208,7 @@ export default function DeepStatistics() {
         <motion.div variants={fadeUp} className="glass-card p-6">
           <h2 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
             <MapPin size={18} className="text-[#5C8A4A]" />
-            Top 5 Most Recorded Stations
+            Top {limit} Most Recorded Stations
           </h2>
           <div className="h-64 relative">
             {stationsLoading ? (

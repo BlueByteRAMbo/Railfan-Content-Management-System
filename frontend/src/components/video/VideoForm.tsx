@@ -12,6 +12,8 @@ import type { Video, VideoCreateRequest } from '../../types'
 import { AlertTriangle, Loader2, CheckCircle, Plus, X, PlayCircle } from 'lucide-react';
 import StationSelect from '../../components/ui/StationSelect';
 import SearchableSelect from '../../components/ui/SearchableSelect';
+import SignalLoader from '../../components/ui/SignalLoader';
+import LocationPickerMap from './LocationPickerMap';
 
 // ── Validation Schema ─────────────────────────────────────────
 const schema = z.object({
@@ -155,13 +157,15 @@ export default function VideoForm({
   isSubmitting,
   submitLabel = 'Save Video'
 }: VideoFormProps) {
-  const { data: categories = [] }  = useTrainCategories()
-  const { data: locoTypes = [] }   = useLocoTypes()
+  const { data: categories = [], isLoading: catLoading }  = useTrainCategories()
+  const { data: locoTypes = [], isLoading: typesLoading }   = useLocoTypes()
   const { data: locoSheds = [], isLoading: shedsLoading } = useLocoSheds()
-  const { data: collections = [] } = useCollections()
+  const { data: collections = [], isLoading: collectionsLoading } = useCollections()
 
   const [ytLoading, setYtLoading] = useState(false)
   const [ytSuccess, setYtSuccess] = useState(false)
+
+  const isReady = !catLoading && !typesLoading && !shedsLoading && !collectionsLoading
 
   const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -238,6 +242,14 @@ export default function VideoForm({
       stationId: values.stationId ? Number(values.stationId) : undefined,
     }
     await onSubmit(req)
+  }
+
+  if (!isReady) {
+    return (
+      <div className="p-4 md:p-10 flex items-center justify-center h-64 border border-white/10 rounded-xl bg-white/5">
+        <SignalLoader message="LOADING DICTIONARIES..." />
+      </div>
+    )
   }
 
   return (
@@ -632,6 +644,17 @@ export default function VideoForm({
           <div>
             <FieldLabel>Railway Zone</FieldLabel>
             <input {...register('railwayZone')} className="form-input" placeholder="CR, WR, NR…" />
+          </div>
+          <div className="md:col-span-2">
+            <FieldLabel>Location Map</FieldLabel>
+            <LocationPickerMap
+              lat={watch('gpsLat')}
+              lng={watch('gpsLng')}
+              onChange={(lat, lng) => {
+                setValue('gpsLat', lat, { shouldDirty: true, shouldValidate: true })
+                setValue('gpsLng', lng, { shouldDirty: true, shouldValidate: true })
+              }}
+            />
           </div>
           <div>
             <FieldLabel>GPS Latitude</FieldLabel>

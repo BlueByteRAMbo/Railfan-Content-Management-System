@@ -5,6 +5,7 @@ import { Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { MapPin, Navigation, Calendar } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import SignalLoader from '../components/ui/SignalLoader'
 
 // Fix for default Leaflet marker icon in React
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
@@ -33,7 +34,7 @@ export default function SpotterMap() {
 
   if (isLoading) {
     return (
-      <div className="p-8 h-[calc(100vh-100px)] flex flex-col">
+      <div className="p-4 md:p-8 h-[calc(100vh-100px)] flex flex-col">
         <div className="flex items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-white flex items-center gap-2">
@@ -41,15 +42,15 @@ export default function SpotterMap() {
             </h1>
           </div>
         </div>
-        <div className="flex-1 glass-card animate-pulse bg-white/5 flex items-center justify-center rounded-xl border border-white/10">
-          <p className="text-slate-500 font-medium">Loading Map Data...</p>
+        <div className="flex-1 glass-card bg-white/5 flex items-center justify-center rounded-xl border border-white/10">
+          <SignalLoader message="LOADING MAP DATA..." />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="p-8 h-[calc(100vh-100px)] flex flex-col animate-fade-in pb-32">
+    <div className="p-4 md:p-8 h-[calc(100vh-100px)] flex flex-col animate-fade-in pb-32">
       <div className="flex items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
