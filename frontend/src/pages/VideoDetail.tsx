@@ -315,7 +315,7 @@ export default function VideoDetail() {
               <DetailItem label="Section" value={video.section} />
               <DetailItem label="State"   value={video.state} />
               <DetailItem label="Zone"    value={video.railwayZone} />
-              {video.gpsLat && video.gpsLng && (
+              {video.gpsLat && video.gpsLng ? (
                 <>
                   <DetailItem label="GPS" value={`${video.gpsLat}, ${video.gpsLng}`} />
                   <div className="mt-3 overflow-hidden rounded-lg aspect-video border border-white/5 relative">
@@ -327,6 +327,12 @@ export default function VideoDetail() {
                     />
                   </div>
                 </>
+              ) : (
+                <div className="mt-3 flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 border-dashed rounded-lg text-center">
+                  <MapPin size={24} className="text-slate-600 mb-2" />
+                  <p className="text-xs font-semibold text-slate-400">No GPS Coordinates</p>
+                  <p className="text-[10px] text-slate-500 mt-1 max-w-[200px]">Edit this video to add Latitude and Longitude to view the interactive map.</p>
+                </div>
               )}
             </div>
           </div>

@@ -20,6 +20,9 @@ import CollectionsTagsManager from './pages/CollectionsTagsManager'
 import QuickAddView from './pages/QuickAddView'
 import ImportExportView from './pages/ImportExportView'
 import TrainRunTracker from './pages/TrainRunTracker'
+import { ErrorBoundary } from './components/ErrorBoundary'
+import SignalLoader from './components/ui/SignalLoader'
+import { Suspense } from 'react'
 
 // ── Protected route wrapper ───────────────────────────────────
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -34,10 +37,11 @@ export default function App() {
   const location = useLocation()
 
   return (
-    <>
-      <AppBackground />
-      <Routes>
-        {/* Public */}
+    <ErrorBoundary>
+      <Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-[#19181c]"><SignalLoader message="INITIALISING ARCHIVE..." /></div>}>
+        <AppBackground />
+        <Routes>
+          {/* Public */}
       <Route path="/" element={<LandingPage />} />
       <Route
         path="/login"
@@ -78,6 +82,7 @@ export default function App() {
         }
       />
     </Routes>
-    </>
+      </Suspense>
+    </ErrorBoundary>
   )
 }

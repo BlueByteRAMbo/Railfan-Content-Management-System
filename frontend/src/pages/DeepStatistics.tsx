@@ -23,22 +23,23 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function DeepStatistics() {
   const [startDate, setStartDate] = useState<string>('')
   const [endDate, setEndDate] = useState<string>('')
+  const [limit, setLimit] = useState<number>(5)
   
   const { data: trainsData = [], isLoading: trainsLoading } = useQuery({
-    queryKey: ['stats', 'trains', startDate, endDate],
-    queryFn: () => statsApi.getMostRecordedTrains(5, startDate || undefined, endDate || undefined).then(r => r.data)
+    queryKey: ['stats', 'trains', limit, startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedTrains(limit, startDate || undefined, endDate || undefined).then(r => r.data)
   })
   const { data: locosData = [], isLoading: locosLoading } = useQuery({
-    queryKey: ['stats', 'locos', startDate, endDate],
-    queryFn: () => statsApi.getMostRecordedLocos(5, startDate || undefined, endDate || undefined).then(r => r.data)
+    queryKey: ['stats', 'locos', limit, startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedLocos(limit, startDate || undefined, endDate || undefined).then(r => r.data)
   })
   const { data: shedsData = [], isLoading: shedsLoading } = useQuery({
-    queryKey: ['stats', 'sheds', startDate, endDate],
-    queryFn: () => statsApi.getMostRecordedSheds(5, startDate || undefined, endDate || undefined).then(r => r.data)
+    queryKey: ['stats', 'sheds', limit, startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedSheds(limit, startDate || undefined, endDate || undefined).then(r => r.data)
   })
   const { data: stationsData = [], isLoading: stationsLoading } = useQuery({
-    queryKey: ['stats', 'stations', startDate, endDate],
-    queryFn: () => statsApi.getMostRecordedStations(5, startDate || undefined, endDate || undefined).then(r => r.data)
+    queryKey: ['stats', 'stations', limit, startDate, endDate],
+    queryFn: () => statsApi.getMostRecordedStations(limit, startDate || undefined, endDate || undefined).then(r => r.data)
   })
 
   const trains = trainsData.filter((d: any) => d.name && d.name.trim() !== '')
@@ -77,11 +78,24 @@ export default function DeepStatistics() {
             className="form-input text-xs py-1.5 w-36"
           />
         </div>
-        {(startDate || endDate) && (
+        <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-2">
+          <label className="text-xs text-slate-500">Show Top</label>
+          <select
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            className="form-input text-xs py-1.5 w-16 px-2 bg-transparent"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+          </select>
+        </div>
+        {(startDate || endDate || limit !== 5) && (
           <button
             onClick={() => {
               setStartDate('');
               setEndDate('');
+              setLimit(5);
             }}
             className="text-xs text-brand-400 hover:text-brand-300 transition-colors font-medium ml-auto"
           >

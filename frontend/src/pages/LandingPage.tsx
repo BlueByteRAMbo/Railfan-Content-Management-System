@@ -287,7 +287,7 @@ export default function LandingPage() {
           <button onClick={() => navigate(isAuthenticated ? '/dashboard' : '/login')}
             className="hidden md:flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full bg-[#C98A2C]/10 border border-[#C98A2C]/50 text-[#C98A2C] hover:bg-[#C98A2C] hover:text-white shadow-[0_0_20px_rgba(201,138,44,0.4)] transition-all duration-300 relative overflow-hidden group"
           >
-            <span className="relative z-10">{isAuthenticated ? 'Go to Dashboard' : 'Launch App'}</span>
+            <span className="relative z-10">{isAuthenticated ? 'Go to Dashboard' : 'Sign In'}</span>
             <ArrowRight size={16} className="relative z-10 group-hover:translate-x-1 transition-transform" />
             {/* Shimmer animation element */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite] group-hover:hidden" />
@@ -300,7 +300,7 @@ export default function LandingPage() {
         <button onClick={() => navigate(isAuthenticated ? '/dashboard' : '/login')}
           className="pointer-events-auto w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-[#C98A2C] to-[#d99f46] shadow-[0_10px_30px_rgba(201,138,44,0.4)] border border-[#e0a64e]/50 flex items-center justify-center gap-2 transition-transform active:scale-95"
         >
-          {isAuthenticated ? 'Go to Dashboard' : 'Launch App'} <ArrowRight size={18} />
+          {isAuthenticated ? 'Go to Dashboard' : 'Sign In'} <ArrowRight size={18} />
         </button>
       </div>
 

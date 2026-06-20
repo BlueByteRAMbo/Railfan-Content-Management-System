@@ -17,6 +17,16 @@ export default function CollectionsTagsManager() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['collections'] })
   })
 
+  const createCollection = useMutation({
+    mutationFn: (data: { name: string, description: string }) => collectionsApi.create(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['collections'] })
+  })
+
+  const updateCollection = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: { name: string, description: string } }) => collectionsApi.update(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['collections'] })
+  })
+
   const deleteTag = useMutation({
     mutationFn: (id: number) => tagsApi.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['tags'] })
@@ -57,7 +67,17 @@ export default function CollectionsTagsManager() {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-white">Your Collections ({collections.length})</h2>
-              <button className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"><Plus size={14} /> New</button>
+              <button 
+                onClick={() => {
+                  const name = prompt('Enter new collection name:');
+                  if (!name) return;
+                  const description = prompt('Enter description (optional):') || '';
+                  createCollection.mutate({ name, description });
+                }}
+                className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
+              >
+                <Plus size={14} /> New
+              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {collections.map(c => (
@@ -65,7 +85,17 @@ export default function CollectionsTagsManager() {
                   <h3 className="font-bold text-slate-200 mb-1">{c.name}</h3>
                   <p className="text-xs text-slate-500 line-clamp-2 h-8">{c.description || 'No description'}</p>
                   <div className="flex justify-end gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-brand-400 transition-colors"><Edit2 size={14} /></button>
+                    <button 
+                      onClick={() => {
+                        const name = prompt('Enter new name:', c.name);
+                        if (!name) return;
+                        const description = prompt('Enter new description:', c.description || '') || '';
+                        updateCollection.mutate({ id: c.id, data: { name, description } });
+                      }}
+                      className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-brand-400 transition-colors"
+                    >
+                      <Edit2 size={14} />
+                    </button>
                     <button onClick={() => deleteCollection.mutate(c.id)} className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
                   </div>
                 </div>

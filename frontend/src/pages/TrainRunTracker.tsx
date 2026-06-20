@@ -25,6 +25,8 @@ export default function TrainRunTracker() {
   // Calculate some stats from the run history
   const totalRuns = history.length
   const totalSwapDays = history.filter(h => h.locoChanged).length
+  const uniqueLocos = new Set(history.flatMap(h => h.appearances.map((a: any) => a.locoNumber).filter(Boolean))).size
+  const uniqueStations = new Set(history.flatMap(h => h.appearances.map((a: any) => a.stationName).filter(Boolean))).size
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 animate-fade-in">
@@ -98,7 +100,7 @@ export default function TrainRunTracker() {
           ) : (
             <div className="space-y-6">
               {/* Quick stats panel */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="glass-card p-4 flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-brand-500/10 text-brand-400">
                     <Calendar size={18} />
@@ -113,8 +115,26 @@ export default function TrainRunTracker() {
                     <Sparkles size={18} />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Loco Swaps Detected</p>
+                    <p className="text-xs text-slate-500">Loco Swaps</p>
                     <p className="text-lg font-bold text-white">{totalSwapDays}</p>
+                  </div>
+                </div>
+                <div className="glass-card p-4 flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                    <Train size={18} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Unique Locos</p>
+                    <p className="text-lg font-bold text-white">{uniqueLocos}</p>
+                  </div>
+                </div>
+                <div className="glass-card p-4 flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-pink-500/10 text-pink-400">
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Stations</p>
+                    <p className="text-lg font-bold text-white">{uniqueStations}</p>
                   </div>
                 </div>
               </div>

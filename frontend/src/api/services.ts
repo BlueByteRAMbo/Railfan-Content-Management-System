@@ -89,11 +89,11 @@ export const referenceApi = {
 
 // ── Tags ──────────────────────────────────────────────────────
 export const tagsApi = {
-  getAll:        ()          => apiClient.get<Tag[]>('/api/tags'),
-  autocomplete:  (q: string) => apiClient.get<Tag[]>('/api/tags/autocomplete', { params: { q } }),
-  create:        (name: string) => apiClient.post<Tag>('/api/tags', { name }),
-  update:        (id: number, name: string) => apiClient.put<Tag>(`/api/tags/${id}`, { name }),
-  delete:        (id: number) => apiClient.delete(`/api/tags/${id}`),
+  getAll:       () => apiClient.get<Tag[]>('/api/tags'),
+  autocomplete: (query: string) => apiClient.get<Tag[]>('/api/tags/autocomplete', { params: { query } }),
+  create:       (name: string)  => apiClient.post<Tag>('/api/tags', { name }),
+  update:       (id: number, name: string) => apiClient.put<Tag>(`/api/tags/${id}`, { name }),
+  delete:       (id: number) => apiClient.delete(`/api/tags/${id}`),
 };
 
 // ── Collections ───────────────────────────────────────────────

@@ -420,6 +420,8 @@ export default function VideoList() {
               {selectedIds.length}
             </span>
             <span className="text-sm text-slate-300 mr-2 font-medium">selected</span>
+            <button onClick={() => handleBulkAction('MARK_UPLOADED')} className="btn-secondary py-1.5 px-3 text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20">Mark Uploaded</button>
+            <button onClick={() => handleBulkAction('SCHEDULE_UPLOAD')} className="btn-secondary py-1.5 px-3 text-xs bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 border-brand-500/20">Schedule</button>
             <button onClick={() => handleBulkAction('ARCHIVE')} className="btn-secondary py-1.5 px-3 text-xs bg-white/5 hover:bg-white/10 border-white/10">Archive</button>
             <button onClick={() => handleBulkAction('DELETE')} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border-red-500/20">Delete</button>
           </motion.div>
