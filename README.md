@@ -1,114 +1,150 @@
 <div align="center">
-  <img src="https://img.icons8.com/color/120/train.png" alt="Railfan Archive Manager Logo" />
-  
-  # 🚂 Railfan Archive Manager
-  
-  **A production-grade, full-stack video management system built for railfans, trainspotters, and content creators.**
 
-  [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3-6DB33F?logo=spring&logoColor=white)](#)
-  [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](#)
-  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white)](#)
-  [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](#)
-  [![Vite](https://img.shields.io/badge/Vite-8.0-646CFF?logo=vite&logoColor=white)](#)
+<img width="160" src="https://raw.githubusercontent.com/BlueByteRAMbo/Railfan-Content-Management-System/master/frontend/public/RF_Logo.png" alt="RCMS — Railfan Content Management System"/>
+
+<h1>Railfan Archive Manager</h1>
+
+<p><strong>A production-grade video archive system built for railfans, trainspotters, and content creators.</strong><br/>Track every locomotive. Map every journey. Never lose a recording.</p>
+
+<p>
+  <a href="#"><img src="https://img.shields.io/badge/Spring%20Boot-3.3.4-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/PostgreSQL-15-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/License-MIT-C98A2C?style=flat-square" alt="MIT License"/></a>
+</p>
+
+<p>
+  <a href="#-getting-started">Get Started</a> ·
+  <a href="#-key-features">Features</a> ·
+  <a href="#️-tech-stack">Tech Stack</a> ·
+  <a href="#️-production-deployment">Deploy</a>
+</p>
+
 </div>
 
 ---
 
-## 📖 Overview
+## What Is This?
 
-The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically for train enthusiasts to replace messy text-file tracking systems. It lets users track, organise, and analyse high volumes of train recording data — syncing automatically with YouTube metadata, visualising upload velocity, and offering deep analytics.
+The **Railfan Archive Manager** replaces the spreadsheets, text files, and scattered notes that most railfans use to log their footage. It is a self-hosted, full-stack web application where you can:
 
-### ✨ Key Features
+- Log every video you've ever recorded — loco number, train, shed, station, date, GPS coordinates, file size, duration
+- Automatically pull YouTube titles, descriptions, and thumbnails by pasting a video ID
+- See every recording on an interactive map of India
+- Track the "passport" of individual locomotives across your entire archive
+- Plan your upload schedule and manage a pending queue
+- Detect duplicates, resolve them, and bulk-manage hundreds of entries at once
 
-- 🚂 **Train Run Tracker & Locomotive Logbook**: Track physical runs of specific trains across your archive, and maintain a "passport" for every locomotive you capture. Detects shed and livery changes automatically.
-- 🗺️ **Interactive Spotter Map & Location Picker**: Add GPS coordinates via a visual, interactive `react-leaflet` map integrated directly into the video addition form. View all your encounters on a massive interactive Spotter Map.
-- 🔍 **Searchable Station Picker**: A live search dropdown backed by a full Indian Railways station database (7 000+ stations). Type any station name or code and get instant results from the backend.
-- 🆓 **API-Free YouTube Metadata Scraping**: Paste a YouTube Video ID to automatically extract Title, Description, Duration, and high-quality Thumbnail — no paid API key required.
-- 📤 **Google Takeout Auto-Importer**: Drop your raw `videos.csv` from Google Takeout directly into the dashboard. The backend automatically detects the format and builds your database instantly.
-- 🚀 **Quick Add Mode**: Lightning-fast sequential data entry designed for logging massive backlogs without touching your mouse.
-- 🗃️ **Mass Import & Export**: Import legacy Excel/CSV files. Export your entire archive to PDF reports, Excel spreadsheets, or CSV backups.
-- 📦 **Bulk Action Engine**: Multi-select hundreds of videos using checkboxes, then Archive, Delete, Mark Uploaded, or Schedule them with a floating action bar.
-- 📊 **Deep Analytics Dashboard**: Interactive Recharts visualisations of top trains, locos, sheds, and stations. Instantly filterable by custom date ranges.
-- 📅 **Temporal Workflows**: Upload Planner, Pending Queues, and an Interactive Calendar to track what you recorded and when.
-- 🚨 **Duplicate Detection**: Automated backend daemon flags potential duplicate recordings (same train, same day).
-- 🗂️ **Taxonomy & Collection Browsing**: Fully interactive, inline Tag and Collection manager. Click directly into collections to browse visually rich, filtered galleries of your archives.
-- ⚡ **Optimised Infrastructure**: In-memory caching with Caffeine, per-user JWT-aware rate limiting with Bucket4j, Nginx-level protection, and Prometheus metrics out of the box.
-- 📱 **Progressive Web App (PWA)**: Installable on mobile devices with offline caching via Workbox `StaleWhileRevalidate` strategies.
-- 📖 **Interactive API Documentation**: Auto-generated OpenAPI / Swagger UI specs available at `/swagger-ui.html`.
-- 🔄 **Automated CI/CD**: Built-in GitHub Actions workflows for zero-downtime, automated deployments to Render and similar platforms.
-- 🔒 **Enterprise Security**: Full multi-tenant data isolation, JWT-based auth with brute-force account lockouts, and strict environment variable fallbacks to prevent secret exposure.
+It is built for personal use but architected for production — JWT auth, rate limiting, Flyway migrations, Caffeine caching, Prometheus metrics, and a full CI/CD pipeline out of the box.
 
-### 🎨 Design & UX
-- **"Signal & Steel" Identity**: Deep Charcoal/Graphite base with vibrant Signal Amber accents.
-- **Unified Custom Loaders**: The entire app utilizes a bespoke `<SignalLoader />` animation. Dashboards hold back renders until data is fully loaded, eliminating jittery per-component spinners.
-- **Framer Motion**: Staggered page loads, layout transitions, animated stat counters.
-- **Glassmorphism**: Backdrop-blur card layouts and glowing hover states over a radial mesh background.
-- **Mobile-First**: Off-canvas drawer sidebar, bottom navigation, and touch-friendly stacked cards on small screens with responsive padding.
+---
+
+## ✨ Key Features
+
+### 🗂️ Archive & Logging
+| Feature | Description |
+|---|---|
+| **Quick Add Mode** | Lightning-fast sequential entry — log a full session without touching your mouse |
+| **Google Takeout Import** | Drop your `videos.csv` directly — the backend detects format and imports instantly |
+| **Mass Import / Export** | Excel, CSV, and PDF export for your entire archive or filtered subsets |
+| **Duplicate Detection** | Backend daemon flags same-train, same-day duplicates automatically |
+| **Bulk Actions** | Multi-select hundreds of videos — Archive, Delete, Mark Uploaded, Schedule |
+
+### 🚂 Locomotive & Train Intelligence
+| Feature | Description |
+|---|---|
+| **Locomotive Logbook** | A "passport" for every loco — full appearance history, every train, every shed, every livery |
+| **Train Run Tracker** | Group appearances of the same train across dates; detects loco swaps automatically |
+| **Offlink Detector** | Flags when a train runs with an unexpected locomotive — configure expected assignments per train |
+| **Spotter Map** | All GPS-tagged recordings on an interactive Leaflet map, clustered by traction type |
+
+### 📊 Analytics & Planning
+| Feature | Description |
+|---|---|
+| **Deep Statistics** | Recharts visualisations of top locos, trains, sheds, stations — filterable by date range |
+| **Upload Planner** | Schedule your YouTube releases; see gaps at a glance |
+| **Pending Queue** | Workflow view for unuploaded footage with inline bulk actions |
+| **Interactive Calendar** | Recording and upload calendar with day-level drill-down |
+| **Timeline View** | Monthly recording/upload bars — click any month to see its videos |
+
+### 🔧 Infrastructure
+| Feature | Description |
+|---|---|
+| **YouTube Metadata Scraping** | Paste a video ID — title, description, duration, and thumbnail fill automatically. No API key needed |
+| **7 000+ Station Search** | Full Indian Railways station database seeded on first boot; live-search dropdown in every form |
+| **Caching** | Caffeine in-memory cache on dashboard, stats, and YouTube calls |
+| **Rate Limiting** | Bucket4j per-user JWT-aware limiting + Nginx IP-level limiting on auth endpoints |
+| **Metrics** | Spring Actuator + Micrometer Prometheus endpoint — plug into Grafana Cloud |
+| **PWA** | Installable on Android/iOS; reference data cached offline via Workbox |
+| **API Docs** | OpenAPI / Swagger UI auto-generated at `/swagger-ui.html` |
+| **CI/CD** | GitHub Actions: build → test → deploy on every push to `master` |
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Backend (Java)
+### Backend
 | | |
 |---|---|
+| **Runtime** | Java 21 |
 | **Framework** | Spring Boot 3.3.4 |
-| **Security** | Spring Security + JWT |
-| **Database** | PostgreSQL (JPA / Hibernate) |
-| **Migrations** | Flyway |
-| **Extras** | Apache POI · OpenCSV · iText PDF · HTML Scraper |
+| **Security** | Spring Security · JWT (JJWT) · Bucket4j rate limiting |
+| **Database** | PostgreSQL 15 · Hibernate JPA · Flyway migrations |
+| **Exports** | Apache POI (Excel) · OpenCSV · iText (PDF) |
+| **Monitoring** | Spring Actuator · Micrometer · Prometheus |
 
-### Frontend (TypeScript)
+### Frontend
 | | |
 |---|---|
-| **Framework** | React 19 + Vite 8 |
-| **Styling** | Tailwind CSS |
-| **Animations** | Framer Motion |
-| **State / Fetching** | Zustand + TanStack Query |
-| **UI** | Radix UI · Recharts · react-select · Lucide Icons |
+| **Framework** | React 19 + Vite 8 · TypeScript 5 |
+| **Styling** | Tailwind CSS · Framer Motion |
+| **Data** | TanStack Query · Zustand |
+| **UI** | Radix UI · Shadcn · Recharts · React Leaflet · Lucide Icons |
+| **PWA** | Vite PWA Plugin · Workbox |
 
 ### Infrastructure
-- Docker & Docker Compose
-- Nginx Reverse Proxy
+| | |
+|---|---|
+| **Containers** | Docker · Docker Compose |
+| **Proxy** | Nginx (rate limiting, gzip, SPA routing, API proxying) |
+| **CI/CD** | GitHub Actions |
+| **Hosting** | Render · Railway · any VPS |
 
 ---
 
-## 🚀 Getting Started (Local Development)
+## 🚀 Getting Started
 
 ### Prerequisites
+
+- **Java** JDK 21+
 - **Node.js** v18+
-- **Java** JDK 21
-- **Maven** (optional — see below)
+- **Maven** (optional — wrapper included)
 
-### 1. Start the Backend (H2 in-memory, no Docker required)
+### 1 — Start the Backend
 
-> On first boot the seeder automatically imports all 7 000+ Indian railway stations into the in-memory database.
+The local profile uses an H2 in-memory database. No PostgreSQL or Docker needed. On first boot, all 7 000+ Indian railway stations are seeded automatically.
 
-**If Maven is on your PATH:**
+**macOS / Linux:**
 ```bash
 cd backend
 mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
 ```
 
-**Without a system Maven (Windows):**
+**Windows (no system Maven needed):**
 ```powershell
-# One-time: the bundled wrapper downloads Maven 3.9.6 automatically
 cd backend
 .\mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--spring.profiles.active=local"
 ```
 
-**Or use a locally downloaded Maven:**
-```powershell
-& "$env:USERPROFILE\maven\apache-maven-3.9.6\bin\mvn.cmd" spring-boot:run `
-    "-Dspring-boot.run.arguments=--spring.profiles.active=local"
-```
-
 Default credentials seeded automatically:
+
 | Username | Password |
 |---|---|
 | `railfan` | `railfan123` |
 
-### 2. Start the Frontend
+### 2 — Start the Frontend
 
 ```bash
 cd frontend
@@ -116,64 +152,101 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:5173** in your browser.
+Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
 ---
 
 ## ☁️ Production Deployment
 
-The app is ready to deploy to **Render**, **Railway**, or any VPS.
+### Environment Variables
 
-### Environment Variables (`.env` — copy from `.env.example`)
+Copy `.env.example` to `.env` and fill in your values:
 
-```
-DB_URL=jdbc:postgresql://<host>:<port>/<db>
-DB_USERNAME=<user>
-DB_PASSWORD=<pass>
+```env
+# Database
+SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:<port>/<db>
+SPRING_DATASOURCE_USERNAME=<user>
+SPRING_DATASOURCE_PASSWORD=<strong-password>
+
+# Security — must be at least 256 bits, randomly generated
 JWT_SECRET=<long-random-string>
+
+# Optional
+YOUTUBE_API_KEY=
+CORS_ALLOWED_ORIGINS=https://your-domain.com
 ```
 
-### Docker Compose (full stack)
+> ⚠️ **Never leave `JWT_SECRET` unset in production.** The app will refuse to start if this variable is missing.
+
+### Docker (Full Stack)
 
 ```bash
-# Copy and fill in .env first
 cp .env.example .env
-
-# Start everything (Postgres + Backend + Frontend + Nginx)
+# Edit .env with your values, then:
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Backend-only (Render / Railway)
+This starts PostgreSQL, the Spring Boot backend, the Nginx frontend, and wires everything together.
 
-1. Set the env vars above in your platform dashboard.
+### Render / Railway (Backend only)
+
+1. Set all environment variables in the platform dashboard
 2. Point the build to `backend/` with:
-   - **Build command**: `mvn -B package -DskipTests`
-   - **Start command**: `java -jar target/*.jar`
-3. Flyway runs automatically on first startup and seeds all tables.
+   - **Build command:** `mvn -B package -DskipTests`
+   - **Start command:** `java -jar target/*.jar`
+3. Flyway runs on startup and creates all tables automatically
 
-### Frontend-only (Vercel / Netlify)
+### Vercel / Netlify (Frontend only)
 
 1. Root directory: `frontend/`
 2. Build command: `npm run build`
 3. Output directory: `dist/`
-4. Set `VITE_API_URL=https://<your-backend-domain>` if you use a separate backend host.
+4. Set `VITE_API_URL=https://your-backend-domain.com`
+
+---
+
+## 🔐 Security Notes
+
+- Passwords hashed with BCrypt (strength 12)
+- Stateless JWT sessions — no CSRF exposure
+- Per-user Bucket4j rate limiting (200 req/min) + Nginx IP rate limiting (5 req/min on auth)
+- All data is user-scoped — every query filters by authenticated user
+- CORS restricted to configured origins only
+- Pagination size capped at 100 per request
 
 ---
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create your feature branch
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m 'Add: description of your feature'
+   ```
+4. Push and open a Pull Request
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+Please open an issue first for anything beyond small bug fixes so we can discuss the approach.
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the **MIT License** — see [`LICENSE`](LICENSE) for details.
+
+---
 
 <div align="center">
-  <i>Built with ❤️ for the Railfan Community</i>
+  <sub>Built with ❤️ for the Indian Railfan Community</sub><br/>
+  <sub>
+    <a href="#-getting-started">Get Started</a> ·
+    <a href="https://github.com/BlueByteRAMbo/Railfan-Content-Management-System/issues">Report a Bug</a> ·
+    <a href="https://github.com/BlueByteRAMbo/Railfan-Content-Management-System/issues">Request a Feature</a>
+  </sub>
 </div>
