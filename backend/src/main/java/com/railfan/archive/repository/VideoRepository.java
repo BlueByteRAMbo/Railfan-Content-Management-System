@@ -256,4 +256,21 @@ public interface VideoRepository extends JpaRepository<Video, Long>, JpaSpecific
         @Param("trainNumber") String trainNumber,
         @Param("user") User user
     );
+    // ── Loco Logbook queries ──────────────────────────────────
+    @Query("SELECT new com.railfan.archive.dto.response.LocoSummaryDto(v.locoNumber, COUNT(v), MIN(v.recordingDate), MAX(v.recordingDate)) " +
+           "FROM Video v WHERE v.user = :user AND v.isDeleted = false AND v.locoNumber IS NOT NULL AND v.locoNumber != '' " +
+           "GROUP BY v.locoNumber ORDER BY COUNT(v) DESC")
+    List<com.railfan.archive.dto.response.LocoSummaryDto> getLocoSummaries(@Param("user") User user);
+
+    @Query("SELECT v FROM Video v " +
+           "LEFT JOIN FETCH v.locoType LEFT JOIN FETCH v.locoShed LEFT JOIN FETCH v.station " +
+           "WHERE v.isDeleted = false AND v.user = :user AND v.locoNumber = :locoNumber " +
+           "ORDER BY v.recordingDate DESC, v.recordingTime DESC")
+    List<Video> findLocoHistory(@Param("locoNumber") String locoNumber, @Param("user") User user);
+
+    // ── Spotter Map ───────────────────────────────────────────
+    @Query("SELECT new com.railfan.archive.dto.response.MapPointDto(v.id, v.gpsLat, v.gpsLng, lt.name, v.locoNumber, v.recordingDate, v.thumbnail) " +
+           "FROM Video v LEFT JOIN v.locoType lt " +
+           "WHERE v.user = :user AND v.isDeleted = false AND v.gpsLat IS NOT NULL AND v.gpsLng IS NOT NULL")
+    List<com.railfan.archive.dto.response.MapPointDto> findMapPoints(@Param("user") User user);
 }

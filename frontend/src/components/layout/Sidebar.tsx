@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/authStore'
 import {
   LayoutDashboard, Video, Clock, CalendarRange, Calendar,
   ListTodo, BookMarked, BarChart3, FileInput,
-  Zap, LogOut, ChevronRight, AlertTriangle, Menu, Sparkles
+  Zap, LogOut, ChevronRight, AlertTriangle, Menu, Sparkles, Train, Map
 } from 'lucide-react'
 
 const navSections = [
@@ -13,6 +13,7 @@ const navSections = [
     items: [
       { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
       { to: '/videos',     icon: Video,           label: 'All Videos' },
+      { to: '/map',        icon: Map,             label: 'Spotter Map' },
     ]
   },
   {
@@ -30,6 +31,7 @@ const navSections = [
       { to: '/calendar',   icon: Calendar,        label: 'Calendar' },
       { to: '/collections',icon: BookMarked,      label: 'Collections' },
       { to: '/train-tracker', icon: Sparkles,     label: 'Train Tracker' },
+      { to: '/locos',      icon: Train,           label: 'Loco Logbook' },
     ]
   },
   {

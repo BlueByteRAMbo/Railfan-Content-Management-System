@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { collectionsApi, tagsApi } from '../api/services'
-import { Tag as TagIcon, Folder, Trash2, Edit2, Plus } from 'lucide-react'
+import { Plus, Edit2, Trash2, Folder, Tag as TagIcon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 export default function CollectionsTagsManager() {
   const qc = useQueryClient()
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'collections'|'tags'>('collections')
   const [editingTagId, setEditingTagId] = useState<number | null>(null)
   const [editingTagName, setEditingTagName] = useState<string>('')
@@ -12,6 +14,9 @@ export default function CollectionsTagsManager() {
   const [editingCollectionId, setEditingCollectionId] = useState<number | 'new' | null>(null)
   const [editColName, setEditColName] = useState('')
   const [editColDesc, setEditColDesc] = useState('')
+  
+  const [confirmDeleteTagId, setConfirmDeleteTagId] = useState<number | null>(null)
+  const [confirmDeleteColId, setConfirmDeleteColId] = useState<number | null>(null)
   
   const { data: collections = [] } = useQuery({ queryKey: ['collections'], queryFn: () => collectionsApi.getAll().then(r => r.data) })
   const { data: tags = [] } = useQuery({ queryKey: ['tags'], queryFn: () => tagsApi.getAll().then(r => r.data) })
@@ -119,9 +124,9 @@ export default function CollectionsTagsManager() {
                 }
 
                 return (
-                  <div key={c.id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors group flex flex-col h-full">
+                  <div key={c.id} onClick={() => navigate(`/collections/${c.id}`)} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-brand-500/50 cursor-pointer transition-colors group flex flex-col h-full">
                     <div className="flex items-start justify-between mb-1">
-                      <h3 className="font-bold text-slate-200">{c.name}</h3>
+                      <h3 className="font-bold text-slate-200 group-hover:text-brand-400 transition-colors">{c.name}</h3>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-slate-300 whitespace-nowrap">
                         {c.videoCount || 0} Videos
                       </span>
@@ -129,7 +134,8 @@ export default function CollectionsTagsManager() {
                     <p className="text-xs text-slate-500 line-clamp-2 mb-4 flex-1">{c.description || 'No description'}</p>
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity mt-auto">
                       <button 
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setEditingCollectionId(c.id);
                           setEditColName(c.name);
                           setEditColDesc(c.description || '');
@@ -138,7 +144,15 @@ export default function CollectionsTagsManager() {
                       >
                         <Edit2 size={14} />
                       </button>
-                      <button onClick={() => { if(confirm(`Delete collection "${c.name}"?`)) deleteCollection.mutate(c.id); }} className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
+                      {confirmDeleteColId === c.id ? (
+                        <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 bg-red-500/10 rounded px-2">
+                          <span className="text-[10px] font-bold text-red-400 uppercase">Sure?</span>
+                          <button onClick={() => deleteCollection.mutate(c.id)} className="text-xs font-bold text-white hover:text-red-200">Yes</button>
+                          <button onClick={() => setConfirmDeleteColId(null)} className="text-xs font-bold text-slate-400 hover:text-white">No</button>
+                        </div>
+                      ) : (
+                        <button onClick={(e) => { e.stopPropagation(); setConfirmDeleteColId(c.id); }} className="p-1.5 rounded bg-white/5 text-slate-400 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
+                      )}
                     </div>
                   </div>
                 )
@@ -198,17 +212,21 @@ export default function CollectionsTagsManager() {
                     >
                       <Edit2 size={12} />
                     </button>
-                    <button
-                      onClick={() => {
-                        if (confirm(`Delete tag #${t.name}? This will remove it from all videos.`)) {
-                          deleteTag.mutate(t.id)
-                        }
-                      }}
-                      className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-slate-400 hover:text-red-400 transition-all"
-                      title="Delete tag"
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                    {confirmDeleteTagId === t.id ? (
+                      <div className="flex items-center gap-2 bg-red-500/10 rounded px-2 opacity-0 group-hover:opacity-100 transition-all">
+                        <span className="text-[10px] font-bold text-red-400 uppercase">Sure?</span>
+                        <button onClick={() => deleteTag.mutate(t.id)} className="text-xs font-bold text-white hover:text-red-200">Yes</button>
+                        <button onClick={() => setConfirmDeleteTagId(null)} className="text-xs font-bold text-slate-400 hover:text-white">No</button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteTagId(t.id)}
+                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-slate-400 hover:text-red-400 transition-all"
+                        title="Delete tag"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    )}
                   </div>
                 );
               })}

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { videosApi } from '../api/services'
@@ -7,7 +7,7 @@ import VideoForm from '../components/video/VideoForm'
 import type { VideoCreateRequest, UploadStatus } from '../types'
 import {
   ArrowLeft, Edit2, Trash2, PlayCircle, CheckCircle,
-  Calendar, Clock, HardDrive, Film, MapPin, Train, Zap, Tag
+  Calendar, Clock, HardDrive, Film, MapPin, Train, Zap, Tag, Copy, Check, ChevronLeft, ChevronRight
 } from 'lucide-react'
 
 const STATUS_COLORS: Record<UploadStatus, string> = {
@@ -37,12 +37,27 @@ function formatDuration(secs?: number | null): string {
   return `${m}:${String(s).padStart(2,'0')}`
 }
 
-function DetailItem({ label, value }: { label: string; value?: string | number | null | boolean }) {
+function DetailItem({ label, value, copyable }: { label: string; value?: string | number | null | boolean; copyable?: boolean }) {
+  const [copied, setCopied] = useState(false)
   if (value === undefined || value === null || value === '') return null
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(String(value))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <div>
       <p className="text-xs text-slate-600 uppercase tracking-wide mb-0.5">{label}</p>
-      <p className="text-sm text-slate-200 font-medium">{String(value)}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-sm text-slate-200 font-medium">{String(value)}</p>
+        {copyable && (
+          <button onClick={handleCopy} title="Copy to clipboard" className="text-slate-500 hover:text-brand-400 transition-colors">
+            {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -50,6 +65,7 @@ function DetailItem({ label, value }: { label: string; value?: string | number |
 export default function VideoDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const [editing, setEditing] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -57,6 +73,16 @@ export default function VideoDetail() {
   const updateMutation      = useUpdateVideo(Number(id))
   const deleteMutation      = useDeleteVideo()
   const statusMutation      = useUpdateVideoStatus()
+
+  // Routing list state for Prev/Next
+  const filteredIds = location.state?.videoIds as number[] | undefined
+  let prevId = null
+  let nextId = null
+  if (filteredIds) {
+    const currentIndex = filteredIds.indexOf(Number(id))
+    if (currentIndex > 0) prevId = filteredIds[currentIndex - 1]
+    if (currentIndex !== -1 && currentIndex < filteredIds.length - 1) nextId = filteredIds[currentIndex + 1]
+  }
 
   if (isLoading) {
     return (
@@ -125,6 +151,28 @@ export default function VideoDetail() {
           <button onClick={() => navigate(-1)} className="btn-secondary p-2">
             <ArrowLeft size={18} />
           </button>
+
+          {filteredIds && (
+            <div className="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/5">
+              <button 
+                onClick={() => prevId && navigate(`/videos/${prevId}`, { state: { videoIds: filteredIds } })} 
+                disabled={!prevId}
+                className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors"
+                title="Previous Video"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button 
+                onClick={() => nextId && navigate(`/videos/${nextId}`, { state: { videoIds: filteredIds } })} 
+                disabled={!nextId}
+                className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors"
+                title="Next Video"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
+
           <div>
             <h1 className="text-2xl font-bold text-white">{video.title}</h1>
             <div className="flex items-center gap-3 mt-1.5">
@@ -280,7 +328,7 @@ export default function VideoDetail() {
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide">Train</h3>
             </div>
             <div className="space-y-2.5">
-              <DetailItem label="Number" value={video.trainNumber} />
+              <DetailItem label="Number" value={video.trainNumber} copyable />
               <DetailItem label="Name"   value={video.trainName} />
               <DetailItem label="Category" value={video.trainCategoryName} />
             </div>
@@ -293,7 +341,7 @@ export default function VideoDetail() {
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wide">Locomotive</h3>
             </div>
             <div className="space-y-2.5">
-              <DetailItem label="Number"  value={video.locoNumber} />
+              <DetailItem label="Number"  value={video.locoNumber} copyable />
               <DetailItem label="Type"    value={video.locoTypeName} />
               <DetailItem label="Shed"    value={video.locoShedName} />
               <DetailItem label="Livery"  value={video.locoLivery} />
@@ -384,38 +432,45 @@ export default function VideoDetail() {
       </div>
 
       {/* Related Videos Section */}
-      <RelatedVideos trainNumber={video.trainNumber} locoNumber={video.locoNumber} currentVideoId={video.id} />
+      <div className="mt-8">
+        {video.trainNumber && <RelatedVideosPanel type="train" value={video.trainNumber} currentVideoId={video.id} />}
+        {video.locoNumber && <RelatedVideosPanel type="loco" value={video.locoNumber} currentVideoId={video.id} />}
+      </div>
     </div>
   )
 }
 
-function RelatedVideos({ trainNumber, locoNumber, currentVideoId }: { trainNumber?: string; locoNumber?: string; currentVideoId: number }) {
+function RelatedVideosPanel({ type, value, currentVideoId }: { type: 'train' | 'loco', value?: string, currentVideoId: number }) {
   const navigate = useNavigate()
+  
   const { data } = useQuery({
-    queryKey: ['videos', 'related', trainNumber, locoNumber],
+    queryKey: ['videos', 'related', type, value, currentVideoId],
     queryFn: () => videosApi.getAll({ 
-      trainNumber: trainNumber || undefined, 
-      locoNumber: !trainNumber ? locoNumber : undefined, 
+      trainNumber: type === 'train' ? value : undefined, 
+      locoNumber: type === 'loco' ? value : undefined, 
       size: 6, 
       sort: 'recordingDate', 
       direction: 'DESC' 
     }).then(r => r.data),
-    enabled: !!trainNumber || !!locoNumber
+    enabled: !!value
   })
 
   if (!data?.content) return null
   const related = data.content.filter(v => v.id !== currentVideoId).slice(0, 5)
   if (related.length === 0) return null
 
+  // Pass the context of the related videos when clicking through to keep Next/Prev buttons alive
+  const relatedIds = data.content.map(v => v.id)
+
   return (
-    <div className="mt-12 pt-8 border-t border-white/10 animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-white flex items-center gap-2">
-          <Film className="text-brand-400" />
-          Related Encounters
+    <div className="pt-8 border-t border-white/10 animate-fade-in first:mt-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          {type === 'train' ? <Train className="text-brand-400" size={18} /> : <Film className="text-brand-400" size={18} />}
+          Same {type === 'train' ? 'Train' : 'Locomotive'}
         </h3>
-        <span className="text-sm font-medium text-slate-400">
-          {trainNumber ? `Train ${trainNumber}` : `Loco ${locoNumber}`}
+        <span className="text-xs font-bold text-slate-400 bg-white/5 px-2 py-1 rounded">
+          {value}
         </span>
       </div>
       
@@ -423,10 +478,10 @@ function RelatedVideos({ trainNumber, locoNumber, currentVideoId }: { trainNumbe
         {related.map(v => (
           <div 
             key={v.id} 
-            onClick={() => navigate(`/videos/${v.id}`)} 
-            className="snap-start shrink-0 w-[280px] bg-white/5 border border-white/5 hover:border-brand-500/50 rounded-xl overflow-hidden cursor-pointer group transition-all"
+            onClick={() => navigate(`/videos/${v.id}`, { state: { videoIds: relatedIds } })} 
+            className="snap-start shrink-0 w-[240px] bg-white/5 border border-white/5 hover:border-brand-500/50 rounded-xl overflow-hidden cursor-pointer group transition-all"
           >
-            <div className="h-40 bg-slate-800 relative">
+            <div className="h-32 bg-slate-800 relative">
               {v.thumbnail ? (
                 <img src={v.thumbnail.startsWith('http') ? v.thumbnail : `data:image/jpeg;base64,${v.thumbnail}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Thumbnail" />
               ) : (
@@ -435,8 +490,8 @@ function RelatedVideos({ trainNumber, locoNumber, currentVideoId }: { trainNumbe
                 </div>
               )}
             </div>
-            <div className="p-4">
-              <h4 className="font-bold text-slate-200 text-sm line-clamp-2 leading-snug group-hover:text-brand-400 transition-colors mb-2">{v.title}</h4>
+            <div className="p-3">
+              <h4 className="font-bold text-slate-200 text-sm line-clamp-2 leading-snug group-hover:text-brand-400 transition-colors mb-1">{v.title}</h4>
               <p className="text-xs text-slate-500 flex items-center gap-1">
                 <Calendar size={12} /> {v.recordingDate || 'Unknown Date'}
               </p>

@@ -62,6 +62,11 @@ public class VideoService {
 
     // ── Read operations ───────────────────────────────────────
 
+    @Transactional(readOnly = true)
+    public java.util.List<com.railfan.archive.dto.response.MapPointDto> getMapPoints() {
+        return videoRepository.findMapPoints(getCurrentUser());
+    }
+
     /**
      * Paginated, filtered, sorted list of videos.
      */

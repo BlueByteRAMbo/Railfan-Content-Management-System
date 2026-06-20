@@ -33,6 +33,16 @@ export interface Station {
   railwayZone?: string;
 }
 
+export interface MapPointDto {
+  id: number;
+  gpsLat: number;
+  gpsLng: number;
+  locoTypeName?: string;
+  locoNumber?: string;
+  recordingDate: string;
+  thumbnail?: string;
+}
+
 export interface Tag {
   id: number;
   name: string;
@@ -364,4 +374,29 @@ export interface TrainHistoryResponse {
   date: string;
   locoChanged: boolean;
   appearances: TrainAppearanceDto[];
+}
+
+// ── Loco Logbook ──────────────────────────────────────────────
+export interface LocoSummaryDto {
+  locoNumber: string;
+  count: number;
+  firstSeen: string;
+  lastSeen: string;
+}
+
+export interface LocoAppearanceDto {
+  videoId: number;
+  videoTitle: string;
+  recordingTime?: string;
+  trainNumber?: string;
+  trainName?: string;
+  stationName?: string;
+}
+
+export interface LocoHistoryResponse {
+  date: string;
+  shedOrLiveryChanged: boolean;
+  currentShed?: string;
+  currentLivery?: string;
+  appearances: LocoAppearanceDto[];
 }

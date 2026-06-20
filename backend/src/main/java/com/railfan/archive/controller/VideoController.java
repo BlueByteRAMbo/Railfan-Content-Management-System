@@ -44,6 +44,12 @@ public class VideoController {
     private final VideoService videoService;
     private final YouTubeService youtubeService;
 
+    // ── Spotter Map ───────────────────────────────────────────
+    @GetMapping("/map-points")
+    public ResponseEntity<List<com.railfan.archive.dto.response.MapPointDto>> getMapPoints() {
+        return ResponseEntity.ok(videoService.getMapPoints());
+    }
+
     // ── List / Search ─────────────────────────────────────────
     @GetMapping
     public ResponseEntity<PagedResponse<VideoSummaryResponse>> findAll(

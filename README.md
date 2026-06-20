@@ -20,9 +20,9 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 
 ### ✨ Key Features
 
-- 🚂 **Train Run Tracker**: Track and analyze physical runs of specific trains across your archive. Detects rare locomotive swaps automatically.
-- 🗺️ **Interactive Geolocation**: Add GPS coordinates to generate dynamic, stunning dark-mode maps embedded directly in your video archives.
-- 🔍 **Searchable Station Picker**: A live search dropdown backed by a full Indian Railways station database (7 000+ stations). Type any station name or code and get instant results from the backend — zero client-side JSON bundle.
+- 🚂 **Train Run Tracker & Locomotive Logbook**: Track physical runs of specific trains across your archive, and maintain a "passport" for every locomotive you capture. Detects shed and livery changes automatically.
+- 🗺️ **Interactive Spotter Map**: Add GPS coordinates to generate dynamic, stunning dark-mode maps using `react-leaflet`. Click pins to view custom popups of your geographical encounters.
+- 🔍 **Searchable Station Picker**: A live search dropdown backed by a full Indian Railways station database (7 000+ stations). Type any station name or code and get instant results from the backend.
 - 🆓 **API-Free YouTube Metadata Scraping**: Paste a YouTube Video ID to automatically extract Title, Description, Duration, and high-quality Thumbnail — no paid API key required.
 - 📤 **Google Takeout Auto-Importer**: Drop your raw `videos.csv` from Google Takeout directly into the dashboard. The backend automatically detects the format and builds your database instantly.
 - 🚀 **Quick Add Mode**: Lightning-fast sequential data entry designed for logging massive backlogs without touching your mouse.
@@ -31,7 +31,7 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 - 📊 **Deep Analytics Dashboard**: Interactive Recharts visualisations of top trains, locos, sheds, and stations. Instantly filterable by custom date ranges.
 - 📅 **Temporal Workflows**: Upload Planner, Pending Queues, and an Interactive Calendar to track what you recorded and when.
 - 🚨 **Duplicate Detection**: Automated backend daemon flags potential duplicate recordings (same train, same day).
-- 🏷️ **Taxonomy Management**: Fully interactive, inline Tag and Collection manager with complete CRUD capabilities.
+- 🗂️ **Taxonomy & Collection Browsing**: Fully interactive, inline Tag and Collection manager. Click directly into collections to browse visually rich, filtered galleries of your archives.
 
 ### 🎨 Design & UX
 - **"Signal & Steel" Identity**: Deep Charcoal/Graphite base with vibrant Signal Amber accents.

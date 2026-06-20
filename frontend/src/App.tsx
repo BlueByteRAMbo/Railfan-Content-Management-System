@@ -17,6 +17,10 @@ import UploadPlanner from './pages/UploadPlanner'
 import DeepStatistics from './pages/DeepStatistics'
 import DuplicateResolver from './pages/DuplicateResolver'
 import CollectionsTagsManager from './pages/CollectionsTagsManager'
+import CollectionBrowse from './pages/CollectionBrowse'
+import LocoDirectory from './pages/LocoDirectory'
+import LocoDetail from './pages/LocoDetail'
+import SpotterMap from './pages/SpotterMap'
 import QuickAddView from './pages/QuickAddView'
 import ImportExportView from './pages/ImportExportView'
 import TrainRunTracker from './pages/TrainRunTracker'
@@ -68,11 +72,15 @@ export default function App() {
                   <Route path="/timeline"      element={<PageTransition><TimelineView /></PageTransition>} />
                   <Route path="/calendar"      element={<PageTransition><CalendarView /></PageTransition>} />
                   <Route path="/collections"   element={<PageTransition><CollectionsTagsManager /></PageTransition>} />
+                  <Route path="/collections/:id" element={<PageTransition><CollectionBrowse /></PageTransition>} />
                   <Route path="/statistics"    element={<PageTransition><DeepStatistics /></PageTransition>} />
                   <Route path="/duplicates"    element={<PageTransition><DuplicateResolver /></PageTransition>} />
                   <Route path="/quick-add"     element={<PageTransition><QuickAddView /></PageTransition>} />
                   <Route path="/import-export" element={<PageTransition><ImportExportView /></PageTransition>} />
                   <Route path="/train-tracker" element={<PageTransition><TrainRunTracker /></PageTransition>} />
+                  <Route path="/locos"         element={<PageTransition><LocoDirectory /></PageTransition>} />
+                  <Route path="/locos/:number" element={<PageTransition><LocoDetail /></PageTransition>} />
+                  <Route path="/map"           element={<PageTransition><SpotterMap /></PageTransition>} />
 
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

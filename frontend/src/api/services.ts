@@ -4,7 +4,8 @@ import type {
   Video, VideoSummary, VideoCreateRequest, VideoUpdateRequest,
   PagedResponse, VideoFilterParams, DashboardStats, DashboardCharts,
   TrainCategory, LocoType, LocoShed, Station, Tag, RailCollection,
-  BulkActionRequest, TimelineMonth, DuplicateAlert, TrainHistoryResponse
+  BulkActionRequest, TimelineMonth, DuplicateAlert, TrainHistoryResponse,
+  LocoSummaryDto, LocoHistoryResponse, MapPointDto
 } from '../types';
 
 // ── Auth ──────────────────────────────────────────────────────
@@ -40,6 +41,9 @@ export const videosApi = {
     apiClient.get<VideoSummary[]>('/api/videos/check-duplicate', {
       params: { trainNumber, locoNumber, recordingDate, excludeId }
     }),
+
+  getMapPoints: () =>
+    apiClient.get<MapPointDto[]>('/api/videos/map-points'),
 
   fetchYouTubeMetadata: (videoId: string) =>
     apiClient.get(`/api/videos/youtube-metadata/${videoId}`),
@@ -146,4 +150,10 @@ export const statsApi = {
 // ── Train History ─────────────────────────────────────────────
 export const trainsApi = {
   getHistory: (trainNumber: string) => apiClient.get<TrainHistoryResponse[]>(`/api/trains/${trainNumber}/history`),
+};
+
+// ── Loco Logbook ──────────────────────────────────────────────
+export const locosApi = {
+  getAll:     () => apiClient.get<LocoSummaryDto[]>('/api/locos'),
+  getHistory: (locoNumber: string) => apiClient.get<LocoHistoryResponse[]>(`/api/locos/${locoNumber}/history`),
 };
