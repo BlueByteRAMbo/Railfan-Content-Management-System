@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * REST controller for video CRUD operations.
@@ -40,6 +41,11 @@ import java.util.Map;
 @RequestMapping("/api/videos")
 @RequiredArgsConstructor
 public class VideoController {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+        "recordingDate", "uploadDate", "title", "locoNumber",
+        "trainNumber", "priority", "createdAt", "durationSeconds", "fileSizeBytes"
+    );
 
     private final VideoService videoService;
     private final YouTubeService youtubeService;
@@ -76,6 +82,7 @@ public class VideoController {
         @RequestParam(defaultValue = "DESC") String direction
     ) {
         Sort.Direction dir = Sort.Direction.fromString(direction);
+        if (!ALLOWED_SORT_FIELDS.contains(sort)) sort = "recordingDate";
         Pageable pageable = PageRequest.of(page, Math.min(size, 100), Sort.by(dir, sort));
 
         Page<VideoSummaryResponse> result = videoService.findAll(

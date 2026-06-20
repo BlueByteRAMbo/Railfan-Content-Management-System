@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Collection management endpoints.
@@ -28,6 +29,11 @@ import java.util.Map;
 @RequestMapping("/api/collections")
 @RequiredArgsConstructor
 public class CollectionController {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+        "recordingDate", "uploadDate", "title", "locoNumber",
+        "trainNumber", "priority", "createdAt", "durationSeconds", "fileSizeBytes"
+    );
 
     private final RailCollectionRepository collectionRepository;
     private final VideoService videoService;
@@ -82,6 +88,7 @@ public class CollectionController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "recordingDate") String sort,
             @RequestParam(defaultValue = "DESC") String direction) {
+        if (!ALLOWED_SORT_FIELDS.contains(sort)) sort = "recordingDate";
         Pageable pageable = PageRequest.of(page, size,
                 Sort.by(Sort.Direction.fromString(direction), sort));
 
