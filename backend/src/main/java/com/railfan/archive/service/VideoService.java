@@ -404,7 +404,7 @@ public class VideoService {
 
         // Offlink Detection
         if (StringUtils.hasText(v.getTrainNumber()) && locoType != null) {
-            expectedLocoConfigRepository.findByTrainNumber(v.getTrainNumber())
+            expectedLocoConfigRepository.findByTrainNumberAndUser(v.getTrainNumber(), v.getUser())
                 .ifPresentOrElse(
                     config -> v.setIsOfflink(!config.getExpectedLocoType().getId().equals(locoType.getId())),
                     () -> v.setIsOfflink(false)

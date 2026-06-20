@@ -36,6 +36,7 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 - 📱 **Progressive Web App (PWA)**: Installable on mobile devices with offline caching via Workbox `StaleWhileRevalidate` strategies.
 - 📖 **Interactive API Documentation**: Auto-generated OpenAPI / Swagger UI specs available at `/swagger-ui.html`.
 - 🔄 **Automated CI/CD**: Built-in GitHub Actions workflows for zero-downtime, automated deployments to Render and similar platforms.
+- 🔒 **Enterprise Security**: Full multi-tenant data isolation, JWT-based auth with brute-force account lockouts, and strict environment variable fallbacks to prevent secret exposure.
 
 ### 🎨 Design & UX
 - **"Signal & Steel" Identity**: Deep Charcoal/Graphite base with vibrant Signal Amber accents.

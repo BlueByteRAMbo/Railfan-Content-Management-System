@@ -16,6 +16,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.BadCredentialsException;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.railfan.archive.exception.TooManyRequestsException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Authentication service: register, login, token generation.
@@ -32,11 +37,28 @@ public class AuthService {
     @Value("${app.jwt.expiration-ms}")
     private long jwtExpirationMs;
 
+    private final Cache<String, Integer> failedAttempts = Caffeine.newBuilder()
+        .expireAfterWrite(15, TimeUnit.MINUTES)
+        .build();
+
     /** Authenticate user and return JWT token */
     public AuthResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+        int attempts = failedAttempts.get(request.getUsername(), k -> 0);
+        if (attempts >= 5) {
+            throw new TooManyRequestsException("Account temporarily locked. Try again in 15 minutes.");
+        }
+
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
+            failedAttempts.invalidate(request.getUsername()); // reset on success
+        } catch (BadCredentialsException e) {
+            failedAttempts.put(request.getUsername(), attempts + 1);
+            throw e;
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = tokenProvider.generateToken(authentication);
