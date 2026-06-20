@@ -32,6 +32,10 @@ The **Railfan Archive Manager** is an enterprise-grade CMS designed specifically
 - 📅 **Temporal Workflows**: Upload Planner, Pending Queues, and an Interactive Calendar to track what you recorded and when.
 - 🚨 **Duplicate Detection**: Automated backend daemon flags potential duplicate recordings (same train, same day).
 - 🗂️ **Taxonomy & Collection Browsing**: Fully interactive, inline Tag and Collection manager. Click directly into collections to browse visually rich, filtered galleries of your archives.
+- ⚡ **Optimised Infrastructure**: In-memory caching with Caffeine, per-user JWT-aware rate limiting with Bucket4j, Nginx-level protection, and Prometheus metrics out of the box.
+- 📱 **Progressive Web App (PWA)**: Installable on mobile devices with offline caching via Workbox `StaleWhileRevalidate` strategies.
+- 📖 **Interactive API Documentation**: Auto-generated OpenAPI / Swagger UI specs available at `/swagger-ui.html`.
+- 🔄 **Automated CI/CD**: Built-in GitHub Actions workflows for zero-downtime, automated deployments to Render and similar platforms.
 
 ### 🎨 Design & UX
 - **"Signal & Steel" Identity**: Deep Charcoal/Graphite base with vibrant Signal Amber accents.

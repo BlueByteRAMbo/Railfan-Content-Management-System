@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.regex.Matcher;
@@ -17,6 +18,7 @@ public class YouTubeService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Cacheable(value = "youtube-meta", key = "#videoId")
     public YouTubeMetadataResponse fetchMetadata(String videoId) {
         String oembedUrl = "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=" + videoId + "&format=json";
 
