@@ -3,22 +3,22 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { videosApi } from '../api/services'
 import type { VideoFilterParams, UploadStatus } from '../types'
-import { Plus, Search, Filter, Clock, HardDrive } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { Filter, Plus, Clock, HardDrive, Search, Zap, AlertTriangle } from 'lucide-react'
 import SignalLoader from '../components/ui/SignalLoader'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const STATUS_LABELS: Record<UploadStatus, string> = {
-  PENDING_UPLOAD:   'Pending',
+  PENDING_UPLOAD: 'Pending',
   SCHEDULED_UPLOAD: 'Scheduled',
-  UPLOADED:         'Uploaded',
-  ARCHIVED:         'Archived',
+  UPLOADED: 'Uploaded',
+  ARCHIVED: 'Archived',
 }
 
 const STATUS_CLASSES: Record<UploadStatus, string> = {
-  PENDING_UPLOAD:   'status-pending',
+  PENDING_UPLOAD: 'status-pending',
   SCHEDULED_UPLOAD: 'status-scheduled',
-  UPLOADED:         'status-uploaded',
-  ARCHIVED:         'status-archived',
+  UPLOADED: 'status-uploaded',
+  ARCHIVED: 'status-archived',
 }
 
 function formatDuration(seconds?: number): string {
@@ -97,7 +97,7 @@ export default function VideoList() {
       setSchedulePromptOpen(true)
       return
     }
-    
+
     let extra = {}
     if (action === 'MARK_UPLOADED') {
       const now = new Date()
@@ -155,8 +155,8 @@ export default function VideoList() {
           <option value="UPLOADED">Uploaded</option>
           <option value="ARCHIVED">Archived</option>
         </select>
-        <button 
-          onClick={() => setShowFilters(!showFilters)} 
+        <button
+          onClick={() => setShowFilters(!showFilters)}
           className={`btn-secondary flex items-center gap-2 transition-all ${showFilters ? 'bg-brand-500/10 border-brand-500 text-brand-400' : ''}`}
         >
           <Filter size={15} />
@@ -271,9 +271,9 @@ export default function VideoList() {
             <thead>
               <tr>
                 <th className="w-10">
-                  <input type="checkbox" className="form-checkbox" 
-                         checked={page && page.content.length > 0 && selectedIds.length === page.content.length} 
-                         onChange={handleSelectAll} />
+                  <input type="checkbox" className="form-checkbox"
+                    checked={page && page.content.length > 0 && selectedIds.length === page.content.length}
+                    onChange={handleSelectAll} />
                 </th>
                 <th>Title</th>
                 <th>Recorded</th>
@@ -304,9 +304,9 @@ export default function VideoList() {
                   className={`cursor-pointer ${selectedIds.includes(v.id) ? 'bg-brand-500/10' : ''}`}
                 >
                   <td onClick={(e) => e.stopPropagation()}>
-                    <input type="checkbox" className="form-checkbox" 
-                           checked={selectedIds.includes(v.id)} 
-                           onChange={() => toggleSelect(v.id)} />
+                    <input type="checkbox" className="form-checkbox"
+                      checked={selectedIds.includes(v.id)}
+                      onChange={() => toggleSelect(v.id)} />
                   </td>
                   <td onClick={() => navigate(`/videos/${v.id}`)}>
                     <div className="flex items-center gap-3">
@@ -319,7 +319,21 @@ export default function VideoList() {
                       ) : (
                         <div className="w-12 h-8 rounded bg-slate-800 flex-shrink-0" />
                       )}
-                      <span className="font-medium text-white truncate max-w-xs">{v.title}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-white truncate max-w-xs">{v.title}</span>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          {v.kavachFitted && (
+                            <span className="text-[9px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1 rounded font-bold uppercase flex items-center gap-0.5">
+                              <Zap size={8} /> Kavach
+                            </span>
+                          )}
+                          {v.isOfflink && (
+                            <span className="text-[9px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-1 rounded font-bold uppercase flex items-center gap-0.5">
+                              <AlertTriangle size={8} /> Offlink
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td onClick={() => navigate(`/videos/${v.id}`)} className="text-slate-400 text-sm whitespace-nowrap">{v.recordingDate}</td>
@@ -353,17 +367,17 @@ export default function VideoList() {
               No videos found. Add your first video to get started!
             </div>
           ) : page?.content.map((v) => (
-            <div 
-              key={v.id} 
+            <div
+              key={v.id}
               className={`p-4 flex items-start gap-4 transition-colors ${selectedIds.includes(v.id) ? 'bg-brand-500/10' : ''}`}
               onClick={() => navigate(`/videos/${v.id}`)}
             >
               <div onClick={(e) => e.stopPropagation()} className="pt-1">
-                <input 
-                  type="checkbox" 
-                  className="form-checkbox" 
-                  checked={selectedIds.includes(v.id)} 
-                  onChange={() => toggleSelect(v.id)} 
+                <input
+                  type="checkbox"
+                  className="form-checkbox"
+                  checked={selectedIds.includes(v.id)}
+                  onChange={() => toggleSelect(v.id)}
                 />
               </div>
               {v.thumbnail ? (
@@ -389,6 +403,11 @@ export default function VideoList() {
                   {(v.trainNumber || v.locoNumber) && (
                     <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-slate-300">
                       {v.trainNumber || v.locoNumber}
+                    </span>
+                  )}
+                  {v.isOfflink && (
+                    <span className="text-[10px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1">
+                      <AlertTriangle size={10} /> Offlink
                     </span>
                   )}
                 </div>
@@ -428,7 +447,7 @@ export default function VideoList() {
       {/* Bulk Actions Floating Bar */}
       <AnimatePresence>
         {selectedIds.length > 0 && (
-          <motion.div 
+          <motion.div
             initial={{ y: 100, opacity: 0, x: '-50%' }}
             animate={{ y: 0, opacity: 1, x: '-50%' }}
             exit={{ y: 100, opacity: 0, x: '-50%' }}
@@ -436,23 +455,23 @@ export default function VideoList() {
             className="fixed bottom-8 md:bottom-12 left-1/2 bg-[#16161a] border border-white/10 shadow-glow rounded-2xl md:rounded-full px-6 py-3 flex flex-col md:flex-row items-center gap-4 z-50"
           >
             {schedulePromptOpen ? (
-               <div className="flex items-center gap-3">
-                 <span className="text-sm font-bold text-white whitespace-nowrap">Schedule Date:</span>
-                 <input type="date" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} className="form-input text-xs py-1.5 bg-slate-800 text-white" />
-                 <button onClick={confirmSchedule} className="btn-primary py-1.5 px-3 text-xs whitespace-nowrap" disabled={!scheduleDate || bulkMutation.isPending}>Confirm</button>
-                 <button onClick={() => { setSchedulePromptOpen(false); setScheduleDate(''); }} className="btn-secondary py-1.5 px-3 text-xs whitespace-nowrap">Cancel</button>
-               </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-white whitespace-nowrap">Schedule Date:</span>
+                <input type="date" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} className="form-input text-xs py-1.5 bg-slate-800 text-white" />
+                <button onClick={confirmSchedule} className="btn-primary py-1.5 px-3 text-xs whitespace-nowrap" disabled={!scheduleDate || bulkMutation.isPending}>Confirm</button>
+                <button onClick={() => { setSchedulePromptOpen(false); setScheduleDate(''); }} className="btn-secondary py-1.5 px-3 text-xs whitespace-nowrap">Cancel</button>
+              </div>
             ) : (
-               <>
-                  <span className="text-sm font-bold text-white bg-brand-500 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(217,142,4,0.5)]">
-                    {selectedIds.length}
-                  </span>
-                  <span className="text-sm text-slate-300 mr-2 font-medium">selected</span>
-                  <button onClick={() => handleBulkAction('MARK_UPLOADED')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20">Mark Uploaded</button>
-                  <button onClick={() => handleBulkAction('SCHEDULE_UPLOAD')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 border-brand-500/20">Schedule</button>
-                  <button onClick={() => handleBulkAction('ARCHIVE')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-white/5 hover:bg-white/10 border-white/10">Archive</button>
-                  <button onClick={() => handleBulkAction('DELETE')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border-red-500/20">Delete</button>
-               </>
+              <>
+                <span className="text-sm font-bold text-white bg-brand-500 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(217,142,4,0.5)]">
+                  {selectedIds.length}
+                </span>
+                <span className="text-sm text-slate-300 mr-2 font-medium">selected</span>
+                <button onClick={() => handleBulkAction('MARK_UPLOADED')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20">Mark Uploaded</button>
+                <button onClick={() => handleBulkAction('SCHEDULE_UPLOAD')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-brand-500/10 text-brand-400 hover:bg-brand-500/20 border-brand-500/20">Schedule</button>
+                <button onClick={() => handleBulkAction('ARCHIVE')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-white/5 hover:bg-white/10 border-white/10">Archive</button>
+                <button onClick={() => handleBulkAction('DELETE')} disabled={bulkMutation.isPending} className="btn-secondary py-1.5 px-3 text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border-red-500/20">Delete</button>
+              </>
             )}
           </motion.div>
         )}

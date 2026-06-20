@@ -9,7 +9,8 @@ import { useDashboardStats, useDashboardCharts, useRecentVideos } from '../hooks
 import { useNavigate } from 'react-router-dom'
 import {
   Video, CheckCircle, Upload, Calendar, Archive,
-  HardDrive, Clock, TrendingUp, Timer, AlertTriangle, Plus, ExternalLink
+  HardDrive, Clock, TrendingUp, Timer, AlertTriangle, Plus, ExternalLink,
+  Train
 } from 'lucide-react'
 import SignalLoader from '../components/ui/SignalLoader'
 
@@ -154,103 +155,112 @@ export default function Dashboard() {
       )}
 
       {/* ── Charts row ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-
-        {/* Recordings per month */}
-        <div className="glass-card p-6">
-          <h3 className="text-sm font-semibold text-slate-300 mb-5">📹 Recordings Per Month</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={(charts?.recordingsPerMonth ?? []).filter(d => d.label && d.label.trim() !== '')}>
-              <defs>
-                <linearGradient id="recGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#d98e04" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#d98e04" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="label" tick={{ fill: '#64748b', fontSize: 11 }} />
-              <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="count" name="Recordings" stroke="#d98e04" fill="url(#recGrad)" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
+      {stats?.totalVideos === 0 ? (
+        <div className="col-span-2 py-20 text-center glass-card mb-6">
+          <Train size={48} className="mx-auto mb-4 text-slate-600" />
+          <h3 className="text-lg font-bold text-white mb-2">Your archive is empty</h3>
+          <p className="text-slate-500 text-sm mb-6">Add your first video to start seeing statistics here.</p>
+          <button onClick={() => navigate('/videos/add')} className="btn-primary">Add First Video</button>
         </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
-        {/* Uploads per month */}
-        <div className="glass-card p-6">
-          <h3 className="text-sm font-semibold text-slate-300 mb-5">🚀 Uploads Per Month</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={(charts?.uploadsPerMonth ?? []).filter(d => d.label && d.label.trim() !== '')}>
-              <defs>
-                <linearGradient id="uplGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3E7C8C" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#3E7C8C" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-              <XAxis dataKey="label" tick={{ fill: '#64748b', fontSize: 11 }} />
-              <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="count" name="Uploads" stroke="#3E7C8C" fill="url(#uplGrad)" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Loco type distribution */}
-        <div className="glass-card p-6">
-          <h3 className="text-sm font-semibold text-slate-300 mb-5">🚂 Loco Type Distribution</h3>
-          {(charts?.locoTypeDistribution?.filter(d => d.name && d.name.trim() !== '')?.length ?? 0) === 0 ? (
-            <div className="h-48 flex items-center justify-center text-slate-600 text-sm">
-              No data yet — add some videos to see distribution
-            </div>
-          ) : (
+          {/* Recordings per month */}
+          <div className="glass-card p-6">
+            <h3 className="text-sm font-semibold text-slate-300 mb-5">📹 Recordings Per Month</h3>
             <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={(charts?.locoTypeDistribution ?? []).filter(d => d.name && d.name.trim() !== '')}
-                  dataKey="count"
-                  nameKey="name"
-                  cx="50%" cy="50%"
-                  outerRadius={75}
-                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                  labelLine={false}
-                >
-                  {((charts?.locoTypeDistribution ?? []).filter(d => d.name && d.name.trim() !== '')).map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-
-        {/* Train category distribution */}
-        <div className="glass-card p-6">
-          <h3 className="text-sm font-semibold text-slate-300 mb-5">🏷️ Train Category Distribution</h3>
-          {(charts?.trainCategoryDistribution?.filter(d => d.name && d.name.trim() !== '')?.length ?? 0) === 0 ? (
-            <div className="h-48 flex items-center justify-center text-slate-600 text-sm">
-              No data yet — add some videos to see distribution
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={(charts?.trainCategoryDistribution ?? []).filter(d => d.name && d.name.trim() !== '')}>
+              <AreaChart data={(charts?.recordingsPerMonth ?? []).filter(d => d.label && d.label.trim() !== '')}>
                 <defs>
-                  <linearGradient id="gradCat" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#e29737" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#a15606" stopOpacity={0.6} />
+                  <linearGradient id="recGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#d98e04" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#d98e04" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                <Bar dataKey="count" name="Videos" fill="url(#gradCat)" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1000} />
-              </BarChart>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis dataKey="label" tick={{ fill: '#64748b', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="count" name="Recordings" stroke="#d98e04" fill="url(#recGrad)" strokeWidth={2} />
+              </AreaChart>
             </ResponsiveContainer>
-          )}
+          </div>
+
+          {/* Uploads per month */}
+          <div className="glass-card p-6">
+            <h3 className="text-sm font-semibold text-slate-300 mb-5">🚀 Uploads Per Month</h3>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={(charts?.uploadsPerMonth ?? []).filter(d => d.label && d.label.trim() !== '')}>
+                <defs>
+                  <linearGradient id="uplGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3E7C8C" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#3E7C8C" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis dataKey="label" tick={{ fill: '#64748b', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="count" name="Uploads" stroke="#3E7C8C" fill="url(#uplGrad)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Loco type distribution */}
+          <div className="glass-card p-6">
+            <h3 className="text-sm font-semibold text-slate-300 mb-5">🚂 Loco Type Distribution</h3>
+            {(charts?.locoTypeDistribution?.filter(d => d.name && d.name.trim() !== '')?.length ?? 0) === 0 ? (
+              <div className="h-48 flex items-center justify-center text-slate-600 text-sm">
+                No data yet — add some videos to see distribution
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={(charts?.locoTypeDistribution ?? []).filter(d => d.name && d.name.trim() !== '')}
+                    dataKey="count"
+                    nameKey="name"
+                    cx="50%" cy="50%"
+                    outerRadius={75}
+                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                    labelLine={false}
+                  >
+                    {((charts?.locoTypeDistribution ?? []).filter(d => d.name && d.name.trim() !== '')).map((_, i) => (
+                      <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* Train category distribution */}
+          <div className="glass-card p-6">
+            <h3 className="text-sm font-semibold text-slate-300 mb-5">🏷️ Train Category Distribution</h3>
+            {(charts?.trainCategoryDistribution?.filter(d => d.name && d.name.trim() !== '')?.length ?? 0) === 0 ? (
+              <div className="h-48 flex items-center justify-center text-slate-600 text-sm">
+                No data yet — add some videos to see distribution
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={(charts?.trainCategoryDistribution ?? []).filter(d => d.name && d.name.trim() !== '')}>
+                  <defs>
+                    <linearGradient id="gradCat" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#e29737" stopOpacity={1} />
+                      <stop offset="100%" stopColor="#a15606" stopOpacity={0.6} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                  <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                  <Bar dataKey="count" name="Videos" fill="url(#gradCat)" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1000} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Recent Videos ── */}
       {recent.length > 0 && (
@@ -279,9 +289,16 @@ export default function Dashboard() {
                   <p className="text-sm font-medium text-slate-200 truncate">{v.title}</p>
                   <p className="text-xs text-slate-500">{v.recordingDate} · {v.trainName ?? v.trainNumber ?? '—'}</p>
                 </div>
-                <span className={`status-badge ${STATUS_CONFIG[v.uploadStatus]?.className}`}>
-                  {STATUS_CONFIG[v.uploadStatus]?.label}
-                </span>
+                <div className="flex items-center gap-2">
+                  {v.isOfflink && (
+                    <span className="text-[10px] bg-rose-500/15 text-rose-400 border border-rose-500/30 px-1.5 py-0.5 rounded font-bold uppercase flex items-center gap-0.5">
+                      <AlertTriangle size={10} /> Offlink
+                    </span>
+                  )}
+                  <span className={`status-badge ${STATUS_CONFIG[v.uploadStatus]?.className}`}>
+                    {STATUS_CONFIG[v.uploadStatus]?.label}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

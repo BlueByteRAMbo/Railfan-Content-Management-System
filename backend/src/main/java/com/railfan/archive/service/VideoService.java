@@ -48,6 +48,7 @@ public class VideoService {
     private final StationRepository stationRepository;
     private final DuplicateAlertRepository duplicateAlertRepository;
     private final TagCollectionService tagCollectionService;
+    private final ExpectedLocoConfigRepository expectedLocoConfigRepository;
 
     private User getCurrentUser() {
         org.springframework.security.core.Authentication auth =
@@ -278,6 +279,7 @@ public class VideoService {
             .locoShedName(v.getLocoShed() != null ? v.getLocoShed().getName() : null)
             .locoLivery(v.getLocoLivery())
             .kavachFitted(v.getKavachFitted())
+            .isOfflink(v.getIsOfflink())
             .stationId(v.getStation() != null ? v.getStation().getId() : null)
             .stationName(v.getStation() != null ? v.getStation().getName() : null)
             .section(v.getSection())
@@ -345,6 +347,7 @@ public class VideoService {
             .youtubeVideoId(v.getYoutubeVideoId())
             .scheduledUploadDate(v.getScheduledUploadDate())
             .kavachFitted(v.getKavachFitted())
+            .isOfflink(v.getIsOfflink())
             .tagNames(v.getTags().stream().map(Tag::getName).toList())
             .build();
     }
@@ -389,14 +392,26 @@ public class VideoService {
 
         // Loco
         v.setLocoNumber(req.getLocoNumber());
-        v.setLocoType(req.getLocoTypeId() != null
+        LocoType locoType = req.getLocoTypeId() != null
             ? locoTypeRepository.findById(req.getLocoTypeId()).orElse(null)
-            : null);
+            : null;
+        v.setLocoType(locoType);
         v.setLocoShed(req.getLocoShedId() != null
             ? locoShedRepository.findById(req.getLocoShedId()).orElse(null)
             : null);
         v.setLocoLivery(req.getLocoLivery());
         v.setKavachFitted(req.getKavachFitted() != null && req.getKavachFitted());
+
+        // Offlink Detection
+        if (StringUtils.hasText(v.getTrainNumber()) && locoType != null) {
+            expectedLocoConfigRepository.findByTrainNumber(v.getTrainNumber())
+                .ifPresentOrElse(
+                    config -> v.setIsOfflink(!config.getExpectedLocoType().getId().equals(locoType.getId())),
+                    () -> v.setIsOfflink(false)
+                );
+        } else {
+            v.setIsOfflink(false);
+        }
 
         // Location
         v.setStation(req.getStationId() != null

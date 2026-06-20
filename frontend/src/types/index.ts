@@ -97,6 +97,7 @@ export interface Video {
   locoShedName?: string;
   locoLivery?: string;
   kavachFitted: boolean;
+  isOfflink: boolean;
 
   // Location
   stationId?: number;
@@ -147,6 +148,7 @@ export interface VideoSummary {
   youtubeVideoId?: string;
   scheduledUploadDate?: string;
   kavachFitted: boolean;
+  isOfflink?: boolean;
   tagNames: string[];
 }
 

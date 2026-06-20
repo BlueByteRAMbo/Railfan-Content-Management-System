@@ -125,6 +125,9 @@ public class Video {
     @Column(nullable = false)
     private Boolean kavachFitted = false;
 
+    @Column(nullable = false)
+    private Boolean isOfflink = false;
+
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private java.util.List<SecondaryLoco> secondaryLocos = new java.util.ArrayList<>();

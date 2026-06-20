@@ -7,7 +7,7 @@ import VideoForm from '../components/video/VideoForm'
 import type { VideoCreateRequest, UploadStatus } from '../types'
 import {
   ArrowLeft, Edit2, Trash2, PlayCircle, CheckCircle,
-  Calendar, Clock, HardDrive, Film, MapPin, Train, Zap, Tag, Copy, Check, ChevronLeft, ChevronRight
+  Calendar, Clock, HardDrive, Film, MapPin, Train, Zap, Tag, Copy, Check, ChevronLeft, ChevronRight, AlertTriangle
 } from 'lucide-react'
 import SignalLoader from '../components/ui/SignalLoader'
 
@@ -181,6 +181,11 @@ export default function VideoDetail() {
                   <Zap size={10} /> KAVACH
                 </span>
               )}
+              {video.isOfflink && (
+                <span className="status-badge bg-rose-500/15 text-rose-400 border-rose-500/30">
+                  <AlertTriangle size={10} /> OFFLINK
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -346,6 +351,12 @@ export default function VideoDetail() {
                 <div className="flex items-center gap-2 pt-1">
                   <Zap size={12} className="text-emerald-400" />
                   <span className="text-xs text-emerald-400 font-semibold">KAVACH Fitted</span>
+                </div>
+              )}
+              {video.isOfflink && (
+                <div className="flex items-center gap-2 pt-1">
+                  <AlertTriangle size={12} className="text-rose-400" />
+                  <span className="text-xs text-rose-400 font-semibold">Offlink Encounter</span>
                 </div>
               )}
             </div>

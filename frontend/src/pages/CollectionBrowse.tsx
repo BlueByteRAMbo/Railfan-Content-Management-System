@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { collectionsApi } from '../api/services'
 import { ArrowLeft, PlayCircle, Calendar, Film } from 'lucide-react'
+import SignalLoader from '../components/ui/SignalLoader'
 
 export default function CollectionBrowse() {
   const { id } = useParams<{ id: string }>()
@@ -9,27 +10,29 @@ export default function CollectionBrowse() {
 
   // We could fetch the collection details separately if needed, 
   // but let's assume we fetch all videos for this collection.
-  const { data: videos, isLoading } = useQuery({
+  const { data: videos, isLoading: videosLoading } = useQuery({
     queryKey: ['collections', id, 'videos'],
-    queryFn: () => collectionsApi.getVideos(Number(id)).then(r => r.data)
+    queryFn: () => collectionsApi.getVideos(Number(id), { size: 1000 }).then(r => r.data)
   })
 
-  // Optionally fetch the collection detail to show the name and description
-  const { data: collections } = useQuery({
-    queryKey: ['collections'],
-    queryFn: () => collectionsApi.getAll().then(r => r.data)
+  // Fetch the specific collection detail
+  const { data: collection, isLoading: collectionLoading } = useQuery({
+    queryKey: ['collections', id],
+    queryFn: () => collectionsApi.getById(Number(id)).then(r => r.data)
   })
 
-  const collection = collections?.find(c => c.id === Number(id))
-
-  if (isLoading) {
-    return <div className="p-8 text-slate-500 animate-pulse">Loading collection...</div>
+  if (videosLoading || collectionLoading) {
+    return (
+      <div className="p-4 md:p-8 h-[calc(100vh-100px)] flex justify-center items-center">
+        <SignalLoader message="LOADING COLLECTION..." />
+      </div>
+    )
   }
 
   const relatedIds = videos?.content?.map(v => v.id) || []
 
   return (
-    <div className="max-w-6xl mx-auto p-8 animate-fade-in pb-32">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 animate-fade-in pb-32">
       <div className="flex items-center gap-4 mb-8">
         <button onClick={() => navigate('/collections')} className="btn-secondary p-2">
           <ArrowLeft size={18} />

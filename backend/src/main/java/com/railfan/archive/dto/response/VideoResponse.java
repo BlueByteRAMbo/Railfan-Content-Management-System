@@ -59,6 +59,7 @@ public class VideoResponse {
     private String locoShedName;
     private String locoLivery;
     private Boolean kavachFitted;
+    private Boolean isOfflink;
 
     // Location
     private Long stationId;

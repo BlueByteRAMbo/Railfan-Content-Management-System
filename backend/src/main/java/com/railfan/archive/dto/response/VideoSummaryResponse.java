@@ -49,6 +49,7 @@ public class VideoSummaryResponse {
 
     // Flags
     private Boolean kavachFitted;
+    private Boolean isOfflink;
 
     // Tags
     private List<String> tagNames;
